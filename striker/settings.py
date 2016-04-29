@@ -18,6 +18,9 @@
 # You should have received a copy of the GNU General Public License
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
 
+import django_auth_ldap.config
+import ldap
+import logging
 import os
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -81,3 +84,41 @@ USE_L10N = True
 USE_TZ = True
 
 STATIC_URL = '/static/'
+
+# LDAP Authentication
+AUTH_LDAP_SERVER_URI = 'ldap://127.0.0.1:3389'
+AUTH_LDAP_START_TLS = True
+AUTH_LDAP_GLOBAL_OPTIONS = {
+    ldap.OPT_X_TLS_REQUIRE_CERT: ldap.OPT_X_TLS_NEVER,
+}
+AUTH_LDAP_BIND_AS_AUTHENTICATING_USER = True
+AUTH_LDAP_USER_ATTR_MAP = {
+    'email': 'mail',
+}
+AUTH_LDAP_USER_SEARCH = django_auth_ldap.config.LDAPSearch(
+    'ou=people,dc=wikimedia,dc=org',
+    ldap.SCOPE_SUBTREE,
+    '(cn=%(user)s)'
+)
+AUTH_LDAP_GROUP_SEARCH = django_auth_ldap.config.LDAPSearch(
+    'dc=wikimedia,dc=org',
+    ldap.SCOPE_SUBTREE,
+    '(objectClass=groupOfNames)'
+)
+AUTH_LDAP_GROUP_TYPE = django_auth_ldap.config.GroupOfNamesType()
+AUTH_LDAP_MIRROR_GROUPS = True
+AUTH_LDAP_USER_FLAGS_BY_GROUP = {
+    'is_active': 'cn=project-tools,ou=groups,dc=wikimedia,dc=org',
+    'is_staff': 'cn=wmf,ou=groups,dc=wikimedia,dc=org',
+    'is_superuser': 'cn=tools.admin,ou=servicegroups,dc=wikimedia,dc=org',
+}
+
+AUTHENTICATION_BACKENDS = (
+    'django_auth_ldap.backend.LDAPBackend',
+    'django.contrib.auth.backends.ModelBackend',
+)
+
+# FIXME: proper logging config needed
+logger = logging.getLogger('django_auth_ldap')
+logger.addHandler(logging.StreamHandler())
+logger.setLevel(logging.DEBUG)
