@@ -3,11 +3,12 @@
 /*.egg-info
 /.coverage
 /.pc
+/.pybuild
 /.tox
 /.venv
 /build
 /cover
-/tests/cover
+/db.sqlite3
 /dist
 /docs/_build
-/.pybuild
+/tests/cover

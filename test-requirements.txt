@@ -1,5 +1,5 @@
 coverage>=3.6 # Apache-2.0
-django-nose>=1.2 # BSD
+django-nose>=1.4.1 # BSD
 flake8<2.6.0,>=2.5.4 # MIT
 nose # LGPL
 nose-exclude # LGPL
