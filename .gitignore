@@ -1,0 +1,13 @@
+*.pyc
+/*.egg
+/*.egg-info
+/.coverage
+/.pc
+/.tox
+/.venv
+/build
+/cover
+/tests/cover
+/dist
+/docs/_build
+/.pybuild
