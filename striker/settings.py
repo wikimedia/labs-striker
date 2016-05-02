@@ -18,24 +18,25 @@
 # You should have received a copy of the GNU General Public License
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
 
-import django_auth_ldap.config
-import ldap
-import logging
 import os
+from striker.labsauth.default_settings import * # noqa
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+STRIKER_DIR = os.path.dirname(os.path.abspath(__file__))
+BASE_DIR = os.path.dirname(STRIKER_DIR)
 
 SECRET_KEY = '3sjg74^=vk&**k1%1-kmmhb_^#-$zx_l2arwia^u0-jac@)^35'
 DEBUG = True
 ALLOWED_HOSTS = []
 
 INSTALLED_APPS = (
+    'striker.labsauth',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'compressor',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -51,24 +52,30 @@ MIDDLEWARE_CLASSES = (
 
 ROOT_URLCONF = 'striker.urls'
 
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            os.path.join(STRIKER_DIR, 'templates'),
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
+                'django.template.context_processors.debug',
+                'django.template.context_processors.i18n',
+                'django.template.context_processors.media',
+                'django.template.context_processors.static',
+                'django.template.context_processors.request',
                 'django.contrib.messages.context_processors.messages',
             ],
+            'debug': DEBUG,
         },
     },
 ]
 
 WSGI_APPLICATION = 'striker.wsgi.application'
-
 
 DATABASES = {
     'default': {
@@ -84,41 +91,15 @@ USE_L10N = True
 USE_TZ = True
 
 STATIC_URL = '/static/'
-
-# LDAP Authentication
-AUTH_LDAP_SERVER_URI = 'ldap://127.0.0.1:3389'
-AUTH_LDAP_START_TLS = True
-AUTH_LDAP_GLOBAL_OPTIONS = {
-    ldap.OPT_X_TLS_REQUIRE_CERT: ldap.OPT_X_TLS_NEVER,
-}
-AUTH_LDAP_BIND_AS_AUTHENTICATING_USER = True
-AUTH_LDAP_USER_ATTR_MAP = {
-    'email': 'mail',
-}
-AUTH_LDAP_USER_SEARCH = django_auth_ldap.config.LDAPSearch(
-    'ou=people,dc=wikimedia,dc=org',
-    ldap.SCOPE_SUBTREE,
-    '(cn=%(user)s)'
+STATIC_ROOT = 'staticfiles'
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'static'),
 )
-AUTH_LDAP_GROUP_SEARCH = django_auth_ldap.config.LDAPSearch(
-    'dc=wikimedia,dc=org',
-    ldap.SCOPE_SUBTREE,
-    '(objectClass=groupOfNames)'
-)
-AUTH_LDAP_GROUP_TYPE = django_auth_ldap.config.GroupOfNamesType()
-AUTH_LDAP_MIRROR_GROUPS = True
-AUTH_LDAP_USER_FLAGS_BY_GROUP = {
-    'is_active': 'cn=project-tools,ou=groups,dc=wikimedia,dc=org',
-    'is_staff': 'cn=wmf,ou=groups,dc=wikimedia,dc=org',
-    'is_superuser': 'cn=tools.admin,ou=servicegroups,dc=wikimedia,dc=org',
-}
-
-AUTHENTICATION_BACKENDS = (
-    'django_auth_ldap.backend.LDAPBackend',
-    'django.contrib.auth.backends.ModelBackend',
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'compressor.finders.CompressorFinder',
 )
 
-# FIXME: proper logging config needed
-logger = logging.getLogger('django_auth_ldap')
-logger.addHandler(logging.StreamHandler())
-logger.setLevel(logging.DEBUG)
+# Honor the 'X-Forwarded-Proto' header for request.is_secure()
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')

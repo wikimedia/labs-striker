@@ -18,12 +18,15 @@
 # You should have received a copy of the GNU General Public License
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.conf.urls import include
-from django.conf.urls import url
-import django.contrib.admin
-import striker.views
+from django import forms
+import striker.labsauth.models
 
-urlpatterns = [
-    url(r'^$', striker.views.IndexView.as_view(), name='index'),
-    url(r'^contrib-admin/', include(django.contrib.admin.site.urls)),
-]
+class LabsUserCreationForm(forms.ModelForm):
+    class Meta:
+        model = striker.labsauth.models.LabsUser
+        fields = ('ldapname',)
+
+class LabsUserChangeForm(forms.ModelForm):
+    class Meta:
+        model = striker.labsauth.models.LabsUser
+        fields = '__all__'

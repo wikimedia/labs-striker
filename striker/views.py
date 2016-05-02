@@ -18,12 +18,11 @@
 # You should have received a copy of the GNU General Public License
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.conf.urls import include
-from django.conf.urls import url
-import django.contrib.admin
-import striker.views
+import django.views.generic.base
 
-urlpatterns = [
-    url(r'^$', striker.views.IndexView.as_view(), name='index'),
-    url(r'^contrib-admin/', include(django.contrib.admin.site.urls)),
-]
+class IndexView(django.views.generic.base.TemplateView):
+    """Landing page."""
+    template_name = 'index.html'
+
+    def dispatch(self, *args, **kwargs):
+        return super(IndexView, self).dispatch(*args, **kwargs)
