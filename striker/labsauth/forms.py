@@ -21,10 +21,12 @@
 from django import forms
 import striker.labsauth.models
 
+
 class LabsUserCreationForm(forms.ModelForm):
     class Meta:
         model = striker.labsauth.models.LabsUser
         fields = ('ldapname',)
+
 
 class LabsUserChangeForm(forms.ModelForm):
     class Meta:

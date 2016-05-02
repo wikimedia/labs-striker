@@ -19,7 +19,7 @@
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
-from striker.labsauth.default_settings import * # noqa
+from striker.labsauth.default_settings import *  # noqa
 
 STRIKER_DIR = os.path.dirname(os.path.abspath(__file__))
 BASE_DIR = os.path.dirname(STRIKER_DIR)

@@ -23,6 +23,7 @@ from django.conf.urls import url
 import django.contrib.admin
 import striker.views
 
+
 urlpatterns = [
     url(r'^$', striker.views.IndexView.as_view(), name='index'),
     url(r'^contrib-admin/', include(django.contrib.admin.site.urls)),

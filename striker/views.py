@@ -20,6 +20,7 @@
 
 import django.views.generic.base
 
+
 class IndexView(django.views.generic.base.TemplateView):
     """Landing page."""
     template_name = 'index.html'

@@ -42,7 +42,8 @@ class LabsUserAdmin(django.contrib.auth.admin.UserAdmin):
     )
     form = striker.labsauth.forms.LabsUserChangeForm
     add_form = striker.labsauth.forms.LabsUserCreationForm
-    list_display = ('ldapname', 'ldapemail', 'shellname', 'sulname', 'is_staff')
+    list_display = (
+        'ldapname', 'ldapemail', 'shellname', 'sulname', 'is_staff')
     search_fields = ('ldapname', 'ldapemail', 'shellname', 'sulname')
     ordering = ('ldapname',)
     filter_horizontal = ('groups',)
