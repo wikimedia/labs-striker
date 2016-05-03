@@ -61,6 +61,8 @@ AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
 )
 
+LOGIN_URL = 'labsauth:login'
+
 # FIXME: proper logging config needed
 logger = logging.getLogger('django_auth_ldap')
 logger.addHandler(logging.StreamHandler())

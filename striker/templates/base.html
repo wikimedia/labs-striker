@@ -1,4 +1,6 @@
+{% load bootstrap3 %}
 {% load i18n %}
+{% load staticfiles %}
 <!DOCTYPE html>
 <html>
   <head>
@@ -7,13 +9,59 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="imagetoolbar" content="no">
     <title>{% block title %}{% endblock title %}</title>
-    {% block css %}
-    {% endblock css %}
+    {% bootstrap_css %}
+    <link rel="stylesheet" href="{% static "css/bootstrap-theme.min.css" %}">
+    <link rel="stylesheet" href="{% static "css/site.css" %}">
+    {% block css %}{% endblock css %}
   </head>
   <body>
-    {% block content %}
-    {% endblock content %}
-    {% block js %}
-    {% endblock js %}
+    <nav class="navbar navbar-default navbar-static-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="{% url 'index' %}">
+            <img alt="{% trans "Striker" %}" src="{% static "img/logo.png" %}">
+          </a>
+        </div>
+        <div id="navbar" class="collapse navbar-collapse">
+          <ul class="nav navbar-nav">
+            {% block navbar %}
+            <li><a href="{% url 'index' %}">{% bootstrap_icon "home" %} {% trans "Home" %}</a></li>
+            {% endblock navbar %}
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+          {% if user.is_authenticated %}
+            <li class="navbar-text">{{ user }}</li>
+            <li><a href="{% url 'labsauth:logout' %}">{% bootstrap_icon "log-out" %} {% trans "Logout" %}</a></li>
+          {% else %}
+          <li><a href="{% url 'labsauth:login' %}?next={{ request.path | urlencode }}">{% bootstrap_icon "log-in" %} {% trans "Login" %}</a></li>
+          {% endif %}
+          </ul>
+        </div>
+      </div>
+    </nav>
+    {% block banner %}{% endblock banner %}
+    <div id="content" class="container">
+      {% block pre_content %}
+      {% bootstrap_messages %}
+      {% endblock pre_content %}
+      {% block content %}<p>{{ request.path }}: Your message here.</p>{% endblock content %}
+      {% block post_content %}{% endblock post_content %}
+    </div>
+    <footer class="footer" role="contentinfo">
+      <p class="pull-left"></p>
+      <div class="container pull-right">
+        <ul class="list-inline">
+          <li><a href="{% url 'about' %}">{% trans "About" %}</a></li>
+        </ul>
+      </div>
+    </footer>
+    {% bootstrap_javascript %}
+    {% block js %}{% endblock js %}
   </body>
 </html>

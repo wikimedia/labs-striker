@@ -1,0 +1,11 @@
+body {
+  /* min-height:2000px; */
+}
+.container {
+  width:auto;
+  max-width:1024px;
+  padding:0 1em;
+}
+.navbar-static-top {
+  margin-bottom:1em;
+}

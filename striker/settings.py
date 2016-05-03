@@ -29,14 +29,15 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 INSTALLED_APPS = (
-    'striker.labsauth',
+    'bootstrap3',
+    'compressor',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
-    'django.contrib.sessions',
     'django.contrib.messages',
+    'django.contrib.sessions',
     'django.contrib.staticfiles',
-    'compressor',
+    'striker.labsauth',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -91,7 +92,7 @@ USE_L10N = True
 USE_TZ = True
 
 STATIC_URL = '/static/'
-STATIC_ROOT = 'staticfiles'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static'),
 )
@@ -103,3 +104,9 @@ STATICFILES_FINDERS = (
 
 # Honor the 'X-Forwarded-Proto' header for request.is_secure()
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+BOOTSTRAP3 = {
+    'jquery_url': STATIC_URL + 'js/jquery.min.js',
+    'base_url': STATIC_URL,
+    'include_jquery': True,
+}
