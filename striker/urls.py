@@ -20,7 +20,6 @@
 
 from django.conf import urls
 from django.conf import settings
-from django.contrib.auth import decorators
 from django.views import generic
 from django.conf.urls.static import static
 import django.contrib.admin
