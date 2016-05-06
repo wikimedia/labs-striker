@@ -1,0 +1,8 @@
+{% load bootstrap3 %}
+{% load i18n %}
+<ul class="dropdown-menu">
+  <li><a href="{% url "profile:profile" %}">{% bootstrap_icon "user" %} {% trans "Your profile" %}</a></li>
+  <li role="separator" class="divider"></li>
+  <li><a href="{% url "profile:settings" %}">{% bootstrap_icon "cog" %} {% trans "Settings" %}</a></li>
+  <li><a href="{% url 'labsauth:logout' %}">{% bootstrap_icon "log-out" %} {% trans "Logout" %}</a></li>
+</ul>

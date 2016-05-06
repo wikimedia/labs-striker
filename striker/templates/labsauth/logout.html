@@ -2,6 +2,7 @@
 {% load i18n %}
 
 {% block title %}{{ title }}{% endblock %}
+{% block login_next %}{% url 'index' %}{% endblock %}
 {% block content %}
 <div class="container">
   <p>{% trans "Bye!" %}</p>

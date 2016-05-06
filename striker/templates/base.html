@@ -35,13 +35,17 @@
             {% endblock navbar %}
           </ul>
           <ul class="nav navbar-nav navbar-right">
-          {% if user.is_authenticated %}
-            <li class="navbar-text">{{ user }}</li>
-            <li><a href="{% url 'labsauth:logout' %}">{% bootstrap_icon "log-out" %} {% trans "Logout" %}</a></li>
-          {% else %}
-          <li><a href="{% url 'labsauth:login' %}?next={{ request.path | urlencode }}">{% bootstrap_icon "log-in" %} {% trans "Login" %}</a></li>
-          {% endif %}
+            {% block navbar-right %}
+            {% if user.is_authenticated %}
+            <li class="dropdown">
+              <a class="dropdown-toggle" aria-expanded="false" aria-haspopup="true" role="button" data-toggle="dropdown" href="{% url 'profile:nojs' %}">{{ user }} <span class="caret"></span></a>
+              {% include "_nav_user.html" %}
+            </li>
+            {% else %}
+            <li><a href="{% url 'labsauth:login' %}?next={% block login_next %}{{ request.path | urlencode }}{% endblock %}">{% bootstrap_icon "log-in" %} {% trans "Login" %}</a></li>
+            {% endif %}
           </ul>
+            {% endblock navbar-right %}
         </div>
       </div>
     </nav>

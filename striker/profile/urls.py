@@ -19,31 +19,23 @@
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.conf import urls
-from django.conf import settings
-from django.contrib.auth import decorators
 from django.views import generic
-from django.conf.urls.static import static
-import django.contrib.admin
-import striker.labsauth.urls
-import striker.profile.urls
 
 
 urlpatterns = [
     urls.url(
         r'^$',
-        generic.TemplateView.as_view(template_name='index.html'),
-        name='index'
+        generic.TemplateView.as_view(template_name='profile/index.html'),
+        name='profile'
     ),
     urls.url(
-        r'^about/$',
-        generic.TemplateView.as_view(template_name='about.html'),
-        name='about'
+        r'^settings/$',
+        generic.TemplateView.as_view(template_name='profile/settings.html'),
+        name='settings'
     ),
-
     urls.url(
-        r'^auth/', urls.include(striker.labsauth.urls, namespace='labsauth')),
-    urls.url(
-        r'^profile/', urls.include(striker.profile.urls, namespace='profile')),
-
-    urls.url(r'^contrib-admin/', urls.include(django.contrib.admin.site.urls)),
-] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+        r'^nojs/$',
+        generic.TemplateView.as_view(template_name='profile/nojs.html'),
+        name='nojs'
+    ),
+]

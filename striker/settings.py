@@ -38,6 +38,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.staticfiles',
     'striker.labsauth',
+    'striker.profile',
 )
 
 MIDDLEWARE_CLASSES = (
