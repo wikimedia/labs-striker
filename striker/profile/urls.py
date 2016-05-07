@@ -24,18 +24,20 @@ from django.views import generic
 
 urlpatterns = [
     urls.url(
-        r'^$',
-        generic.TemplateView.as_view(template_name='profile/index.html'),
-        name='profile'
-    ),
-    urls.url(
-        r'^settings/$',
-        generic.TemplateView.as_view(template_name='profile/settings.html'),
-        name='settings'
-    ),
-    urls.url(
         r'^nojs/$',
         generic.TemplateView.as_view(template_name='profile/nojs.html'),
         name='nojs'
+    ),
+    urls.url(
+        r'^settings/ldap$',
+        generic.TemplateView.as_view(
+            template_name='profile/settings/ldap.html'),
+        name='ldap'
+    ),
+    urls.url(
+        r'^settings/sul$',
+        generic.TemplateView.as_view(
+            template_name='profile/settings/sul.html'),
+        name='sul'
     ),
 ]

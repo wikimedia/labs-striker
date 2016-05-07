@@ -31,18 +31,20 @@
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
             {% block navbar %}
-            <li><a href="{% url 'index' %}">{% bootstrap_icon "home" %} {% trans "Home" %}</a></li>
+            {% url 'index' as index %}
+            <li class="{% if request.path == index %}active{% endif %}"><a href="{{ index }}">{% bootstrap_icon "home" %} {% trans "Home" %}</a></li>
             {% endblock navbar %}
           </ul>
           <ul class="nav navbar-nav navbar-right">
             {% block navbar-right %}
             {% if user.is_authenticated %}
-            <li class="dropdown">
+            <li class="dropdown {% if '/profile/' in request.path %}active{% endif %}">
               <a class="dropdown-toggle" aria-expanded="false" aria-haspopup="true" role="button" data-toggle="dropdown" href="{% url 'profile:nojs' %}">{{ user }} <span class="caret"></span></a>
               {% include "_nav_user.html" %}
             </li>
             {% else %}
-            <li><a href="{% url 'labsauth:login' %}?next={% block login_next %}{{ request.path | urlencode }}{% endblock %}">{% bootstrap_icon "log-in" %} {% trans "Login" %}</a></li>
+            {% url 'labsauth:login' as login %}
+            <li class="{% if request.path == login %}active{% endif %}"><a href="{{ login }}?next={% block login_next %}{{ request.path|urlencode }}{% endblock %}">{% bootstrap_icon "log-in" %} {% trans "Login" %}</a></li>
             {% endif %}
           </ul>
             {% endblock navbar-right %}

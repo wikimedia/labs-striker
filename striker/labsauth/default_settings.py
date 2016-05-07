@@ -34,9 +34,9 @@ AUTH_LDAP_GLOBAL_OPTIONS = {
 }
 AUTH_LDAP_BIND_AS_AUTHENTICATING_USER = True
 AUTH_LDAP_USER_ATTR_MAP = {
+    'ldapname': 'sn',
     'ldapemail': 'mail',
     'shellname': 'uid',
-    'realname': 'sn',
 }
 AUTH_LDAP_USER_SEARCH = django_auth_ldap.config.LDAPSearch(
     'ou=people,dc=wikimedia,dc=org',
@@ -62,6 +62,11 @@ AUTHENTICATION_BACKENDS = (
 )
 
 LOGIN_URL = 'labsauth:login'
+
+# OAuth settings
+OAUTH_CONSUMER_KEY = ""
+OAUTH_CONSUMER_SECRET = ""
+OAUTH_MWURL = "https://www.mediawiki.org/w/index.php"
 
 # FIXME: proper logging config needed
 logger = logging.getLogger('django_auth_ldap')

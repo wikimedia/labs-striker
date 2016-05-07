@@ -18,6 +18,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
 
+import mwoauth
 import random
 import string
 from django.contrib.auth.models import AbstractBaseUser
@@ -104,3 +105,10 @@ class LabsUser(AbstractBaseUser, PermissionsMixin):
 
     def get_session_auth_hash(self):
         return salted_hmac(LabsUser.__name__, self.authhash).hexdigest()
+
+    def set_accesstoken(self, token):
+        self.oauthtoken = token.key
+        self.oauthsecret = token.secret
+
+    def get_accesstoken(self):
+        return mwoauth.AccessToken(self.oauthtoken, self.oauthsecret)

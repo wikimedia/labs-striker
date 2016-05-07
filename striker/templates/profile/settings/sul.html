@@ -1,0 +1,15 @@
+{% extends "profile/settings/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "SUL settings" %}{% endblock %}
+{% block content %}
+{% if user.oauthtoken %}
+<ul>
+  <li>{% trans "Username" %}: {{ user.sulname }}</li>
+  <li>{% trans "Real name" %}: {{ user.realname }}</li>
+  <li>{% trans "Email" %}: {{ user.sulemail }}</li>
+</ul>
+{% else %}
+<a class="btn btn-primary" href="{% url 'labsauth:oauth_initiate' %}?next={{ request.path }}">{% trans "Login using OAuth" %}</a>
+{% endif %}
+{% endblock %}

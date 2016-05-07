@@ -20,6 +20,7 @@
 
 from django.conf import urls
 from django.contrib.auth import views as auth_views
+import striker.labsauth.views
 
 app_name = 'labsauth'
 urlpatterns = [
@@ -34,5 +35,15 @@ urlpatterns = [
         auth_views.logout,
         {'template_name': 'labsauth/logout.html'},
         name='logout'
+    ),
+    urls.url(
+        r'initiate$',
+        striker.labsauth.views.oauth_initiate,
+        name='oauth_initiate'
+    ),
+    urls.url(
+        r'callback$',
+        striker.labsauth.views.oauth_callback,
+        name='oauth_callback'
     ),
 ]

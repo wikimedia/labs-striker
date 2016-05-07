@@ -1,0 +1,12 @@
+{% extends "profile/settings/base.html" %}
+{% load bootstrap3 %}
+{% load i18n %}
+
+{% block title %}{% trans "LDAP settings" %}{% endblock %}
+{% block content %}
+<ul>
+    <li>{% trans "Username" %}: {{ user.ldapname }}</li>
+    <li>{% trans "Shell account name" %}: {{ user.shellname }}</li>
+    <li>{% trans "Email" %}: {{ user.ldapemail }}</li>
+</ul>
+{% endblock %}
