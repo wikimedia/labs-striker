@@ -28,10 +28,13 @@ import striker.labsauth.models
 class LabsUserAdmin(django.contrib.auth.admin.UserAdmin):
     fieldsets = (
         (None, {'fields': ('ldapname',)}),
-        (_('Personal info'), {'fields': ('ldapemail', 'shellname', 'sulname',
-                                         'sulemail', 'realname')}),
-        (_('Permissions'), {'fields': ('is_active', 'is_staff', 'is_superuser',
-                                       'groups', 'user_permissions')}),
+        (_('LDAP info'), {'fields': ('ldapemail', 'shellname')}),
+        (_('SUL info'), {'fields': ('sulname', 'sulemail', 'realname')}),
+        (_('Phabricator info'), {'fields': (
+            'phabname', 'phid', 'phabrealname', 'phaburl', 'phabimage')}),
+        (_('Permissions'), {'fields': (
+            'is_active', 'is_staff', 'is_superuser', 'groups',
+            'user_permissions')}),
         (_('Important dates'), {'fields': ('last_login',)}),
     )
     add_fieldsets = (

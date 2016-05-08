@@ -65,6 +65,18 @@ class LabsUser(AbstractBaseUser, PermissionsMixin):
     oauthsecret = models.CharField(
             _('OAuth secret'), max_length=127, blank=True, null=True)
 
+    phabname = models.CharField(
+        _('Phabricator username'), max_length=255, unique=True,
+        blank=True, null=True)
+    phid = models.CharField(
+        _('phid'), max_length=255, blank=True, null=True)
+    phabrealname = models.CharField(
+        _('Phabricator real name'), max_length=255, blank=True, null=True)
+    phaburl = models.CharField(
+        _('Phabricator url'), max_length=255, blank=True, null=True)
+    phabimage = models.CharField(
+        _('image'), max_length=255, blank=True, null=True)
+
     authhash = models.CharField(
         _('authhash'), max_length=128, editable=False, default=make_authhash)
 
@@ -98,7 +110,10 @@ class LabsUser(AbstractBaseUser, PermissionsMixin):
         return False
 
     def get_full_name(self):
-        return self.realname or self.sulname or self.ldapname
+        return (self.realname or
+                self.phabrealname or
+                self.sulname or
+                self.ldapname)
 
     def get_short_name(self):
         return self.sulname or self.ldapname

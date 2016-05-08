@@ -106,6 +106,10 @@ STATICFILES_STORAGE = \
 # Honor the 'X-Forwarded-Proto' header for request.is_secure()
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
+PHABRICATOR_URL = 'https://phabricator.wikimedia.org'
+PHABRICATOR_USER = ''
+PHABRICATOR_CERT = ''
+
 BOOTSTRAP3 = {
     'jquery_url': STATIC_URL + 'js/jquery.min.js',
     'base_url': STATIC_URL,

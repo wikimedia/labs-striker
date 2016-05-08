@@ -9,3 +9,11 @@ body {
 .navbar-static-top {
   margin-bottom:1em;
 }
+.user-image-large {
+  height:80px;
+  width:80px;
+}
+.user-image-small {
+  height:28px;
+  width:28px;
+}

@@ -5,15 +5,17 @@
 {% block pre_content %}
 {% url 'profile:ldap' as settings_ldap %}
 {% url 'profile:sul' as settings_sul %}
+{% url 'profile:phabricator' as settings_phabricator %}
 {{ block.super }}
 <div class="container-fluid">
   <div class="row">
     <div class="col-sm-3">
       <div class="panel panel-default">
-        <div class="panel-heading">{% trans "Settings" %}</div>
+        <div class="panel-heading">{% trans "Accounts" %}</div>
         <div class="list-group" role="navigation">
-          <a class="list-group-item {% if request.path == settings_ldap %}active{% endif %}" href="{{ settings_ldap }}">{% trans "LDAP account" %}</a>
-          <a class="list-group-item {% if request.path == settings_sul %}active{% endif %}" href="{{ settings_sul }}">{% trans "SUL account" %}</a>
+          <a class="list-group-item {% if request.path == settings_ldap %}active{% endif %}" href="{{ settings_ldap }}">{% trans "LDAP" %}</a>
+          <a class="list-group-item {% if request.path == settings_sul %}active{% endif %}" href="{{ settings_sul }}">{% trans "SUL" %}</a>
+          <a class="list-group-item {% if request.path == settings_phabricator %}active{% endif %}" href="{{ settings_phabricator }}">{% trans "Phabricator" %}</a>
         </div>
       </div>
     </div>

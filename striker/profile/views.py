@@ -17,3 +17,27 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
+
+from django import shortcuts
+from django.conf import settings
+from django.contrib.auth.decorators import login_required
+from striker import phabricator
+
+
+@login_required
+def phab(req):
+    if not req.user.phid:
+        # Try to find Phabricator account
+        phab = phabricator.Client(
+            settings.PHABRICATOR_URL,
+            settings.PHABRICATOR_USER,
+            settings.PHABRICATOR_CERT)
+        # FIXME: catch KeyError
+        r = phab.user_by_ldap(req.user.ldapname)
+        req.user.phid = r['phid']
+        req.user.phabname = r['userName']
+        req.user.phabrealname = r['realName']
+        req.user.phaburl = r['uri']
+        req.user.phabimage = r['image']
+        req.user.save()
+    return shortcuts.render(req, 'profile/settings/phabricator.html')

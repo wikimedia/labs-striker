@@ -19,25 +19,34 @@
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.conf import urls
-from django.views import generic
+from django.views.generic import TemplateView
+from django.contrib.auth.decorators import login_required
 
 
 urlpatterns = [
     urls.url(
         r'^nojs/$',
-        generic.TemplateView.as_view(template_name='profile/nojs.html'),
+        login_required(
+            TemplateView.as_view(template_name='profile/nojs.html')),
         name='nojs'
     ),
     urls.url(
         r'^settings/ldap$',
-        generic.TemplateView.as_view(
-            template_name='profile/settings/ldap.html'),
+        login_required(
+            TemplateView.as_view(
+                template_name='profile/settings/ldap.html')),
         name='ldap'
     ),
     urls.url(
         r'^settings/sul$',
-        generic.TemplateView.as_view(
-            template_name='profile/settings/sul.html'),
+        login_required(
+            TemplateView.as_view(
+                template_name='profile/settings/sul.html')),
         name='sul'
+    ),
+    urls.url(
+        r'^settings/phabricator$',
+        'striker.profile.views.phab',
+        name='phabricator'
     ),
 ]
