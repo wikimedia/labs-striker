@@ -20,30 +20,19 @@
 
 from django.conf import urls
 from django.contrib.auth import views as auth_views
-import striker.labsauth.views
 
 app_name = 'labsauth'
 urlpatterns = [
-    urls.url(
-        r'login/$',
-        auth_views.login,
-        {'template_name': 'labsauth/login.html'},
-        name='login'
-    ),
-    urls.url(
-        r'logout/$',
-        auth_views.logout,
-        {'template_name': 'labsauth/logout.html'},
-        name='logout'
-    ),
+    urls.url(r'login/$', 'striker.labsauth.views.login', name='login'),
+    urls.url(r'logout/$', 'striker.labsauth.views.logout', name='logout'),
     urls.url(
         r'initiate$',
-        striker.labsauth.views.oauth_initiate,
+        'striker.labsauth.views.oauth_initiate',
         name='oauth_initiate'
     ),
     urls.url(
         r'callback$',
-        striker.labsauth.views.oauth_callback,
+        'striker.labsauth.views.oauth_callback',
         name='oauth_callback'
     ),
 ]

@@ -17,3 +17,19 @@ body {
   height:28px;
   width:28px;
 }
+form.hidden-labels label {
+  height:1px;
+  left:-10000px;
+  overflow:hidden;
+  position:absolute;
+  top:auto;
+  width:1px;
+}
+form.hidden-labels label.no-hide {
+  height:initial;
+  left:initial;
+  overflow:initial;
+  position:initial;
+  top:initial;
+  width:initial;
+}

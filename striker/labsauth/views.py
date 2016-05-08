@@ -22,6 +22,7 @@ import mwoauth
 from django import shortcuts
 from django.conf import settings
 from django.contrib import messages
+from django.contrib.auth import views as auth_views
 from django.core import urlresolvers
 from django.utils.translation import ugettext_lazy as _
 
@@ -29,6 +30,18 @@ from django.utils.translation import ugettext_lazy as _
 NEXT_PAGE = 'striker.oauth.next_page'
 REQUEST_TOKEN_KEY = 'striker.oauth.request_token'
 ACCESS_TOKEN_KEY = 'striker.oauth.access_token'
+
+
+def login(req):
+    resp = auth_views.login(req, template_name='labsauth/login.html')
+    if req.POST.has_key('remember_me'):
+        req.session.set_expiry(1209600)  # 2 weeks
+        req.session.save()
+    return resp
+
+
+def logout(req):
+    return auth_views.logout(req, template_name='labsauth/logout.html')
 
 
 def oauth_initiate(req):

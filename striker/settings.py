@@ -106,6 +106,8 @@ STATICFILES_STORAGE = \
 # Honor the 'X-Forwarded-Proto' header for request.is_secure()
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
 PHABRICATOR_URL = 'https://phabricator.wikimedia.org'
 PHABRICATOR_USER = ''
 PHABRICATOR_CERT = ''
