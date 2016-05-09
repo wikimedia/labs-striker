@@ -17,21 +17,14 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
+"""Default settings for tools."""
 
-from django.conf import urls
+import logging
 
-app_name = 'labsauth'
-urlpatterns = [
-    urls.url(r'login/$', 'striker.labsauth.views.login', name='login'),
-    urls.url(r'logout/$', 'striker.labsauth.views.logout', name='logout'),
-    urls.url(
-        r'initiate$',
-        'striker.labsauth.views.oauth_initiate',
-        name='oauth_initiate'
-    ),
-    urls.url(
-        r'callback$',
-        'striker.labsauth.views.oauth_callback',
-        name='oauth_callback'
-    ),
-]
+TOOLS_MAINTAINER_BASE_DN = 'ou=people,dc=wikimedia,dc=org'
+TOOLS_TOOL_BASE_DN = 'ou=servicegroups,dc=wikimedia,dc=org'
+
+# FIXME: proper logging config needed
+logger = logging.getLogger('ldapdb')
+logger.addHandler(logging.StreamHandler())
+logger.setLevel(logging.DEBUG)

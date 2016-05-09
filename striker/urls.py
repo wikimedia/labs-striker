@@ -20,22 +20,23 @@
 
 from django.conf import urls
 from django.conf import settings
-from django.views import generic
+from django.views.generic import TemplateView
 from django.conf.urls.static import static
 import django.contrib.admin
 import striker.labsauth.urls
 import striker.profile.urls
+import striker.tools.urls
 
 
 urlpatterns = [
     urls.url(
         r'^$',
-        generic.TemplateView.as_view(template_name='index.html'),
+        TemplateView.as_view(template_name='index.html'),
         name='index'
     ),
     urls.url(
         r'^about/$',
-        generic.TemplateView.as_view(template_name='about.html'),
+        TemplateView.as_view(template_name='about.html'),
         name='about'
     ),
 
@@ -43,6 +44,8 @@ urlpatterns = [
         r'^auth/', urls.include(striker.labsauth.urls, namespace='labsauth')),
     urls.url(
         r'^profile/', urls.include(striker.profile.urls, namespace='profile')),
+    urls.url(
+        r'^tools/', urls.include(striker.tools.urls, namespace='tools')),
 
     urls.url(r'^contrib-admin/', urls.include(django.contrib.admin.site.urls)),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

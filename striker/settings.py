@@ -20,6 +20,7 @@
 
 import os
 from striker.labsauth.default_settings import *  # noqa
+from striker.tools.default_settings import *  # noqa
 
 STRIKER_DIR = os.path.dirname(os.path.abspath(__file__))
 BASE_DIR = os.path.dirname(STRIKER_DIR)
@@ -38,6 +39,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'striker.labsauth',
     'striker.profile',
+    'striker.tools',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -82,8 +84,17 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
+    },
+    'ldap': {
+        'ENGINE': 'ldapdb.backends.ldap',
+        'NAME': AUTH_LDAP_SERVER_URI,
+        'USER': '',
+        'PASSWORD': '',
+    },
 }
+DATABASE_ROUTERS = [
+    'ldapdb.router.Router',
+]
 
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'

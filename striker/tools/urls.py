@@ -20,18 +20,12 @@
 
 from django.conf import urls
 
-app_name = 'labsauth'
+
 urlpatterns = [
-    urls.url(r'login/$', 'striker.labsauth.views.login', name='login'),
-    urls.url(r'logout/$', 'striker.labsauth.views.logout', name='logout'),
+    urls.url(r'^$', 'striker.tools.views.tools', name='index'),
     urls.url(
-        r'initiate$',
-        'striker.labsauth.views.oauth_initiate',
-        name='oauth_initiate'
-    ),
-    urls.url(
-        r'callback$',
-        'striker.labsauth.views.oauth_callback',
-        name='oauth_callback'
+        r'^(?P<name>[_a-z][-0-9_a-z]*)$',
+        'striker.tools.views.tool',
+        name='tool'
     ),
 ]

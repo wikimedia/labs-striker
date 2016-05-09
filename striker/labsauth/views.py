@@ -34,7 +34,7 @@ ACCESS_TOKEN_KEY = 'striker.oauth.access_token'
 
 def login(req):
     resp = auth_views.login(req, template_name='labsauth/login.html')
-    if req.POST.has_key('remember_me'):
+    if 'remember_me' in req.POST:
         req.session.set_expiry(1209600)  # 2 weeks
         req.session.save()
     return resp

@@ -1,6 +1,3 @@
 {% load bootstrap3 %}
 {% load i18n %}
-<ul class="dropdown-menu">
-  <li><a href="{% url 'profile:ldap' %}">{% bootstrap_icon "cog" %} {% trans "Settings" %}</a></li>
-  <li><a href="{% url 'labsauth:logout' %}">{% bootstrap_icon "log-out" %} {% trans "Logout" %}</a></li>
-</ul>
+<li class="{% if '/tools/' in request.path %}active{% endif %}"><a href="{% url 'tools:index' %}">{% bootstrap_icon "wrench" %} {% trans "Tools" %}</a></li>

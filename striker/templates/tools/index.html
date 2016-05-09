@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% load bootstrap3 %}
+{% load i18n %}
+
+{% block title %}{% trans "Tools" %}{% endblock %}
+{% block content %}
+<div class="panel panel-default">
+  <div class="panel-heading">{% trans "Your tools" %}</div>
+  <div class="list-group">
+    {% for tool in tools %}
+    <a href="{% url 'tools:tool' name=tool %}" class="list-group-item">{{ tool }}</a>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

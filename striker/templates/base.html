@@ -33,6 +33,9 @@
             {% block navbar %}
             {% url 'index' as index %}
             <li class="{% if request.path == index %}active{% endif %}"><a href="{{ index }}">{% bootstrap_icon "home" %} {% trans "Home" %}</a></li>
+            {% if user.is_authenticated %}
+              {% include "_nav_user.html" %}
+            {% endif %}
             {% endblock navbar %}
           </ul>
           <ul class="nav navbar-nav navbar-right">
@@ -40,7 +43,7 @@
             {% if user.is_authenticated %}
             <li class="dropdown {% if '/profile/' in request.path %}active{% endif %}">
               <a class="dropdown-toggle" aria-expanded="false" aria-haspopup="true" role="button" data-toggle="dropdown" href="{% url 'profile:nojs' %}">{{ user }} <span class="caret"></span></a>
-              {% include "_nav_user.html" %}
+              {% include "_nav_user_right.html" %}
             </li>
             {% else %}
             {% url 'labsauth:login' as login %}
