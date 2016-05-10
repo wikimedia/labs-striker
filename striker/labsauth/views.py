@@ -18,6 +18,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
 
+import logging
 import mwoauth
 from django import shortcuts
 from django.conf import settings
@@ -30,6 +31,8 @@ from django.utils.translation import ugettext_lazy as _
 NEXT_PAGE = 'striker.oauth.next_page'
 REQUEST_TOKEN_KEY = 'striker.oauth.request_token'
 ACCESS_TOKEN_KEY = 'striker.oauth.access_token'
+
+logger = logging.getLogger(__name__)
 
 
 def login(req):
@@ -51,13 +54,20 @@ def oauth_initiate(req):
         req.session[NEXT_PAGE] = next_page
     consumer_token = mwoauth.ConsumerToken(
         settings.OAUTH_CONSUMER_KEY, settings.OAUTH_CONSUMER_SECRET)
-    redirect, request_token = mwoauth.initiate(
-        settings.OAUTH_MWURL,
-        consumer_token,
-        req.build_absolute_uri(
-            urlresolvers.reverse('labsauth:oauth_callback')))
-    req.session[REQUEST_TOKEN_KEY] = request_token
-    return shortcuts.redirect(redirect)
+    try:
+        redirect, request_token = mwoauth.initiate(
+            settings.OAUTH_MWURL,
+            consumer_token,
+            req.build_absolute_uri(
+                urlresolvers.reverse('labsauth:oauth_callback')))
+    except Exception:
+        # FIXME: get upstream to use a narrower exception class
+        logger.exception('mwoauth.initiate failed')
+        messages.error(req, _("OAuth handshake failed."))
+        return shortcuts.redirect(next_page or '/')
+    else:
+        req.session[REQUEST_TOKEN_KEY] = request_token
+        return shortcuts.redirect(redirect)
 
 
 def oauth_callback(req):
