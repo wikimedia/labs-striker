@@ -11,7 +11,6 @@ body {
 }
 .navbar > .container .navbar-brand,
 .navbar > .container-fluid .navbar-brand {
-    margin-left:-30px;
     padding:10px;
 }
 .user-image-large {
