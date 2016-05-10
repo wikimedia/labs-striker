@@ -128,3 +128,26 @@ BOOTSTRAP3 = {
     'base_url': STATIC_URL,
     'include_jquery': True,
 }
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': True,
+    'incremental': False,
+    'formatters': {
+        'line': {
+            'format': '%(asctime)s %(name)s %(levelname)s: %(message)s',
+            'datefmt': '%Y-%m-%dT%H:%M:%SZ',
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'line',
+            'level': 'DEBUG',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
+    },
+}

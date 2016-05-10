@@ -67,8 +67,3 @@ LOGIN_URL = 'labsauth:login'
 OAUTH_CONSUMER_KEY = ""
 OAUTH_CONSUMER_SECRET = ""
 OAUTH_MWURL = "https://www.mediawiki.org/w/index.php"
-
-# FIXME: proper logging config needed
-logger = logging.getLogger('django_auth_ldap')
-logger.addHandler(logging.StreamHandler())
-logger.setLevel(logging.DEBUG)
