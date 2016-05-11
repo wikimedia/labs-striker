@@ -18,10 +18,8 @@
 # You should have received a copy of the GNU General Public License
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
 
-import hashlib
 import json
 import requests
-import time
 
 
 class APIError(Exception):
@@ -35,40 +33,14 @@ class APIError(Exception):
 
 class Client(object):
     """Phabricator client"""
-    def __init__(self, url, username, certificate):
+    def __init__(self, url, username, token):
         self.url = url
         self.username = username
-        self.certificate = certificate
-        self.session = None
-
-    def getSessionKey(self):
-        token = int(time.time())
-        sig = hashlib.sha1(str(token) + self.certificate).hexdigest()
-        data = {
-            'client': 'striker.phabricator',
-            'clientVersion': 0,
-            'user': self.username,
-            'authToken': token,
-            'authSignature': sig,
-        }
-
-        r = requests.post('%s/api/conduit.connect' % self.url, data={
-            'params': json.dumps(data),
-            'output': 'json',
-            '__conduit__': True,
-        })
-        resp = r.json()
-        if resp['error_code'] is not None:
-            raise APIError(resp['error_info'], resp['error_code'])
-
-        return {
-            'sessionKey': resp['result']['sessionKey'],
-            'connectionID': resp['result']['connectionID'],
+        self.session = {
+            'token': token,
         }
 
     def post(self, path, data):
-        if self.session is None:
-            self.session = self.getSessionKey()
         data['__conduit__'] = self.session
         r = requests.post('%s/api/%s' % (self.url, path), data={
             'params': json.dumps(data),
@@ -76,15 +48,26 @@ class Client(object):
         })
         resp = r.json()
         if resp['error_code'] is not None:
-            # FIXME: detect session expiration and renew
             raise APIError(resp['error_info'], resp['error_code'])
         return resp['result']
 
     def user_by_ldap(self, name):
-        r = self.post('user.ldapquery', {'ldapnames': [name]})
-        if len(r):
-            return r[0]
-        raise KeyError('User not found for ' % name)
+        try:
+            r = self.post('user.ldapquery', {
+                'ldapnames': [name],
+                'offset': 0,
+                'limit': 1,
+            })[0]
+        except APIError, e:
+            if e.code == 'ERR-INVALID-PARAMETER' and \
+                    'Unknown or missing ldap names' in e.message:
+                raise KeyError('User not found for %s' % name)
+            else:
+                raise e
+        else:
+            if r['ldap_username'] != name:
+                raise KeyError('User not found for %s' % name)
+            return r
 
     def task(self, task):
         r = self.post('phid.lookup', {'names': [task]})

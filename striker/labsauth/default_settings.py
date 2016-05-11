@@ -21,7 +21,6 @@
 
 import django_auth_ldap.config
 import ldap
-import logging
 
 # Install our custom User model
 AUTH_USER_MODEL = 'labsauth.LabsUser'

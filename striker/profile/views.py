@@ -20,24 +20,36 @@
 
 from django import shortcuts
 from django.conf import settings
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.utils.translation import ugettext_lazy as _
 from striker import phabricator
+import logging
+
+
+logger = logging.getLogger(__name__)
 
 
 @login_required
 def phab(req):
     if not req.user.phid:
-        # Try to find Phabricator account
         phab = phabricator.Client(
             settings.PHABRICATOR_URL,
             settings.PHABRICATOR_USER,
-            settings.PHABRICATOR_CERT)
-        # FIXME: catch KeyError
-        r = phab.user_by_ldap(req.user.ldapname)
-        req.user.phid = r['phid']
-        req.user.phabname = r['userName']
-        req.user.phabrealname = r['realName']
-        req.user.phaburl = r['uri']
-        req.user.phabimage = r['image']
-        req.user.save()
+            settings.PHABRICATOR_TOKEN)
+        try:
+            r = phab.user_by_ldap(req.user.ldapname)
+        except phabricator.APIError:
+            logger.exception('phab.user_by_ldap failed')
+            messages.error(req, _("Error contacting Phabricator."))
+        except KeyError, e:
+            logger.debug(e)
+            messages.error(req, _("No matching Phabricator account found."))
+        else:
+            req.user.phid = r['phid']
+            req.user.phabname = r['userName']
+            req.user.phabrealname = r['realName']
+            req.user.phaburl = r['uri']
+            req.user.phabimage = r['image']
+            req.user.save()
     return shortcuts.render(req, 'profile/settings/phabricator.html')
