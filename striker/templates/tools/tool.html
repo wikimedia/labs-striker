@@ -19,7 +19,7 @@
     <dl>
       <dt>{% trans "Maintainers" %}</dt>
       <dd>
-        <ul>
+        <ul class="tools-maintainers">
           {% for maintainer in tool.maintainers|dictsort:"full_name" %}
           <li>{{ maintainer.full_name }}</li>
           {% endfor %}
