@@ -19,7 +19,6 @@
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.conf import settings
-from django.contrib import messages
 from django.db import models
 from ldapdb.models import fields
 import ldapdb.models
