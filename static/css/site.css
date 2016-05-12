@@ -21,6 +21,9 @@ body {
   height:28px;
   width:28px;
 }
+.login-panel {
+  margin-top:25%;
+}
 form.hidden-labels label {
   height:1px;
   left:-10000px;
