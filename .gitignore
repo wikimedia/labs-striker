@@ -13,3 +13,4 @@
 /docs/_build
 /tests/cover
 /striker/local_settings.py
+/vagrant_settings.py
