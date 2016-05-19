@@ -19,9 +19,25 @@
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
-
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "striker.settings")
 
-application = get_wsgi_application()
+def bootstrap_env(wsgi_env, start_resp):
+    """Bootstrap environment using wsgi provided environment values.
+
+    Inspired by http://stackoverflow.com/a/32416606/8171
+    """
+    global application
+    for key in ['DJANGO_SETTINGS_MODULE', 'DJANGO_LOG_LEVEL']:
+        try:
+            os.environ[key] = wsgi_env[key]
+        except KeyError:
+            pass
+    # Replace self in global scope with Django's handler
+    application = get_wsgi_application()
+    # Handle initial request
+    return application(wsgi_env, start_resp)
+
+
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'striker.settings')
+application = bootstrap_env
