@@ -21,7 +21,6 @@
 from django.conf import urls
 from django.conf import settings
 from django.views.generic import TemplateView
-from django.conf.urls.static import static
 import django.contrib.admin
 import striker.labsauth.urls
 import striker.profile.urls
@@ -48,4 +47,4 @@ urlpatterns = [
         r'^tools/', urls.include(striker.tools.urls, namespace='tools')),
 
     urls.url(r'^contrib-admin/', urls.include(django.contrib.admin.site.urls)),
-] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+] + urls.static.static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
