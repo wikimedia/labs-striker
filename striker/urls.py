@@ -18,8 +18,9 @@
 # You should have received a copy of the GNU General Public License
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.conf import urls
 from django.conf import settings
+from django.conf import urls
+from django.conf.urls.static import static
 from django.views.generic import TemplateView
 import django.contrib.admin
 import striker.labsauth.urls
@@ -47,4 +48,4 @@ urlpatterns = [
         r'^tools/', urls.include(striker.tools.urls, namespace='tools')),
 
     urls.url(r'^contrib-admin/', urls.include(django.contrib.admin.site.urls)),
-] + urls.static.static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
