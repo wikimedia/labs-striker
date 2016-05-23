@@ -32,16 +32,12 @@ AUTH_LDAP_GLOBAL_OPTIONS = {
     ldap.OPT_X_TLS_REQUIRE_CERT: ldap.OPT_X_TLS_NEVER,
 }
 AUTH_LDAP_BIND_AS_AUTHENTICATING_USER = True
+AUTH_LDAP_USER_DN_TEMPLATE = 'cn=%(user)s,ou=people,dc=wikimedia,dc=org'
 AUTH_LDAP_USER_ATTR_MAP = {
     'ldapname': 'sn',
     'ldapemail': 'mail',
     'shellname': 'uid',
 }
-AUTH_LDAP_USER_SEARCH = django_auth_ldap.config.LDAPSearch(
-    'ou=people,dc=wikimedia,dc=org',
-    ldap.SCOPE_SUBTREE,
-    '(cn=%(user)s)'
-)
 AUTH_LDAP_GROUP_SEARCH = django_auth_ldap.config.LDAPSearch(
     'dc=wikimedia,dc=org',
     ldap.SCOPE_SUBTREE,
@@ -50,7 +46,6 @@ AUTH_LDAP_GROUP_SEARCH = django_auth_ldap.config.LDAPSearch(
 AUTH_LDAP_GROUP_TYPE = django_auth_ldap.config.GroupOfNamesType()
 AUTH_LDAP_MIRROR_GROUPS = True
 AUTH_LDAP_USER_FLAGS_BY_GROUP = {
-    'is_active': 'cn=project-tools,ou=groups,dc=wikimedia,dc=org',
     'is_staff': 'cn=wmf,ou=groups,dc=wikimedia,dc=org',
     'is_superuser': 'cn=tools.admin,ou=servicegroups,dc=wikimedia,dc=org',
 }

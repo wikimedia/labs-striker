@@ -25,7 +25,7 @@ from striker.tools.default_settings import *  # noqa
 STRIKER_DIR = os.path.dirname(os.path.abspath(__file__))
 BASE_DIR = os.path.dirname(STRIKER_DIR)
 
-SECRET_KEY = '3sjg74^=vk&**k1%1-kmmhb_^#-$zx_l2arwia^u0-jac@)^35'
+SECRET_KEY = '000000000000000000000000000000000000000000000000000000'
 DEBUG = True
 ALLOWED_HOSTS = []
 
@@ -54,7 +54,6 @@ MIDDLEWARE_CLASSES = (
 )
 
 ROOT_URLCONF = 'striker.urls'
-
 
 TEMPLATES = [
     {
@@ -104,11 +103,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'static'),
-)
 STATICFILES_FINDERS = (
-    'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 )
 STATICFILES_STORAGE = \
@@ -118,6 +113,9 @@ STATICFILES_STORAGE = \
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+# Default redirect location after login
+LOGIN_REDIRECT_URL = '/'
 
 PHABRICATOR_URL = 'https://phabricator.wikimedia.org'
 PHABRICATOR_USER = ''
@@ -144,6 +142,18 @@ LOGGING = {
             'class': 'logging.StreamHandler',
             'formatter': 'line',
             'level': 'DEBUG',
+        },
+    },
+    'loggers': {
+        'django_auth_ldap': {
+            'handlers': ['console'],
+            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
+            'propagate': False,
+        },
+        'ldapdb': {
+            'handlers': ['console'],
+            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
+            'propagate': False,
         },
     },
     'root': {

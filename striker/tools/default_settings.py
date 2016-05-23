@@ -19,12 +19,5 @@
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
 """Default settings for tools."""
 
-import logging
-
 TOOLS_MAINTAINER_BASE_DN = 'ou=people,dc=wikimedia,dc=org'
 TOOLS_TOOL_BASE_DN = 'ou=servicegroups,dc=wikimedia,dc=org'
-
-# FIXME: proper logging config needed
-logger = logging.getLogger('ldapdb')
-logger.addHandler(logging.StreamHandler())
-logger.setLevel(logging.DEBUG)
