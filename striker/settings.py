@@ -123,7 +123,10 @@ LOGIN_REDIRECT_URL = '/'
 
 PHABRICATOR_URL = 'https://phabricator.wikimedia.org'
 PHABRICATOR_USER = ''
-PHABRICATOR_CERT = ''
+PHABRICATOR_TOKEN = ''
+# phid of group granted Diffusion admin rights (i.e. #Repository-Admins)
+PHABRICATOR_REPO_ADMIN_GROUP = 'PHID-PROJ-rzvwdtume4to5fnuh3rj'
+
 
 BOOTSTRAP3 = {
     'jquery_url': STATIC_URL + 'js/jquery.min.js',

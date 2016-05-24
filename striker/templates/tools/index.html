@@ -8,7 +8,7 @@
   <div class="panel-heading">{% trans "Your tools" %}</div>
   <div class="list-group">
     {% for tool in tools %}
-    <a href="{% url 'tools:tool' name=tool %}" class="list-group-item">{{ tool }}</a>
+    <a href="{% url 'tools:tool' tool=tool %}" class="list-group-item">{{ tool }}</a>
     {% endfor %}
   </div>
 </div>

@@ -42,7 +42,7 @@ class Maintainer(ldapdb.models.Model):
 class ToolManager(models.Manager):
     def get_queryset(self):
         return super(ToolManager, self).get_queryset().filter(
-            name__startswith='tools.')
+            group_name__startswith='tools.')
 
 
 class Tool(ldapdb.models.Model):
@@ -52,9 +52,18 @@ class Tool(ldapdb.models.Model):
 
     objects = ToolManager()
 
-    name = fields.CharField(db_column='cn', max_length=200, primary_key=True)
+    group_name = fields.CharField(
+        db_column='cn', max_length=200, primary_key=True)
     gid = fields.IntegerField(db_column='gidNumber', unique=True)
     maintainer_ids = fields.ListField(db_column='member')
+
+    @property
+    def name(self):
+        return self.group_name[6:]
+
+    @name.setter
+    def name(self, value):
+        self.group_name = 'tools.%s' % value
 
     def maintainers(self):
         # OMG, this is horrible. You can't search LDAP by dn.
@@ -67,3 +76,11 @@ class Tool(ldapdb.models.Model):
 
     def __unicode__(self):
         return self.name
+
+
+class DiffusionRepo(models.Model):
+    """Track diffusion repos for Tools"""
+    # FIXME: find real length limits
+    tool = models.CharField(max_length=255)
+    name = models.CharField(max_length=255)
+    phid = models.CharField(max_length=255)

@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% load bootstrap3 %}
+{% load i18n %}
+
+{% block title %}{% blocktrans with name=tool.name %}Tool: {{ name }}{% endblocktrans %}{% endblock %}
+
+{% block pre_content %}
+<ol class="breadcrumb">
+  <li><a href="{% url 'tools:index' %}">{% trans "Tools" %}</a></li>
+  <li><a href="{% url 'tools:tool' tool=tool.name %}">{{ tool.name }}</a></li>
+  <li class="active">{% trans "Create Repository" %}</li>
+</ol>
+{{ block.super }}
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="row">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">{% trans "Create new Diffusion repository" %}</h3>
+      </div>
+      <div class="panel-body">
+        <form method="post" action="{% url 'tools:repo_create' tool=tool.name %}" class="form">
+          {% csrf_token %}
+          {% bootstrap_form form %}
+          {% buttons %}
+          <input class="btn btn-success" type="submit" value="{% trans "Create" %}" />
+          {% endbuttons %}
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

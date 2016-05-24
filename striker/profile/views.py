@@ -33,14 +33,11 @@ logger = logging.getLogger(__name__)
 @login_required
 def phab(req):
     if not req.user.phid:
-        phab = phabricator.Client(
-            settings.PHABRICATOR_URL,
-            settings.PHABRICATOR_USER,
-            settings.PHABRICATOR_TOKEN)
+        client = phabricator.Client.default_client()
         try:
-            r = phab.user_by_ldap(req.user.ldapname)
+            r = client.user_ldapquery([req.user.ldapname])[0]
         except phabricator.APIError:
-            logger.exception('phab.user_by_ldap failed')
+            logger.exception('phab.user_ldapquery failed')
             messages.error(req, _("Error contacting Phabricator."))
         except KeyError, e:
             logger.debug(e)

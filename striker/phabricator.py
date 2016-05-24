@@ -18,14 +18,20 @@
 # You should have received a copy of the GNU General Public License
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
 
+from django.conf import settings
 import json
+import logging
 import requests
 
 
+logger = logging.getLogger(__name__)
+
+
 class APIError(Exception):
-    def __init__(self, message, code):
+    def __init__(self, message, code, result):
         self.message = message
         self.code = code
+        self.result = result
 
     def __str__(self):
         return '%s (%s)' % (self.message, self.code)
@@ -33,6 +39,19 @@ class APIError(Exception):
 
 class Client(object):
     """Phabricator client"""
+    _default_instance = None
+
+    @classmethod
+    def default_client(cls):
+        """Get a Phabricator client using the default credentials."""
+        if cls._default_instance is None:
+            logger.debug('Creating default instance')
+            cls._default_instance = cls(
+                settings.PHABRICATOR_URL,
+                settings.PHABRICATOR_USER,
+                settings.PHABRICATOR_TOKEN)
+        return cls._default_instance
+
     def __init__(self, url, username, token):
         self.url = url
         self.username = username
@@ -47,27 +66,92 @@ class Client(object):
             'output': 'json',
         })
         resp = r.json()
+        logger.debug('%s result: %s', path, resp)
         if resp['error_code'] is not None:
-            raise APIError(resp['error_info'], resp['error_code'])
+            raise APIError(
+                resp['error_info'],
+                resp['error_code'],
+                resp.get('result', None))
         return resp['result']
 
-    def user_by_ldap(self, name):
+    def user_ldapquery(self, names):
+        """Lookup Phabricator user data associated with LDAP sn values."""
         try:
             r = self.post('user.ldapquery', {
-                'ldapnames': [name],
+                'ldapnames': names,
                 'offset': 0,
-                'limit': 1,
-            })[0]
+                'limit': len(names),
+            })
         except APIError, e:
             if e.code == 'ERR-INVALID-PARAMETER' and \
                     'Unknown or missing ldap names' in e.message:
-                raise KeyError('User not found for %s' % name)
+                logger.warn(e.message)
+                if e.result is None:
+                    raise KeyError('Users not found for %s' % ', '.join(names))
+                else:
+                    # Return the partial result
+                    r = e.result
             else:
                 raise e
         else:
-            if r['ldap_username'] != name:
-                raise KeyError('User not found for %s' % name)
             return r
+
+    def get_repository(self, name):
+        """Lookup information on a diffusion repository by name."""
+        r = self.post('diffusion.repository.search', {
+            'constraints': {
+                'name': name,
+            },
+            'attachments': {
+                'uris': True,
+            },
+            'limit': 1,
+        })
+        if 'data' in r and len(r['data']) == 1:
+            return r['data'][0]
+        else:
+            raise KeyError('Repository %s not found' % name)
+
+    def create_repository(self, name, owners):
+        """Create a new diffusion repository."""
+        # Create policy allowing the phids given in owners plus repo-admins
+        custom_policy = self.create_repo_policy(owners)
+
+        r = self.post('diffusion.repository.edit', {
+            'transactions': [
+                {'type': 'vcs', 'value': 'git'},
+                {'type': 'name', 'value': name},
+                {'type': 'shortName', 'value': name},
+                {'type': 'allowDangerousChanges', 'value': True},
+                {'type': 'status', 'value': 'active'},
+                {'type': 'publish', 'value': True},
+                {'type': 'autoclose', 'value': False},
+                {'type': 'policy.push', 'value': custom_policy},
+                {'type': 'view', 'value': 'public'},
+                {'type': 'edit', 'value': custom_policy},
+            ],
+        })
+        return r['object']
+
+    def create_repo_policy(self, owners):
+        """Create an edit policy for a diffusion repository."""
+        r = self.post('policy.create', {
+            'objectType': 'REPO',
+            'default': 'deny',
+            'policy': [
+                {
+                    'action': 'allow',
+                    'rule': 'PhabricatorProjectsPolicyRule',
+                    'value': [settings.PHABRICATOR_REPO_ADMIN_GROUP],
+                },
+                {
+                    'action': 'allow',
+                    'rule': 'PhabricatorUsersPolicyRule',
+                    'value': owners,
+                }
+            ],
+        })
+        return r['phid']
 
     def task(self, task):
         r = self.post('phid.lookup', {'names': [task]})

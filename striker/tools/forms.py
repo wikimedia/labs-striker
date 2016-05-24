@@ -18,24 +18,21 @@
 # You should have received a copy of the GNU General Public License
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.conf import urls
+from django import forms
+from django.utils.translation import ugettext_lazy as _
+import re
 
 
-urlpatterns = [
-    urls.url(r'^$', 'striker.tools.views.index', name='index'),
-    urls.url(
-        r'^(?P<tool>[_a-z][-0-9_a-z]*)$',
-        'striker.tools.views.tool',
-        name='tool'
-    ),
-    urls.url(
-        r'^(?P<tool>[_a-z][-0-9_a-z]*)/create/repo$',
-        'striker.tools.views.repo_create',
-        name='repo_create'
-    ),
-    urls.url(
-        r'^(?P<tool>[_a-z][-0-9_a-z]*)/edit/repo/(?P<name>[a-z0-9-]+)$',
-        'striker.tools.views.repo_edit',
-        name='repo_edit'
-    ),
-]
+class RepoCreateForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        tool = kwargs.pop('tool')
+        super(RepoCreateForm, self).__init__(*args, **kwargs)
+        default_name = 'tool-%s' % tool.name
+        self.fields['repo_name'] = forms.RegexField(
+            label=_("Repository name"),
+            regex=r'^%s' % re.escape(default_name),
+            initial=default_name,
+            help_text=_("Repository name must begin with %(str)s." % {
+                'str': default_name}),
+            min_length=len(default_name),
+            max_length=50)

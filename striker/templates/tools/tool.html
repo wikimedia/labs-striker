@@ -2,30 +2,36 @@
 {% load bootstrap3 %}
 {% load i18n %}
 
-{% block title %}{% blocktrans %}Tool: {{name}}{% endblocktrans %}{% endblock %}
+{% block title %}{% blocktrans with name=tool.name %}Tool: {{ name }}{% endblocktrans %}{% endblock %}
 
 {% block pre_content %}
 <ol class="breadcrumb">
   <li><a href="{% url 'tools:index' %}">{% trans "Tools" %}</a></li>
-  <li class="active">{{ name }}</li>
+  <li class="active">{{ tool.name }}</li>
 </ol>
 {{ block.super }}
 {% endblock %}
 
 {% block content %}
 <div class="panel panel-default">
-  <div class="panel-heading">{{ name }}</div>
+  <div class="panel-heading">{% trans "Maintainers" %}</div>
   <div class="panel-body">
-    <dl>
-      <dt>{% trans "Maintainers" %}</dt>
-      <dd>
-        <ul class="tools-maintainers">
-          {% for maintainer in tool.maintainers|dictsort:"full_name" %}
-          <li>{{ maintainer.full_name }}</li>
-          {% endfor %}
-        </ul>
-      </dd>
-    </dl>
+    <ul class="tools-maintainers">
+      {% for maintainer in tool.maintainers|dictsort:"full_name" %}
+      <li>{{ maintainer.full_name }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+<div class="panel panel-default">
+  <div class="panel-heading">{% trans "Diffusion repositories" %}</div>
+  <div class="panel-body">
+    <ul>
+      {% for repo in repos %}
+      <li><a href="{% url 'tools:repo_edit' tool=tool.name name=repo.name %}">{{ repo.name }}</a></li>
+      {% endfor %}
+    </ul>
+    <p><a href="{% url 'tools:repo_create' tool=tool.name %}" class="btn btn-default">{% trans "Create new repository" %}</a></p>
   </div>
 </div>
 {% endblock %}
