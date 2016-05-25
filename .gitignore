@@ -11,6 +11,7 @@
 /db.sqlite3
 /dist
 /docs/_build
-/tests/cover
+/staticfiles
 /striker/local_settings.py
+/tests/cover
 /vagrant_settings.py
