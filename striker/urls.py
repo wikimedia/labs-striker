@@ -34,11 +34,6 @@ urlpatterns = [
         TemplateView.as_view(template_name='index.html'),
         name='index'
     ),
-    urls.url(
-        r'^about/$',
-        TemplateView.as_view(template_name='about.html'),
-        name='about'
-    ),
 
     urls.url(
         r'^auth/', urls.include(striker.labsauth.urls, namespace='labsauth')),
