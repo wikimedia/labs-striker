@@ -85,6 +85,8 @@ def repo_create(req, tool):
             name = form.cleaned_data['repo_name']
             # FIXME: ensure that repo doesn't already exist (in form?)
             # FIXME: error handling!
+            # * You can not select this edit policy, because you would no
+            #   longer be able to edit the object. (ERR-CONDUIT-CORE)
             # Convert list of maintainers to list of phab users
             maintainers = [m.full_name for m in tool.maintainers()]
             phab_maintainers = [m['phid'] for m in phab.user_ldapquery(
