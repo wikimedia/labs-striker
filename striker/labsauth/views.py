@@ -44,7 +44,8 @@ def login(req):
 
 
 def logout(req):
-    return auth_views.logout(req, template_name='labsauth/logout.html')
+    auth_views.logout(req)
+    return shortcuts.redirect(urlresolvers.reverse('index'))
 
 
 def oauth_initiate(req):
