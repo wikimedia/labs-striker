@@ -1,0 +1,12 @@
+{% load i18n %}
+
+<div class="jumbotron">
+  <h1>{% trans "Welcome!" %}</h1>
+  {% blocktrans with tl_url='https://tools.wmflabs.org/' %}
+  <p><strong>Tool Labs admin console</strong> helps <a href="{{ tl_url }}">Wikimedia Tool Labs</a> users manage their tools.</p>
+  {% endblocktrans %}
+  {% url 'labsauth:login' as login_url %}
+  {% blocktrans with login_url=login_url %}
+  <p><a href="{{ login_url }}" class="btn btn-lg btn-primary" role="button">Get started</a></p>
+  {% endblocktrans %}
+</div>
