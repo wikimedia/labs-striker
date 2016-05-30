@@ -19,7 +19,6 @@
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
 
 from django import shortcuts
-from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 # FIXME add tool membership validation
@@ -102,9 +101,9 @@ def repo_create(req, tool):
             # Redirect to repo view
             return shortcuts.redirect(
                 urlresolvers.reverse('tools:repo_edit', kwargs={
-                    'tool':tool.name,
+                    'tool': tool.name,
                     'name': name,
-            }))
+                }))
 
     return shortcuts.render(req, 'tools/repo/create.html', {
         'tool': tool, 'form': form})

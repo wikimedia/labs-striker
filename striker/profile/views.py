@@ -19,7 +19,6 @@
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
 
 from django import shortcuts
-from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext_lazy as _
