@@ -79,8 +79,14 @@ class Tool(ldapdb.models.Model):
 
 
 class DiffusionRepo(models.Model):
-    """Track diffusion repos for Tools"""
+    """Associate diffusion repos with Tools."""
     # FIXME: find real length limits
     tool = models.CharField(max_length=255)
     name = models.CharField(max_length=255)
     phid = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name
+
+    def __unicode__(self):
+        return self.name
