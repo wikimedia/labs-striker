@@ -113,4 +113,3 @@ class Milestone(models.Model):
 
     def __unicode__(self):
         return '%s: %s' % (self.user, self.name)
-

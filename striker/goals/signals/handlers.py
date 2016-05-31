@@ -28,6 +28,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+
 def check_goal_phab(user):
     if user.phabname is not None:
         user.milestones.recordMilestone(GOALS['ACCOUNT_PHAB'])
@@ -40,8 +41,8 @@ def check_goal_sul(user):
 
 @receiver(user_logged_in, dispatch_uid=__name__)
 def on_user_login(sender, request, user, **kwargs):
-    check_goal_phab(instance)
-    check_goal_sul(instance)
+    check_goal_phab(user)
+    check_goal_sul(user)
 
     groups = user.groups.values_list('name', flat=True)
 
