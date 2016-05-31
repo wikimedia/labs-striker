@@ -1,0 +1,9 @@
+{% extends "goals/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Add a git repository to a tool" %}{% endblock %}
+
+{% block body %}
+<p>{% blocktrans %}Tool Labs now offers hosting for git repositories using Phabricator and Diffusion. You can add a Diffusion repository to any tool you maintain.{% endblocktrans %}</p>
+<p><a href="{% url 'tools:index' %}" class="btn btn-default">{% trans "View my tools" %}</a></p>
+{% endblock %}

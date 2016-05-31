@@ -1,0 +1,9 @@
+{% extends "goals/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Become a Tool Labs member" %}{% endblock %}
+
+{% block body %}
+<p>{% blocktrans %}Request membership in the Tool Labs project so you can create your own tool and help maintain existing tools.{% endblocktrans %}</p>
+<p><a href="https://wikitech.wikimedia.org/wiki/Special:FormEdit/Tools_Access_Request" class="btn btn-default">{% trans "Join now" %}</a></p>
+{% endblock %}

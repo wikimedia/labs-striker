@@ -17,8 +17,8 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
-"""Default settings for tools."""
 
-TOOLS_MAINTAINER_BASE_DN = 'ou=people,dc=wikimedia,dc=org'
-TOOLS_TOOL_BASE_DN = 'ou=servicegroups,dc=wikimedia,dc=org'
-TOOLS_TOOL_LABS_GROUP_NAME = 'project-tools'
+import django.contrib.admin
+from striker.goals import models
+
+django.contrib.admin.site.register(models.Milestone)

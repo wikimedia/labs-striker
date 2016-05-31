@@ -96,7 +96,8 @@ def repo_create(req, tool):
             logger.debug(repo)
             # Save a local association between the repo and the tool.
             repo_model = DiffusionRepo(
-                tool=tool.name, name=name, phid=repo['phid'])
+                tool=tool.name, name=name, phid=repo['phid'],
+                created_by=req.user)
             repo_model.save()
             # Redirect to repo view
             return shortcuts.redirect(

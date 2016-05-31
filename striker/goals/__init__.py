@@ -17,8 +17,12 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
-"""Default settings for tools."""
 
-TOOLS_MAINTAINER_BASE_DN = 'ou=people,dc=wikimedia,dc=org'
-TOOLS_TOOL_BASE_DN = 'ou=servicegroups,dc=wikimedia,dc=org'
-TOOLS_TOOL_LABS_GROUP_NAME = 'project-tools'
+GOALS = {
+    'ACCOUNT_PHAB': 101,
+    'ACCOUNT_SUL': 102,
+    'TOOL_MEMBER': 201,
+    'TOOL_MAINTAINER': 202,
+    'TOOL_GIT': 203,
+}
+GOALS_BY_ID = {v: k for k, v in GOALS.items()}

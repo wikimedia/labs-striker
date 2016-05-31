@@ -21,6 +21,7 @@
 from django.conf import settings
 from django.db import models
 from ldapdb.models import fields
+import datetime
 import ldapdb.models
 
 
@@ -84,6 +85,9 @@ class DiffusionRepo(models.Model):
     tool = models.CharField(max_length=255)
     name = models.CharField(max_length=255)
     phid = models.CharField(max_length=255)
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL)
+    created_date = models.DateTimeField(
+        default=datetime.datetime.now, blank=True, editable=False)
 
     def __str__(self):
         return self.name

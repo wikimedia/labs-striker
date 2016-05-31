@@ -1,0 +1,9 @@
+{% extends "goals/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Connect with your SUL account" %}{% endblock %}
+
+{% block body %}
+<p>{% blocktrans %}Connect your Tool Labs account with your Wikimedia single user login account.{% endblocktrans %}</p>
+<p><a href="{% url 'labsauth:oauth_initiate' %}?next=/" class="btn btn-default">Connect now</a></p>
+{% endblock %}

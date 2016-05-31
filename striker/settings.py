@@ -40,6 +40,7 @@ INSTALLED_APPS = (
     'striker.labsauth',
     'striker.profile',
     'striker.tools',
+    'striker.goals.apps.GoalsConfig',
 )
 
 MIDDLEWARE_CLASSES = (

@@ -17,8 +17,14 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
-"""Default settings for tools."""
 
-TOOLS_MAINTAINER_BASE_DN = 'ou=people,dc=wikimedia,dc=org'
-TOOLS_TOOL_BASE_DN = 'ou=servicegroups,dc=wikimedia,dc=org'
-TOOLS_TOOL_LABS_GROUP_NAME = 'project-tools'
+from django.apps import AppConfig
+
+
+class GoalsConfig(AppConfig):
+    name = 'striker.goals'
+    verbose_name = 'Striker goals'
+
+    def ready(self):
+        # Register signal handlers
+        import striker.goals.signals.handlers  # noqa
