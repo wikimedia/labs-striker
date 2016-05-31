@@ -2,12 +2,17 @@
 from __future__ import unicode_literals
 
 from django.db import migrations, models
+import datetime
+from django.conf import settings
 import ldapdb.models.fields
 
 
 class Migration(migrations.Migration):
 
+    replaces = [(b'tools', '0001_initial'), (b'tools', '0002_auto_20160531_1653')]
+
     dependencies = [
+        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
@@ -18,6 +23,8 @@ class Migration(migrations.Migration):
                 ('tool', models.CharField(max_length=255)),
                 ('name', models.CharField(max_length=255)),
                 ('phid', models.CharField(max_length=255)),
+                ('created_by', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+                ('created_date', models.DateTimeField(default=datetime.datetime.now, editable=False, blank=True)),
             ],
         ),
         migrations.CreateModel(
