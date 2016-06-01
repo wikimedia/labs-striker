@@ -1,4 +1,5 @@
 {% extends "profile/settings/base.html" %}
+{% load bootstrap3 %}
 {% load i18n %}
 
 {% block title %}{% trans "SUL settings" %}{% endblock %}
@@ -10,6 +11,14 @@
   <li>{% trans "Email" %}: {{ user.sulemail }}</li>
 </ul>
 {% else %}
-<a class="btn btn-primary" href="{% url 'labsauth:oauth_initiate' %}?next={{ request.path }}">{% trans "Login using OAuth" %}</a>
+<div class="panel panel-warning">
+  <div class="panel-heading">
+    <h3 class="panel-title">{% bootstrap_icon "pushpin" %} {% trans "Linked SUL account not found" %}</h3>
+  </div>
+  <div class="panel-body">
+    <p>{% blocktrans %}Link your LDAP and SUL accounts by logging in using OAuth.{% endblocktrans %}</p>
+    <p><a class="btn btn-primary" href="{% url 'labsauth:oauth_initiate' %}?next={{ request.path }}">{% trans "Login using OAuth" %}</a></p>
+  </div>
+</div>
 {% endif %}
 {% endblock %}

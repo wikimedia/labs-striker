@@ -19,6 +19,7 @@
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
 
 from django import shortcuts
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext_lazy as _
@@ -38,9 +39,8 @@ def phab(req):
         except phabricator.APIError:
             logger.exception('phab.user_ldapquery failed')
             messages.error(req, _("Error contacting Phabricator."))
-        except KeyError, e:
-            logger.debug(e)
-            messages.error(req, _("No matching Phabricator account found."))
+        except KeyError:
+            pass
         else:
             req.user.phid = r['phid']
             req.user.phabname = r['userName']
@@ -48,4 +48,6 @@ def phab(req):
             req.user.phaburl = r['uri']
             req.user.phabimage = r['image']
             req.user.save()
-    return shortcuts.render(req, 'profile/settings/phabricator.html')
+    return shortcuts.render(
+        req, 'profile/settings/phabricator.html',
+        context={'phab_url': settings.PHABRICATOR_URL})
