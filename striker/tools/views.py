@@ -82,7 +82,6 @@ def repo_create(req, tool):
     if req.method == 'POST':
         if form.is_valid():
             name = form.cleaned_data['repo_name']
-            # FIXME: ensure that repo doesn't already exist (in form?)
             # FIXME: error handling!
             # * You can not select this edit policy, because you would no
             #   longer be able to edit the object. (ERR-CONDUIT-CORE)
@@ -90,10 +89,8 @@ def repo_create(req, tool):
             maintainers = [m.full_name for m in tool.maintainers()]
             phab_maintainers = [m['phid'] for m in phab.user_ldapquery(
                 maintainers)]
-            logger.debug(phab_maintainers)
             # Create repo
             repo = phab.create_repository(name, phab_maintainers)
-            logger.debug(repo)
             # Save a local association between the repo and the tool.
             repo_model = DiffusionRepo(
                 tool=tool.name, name=name, phid=repo['phid'],

@@ -20,7 +20,11 @@
 
 from django import forms
 from django.utils.translation import ugettext_lazy as _
+from striker import phabricator
 import re
+
+
+phab = phabricator.Client.default_client()
 
 
 class RepoCreateForm(forms.Form):
@@ -36,3 +40,15 @@ class RepoCreateForm(forms.Form):
                 'str': default_name}),
             min_length=len(default_name),
             max_length=50)
+
+    def clean_repo_name(self):
+        name = self.cleaned_data.get('repo_name')
+        try:
+            phab.get_repository(name)
+            # If get_repository doesn't raise an exception then its a dup
+            raise forms.ValidationError(
+                _('Repository "%(name)s" exists.'),
+                params={'name': name},
+                code='duplicate')
+        except KeyError:
+            return name
