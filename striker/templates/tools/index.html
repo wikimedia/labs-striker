@@ -9,6 +9,8 @@
   <div class="list-group">
     {% for tool in tools %}
     <a href="{% url 'tools:tool' tool=tool %}" class="list-group-item">{{ tool }}</a>
+    {% empty %}
+    <div class="list-group-item">{% blocktrans with url='https://tools.wmflabs.org/' %}Your account is not assocaited with any tools. Visit <a href="{{ url }}">tools.wmflabs.org</a> to find a existing tool to join or create a new tool.{% endblocktrans %}</div>
     {% endfor %}
   </div>
 </div>
