@@ -119,6 +119,10 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
+# django.middleware.security.SecurityMiddleware flags
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_BROWSER_XSS_FILTER = True
+
 # Default redirect location after login
 LOGIN_REDIRECT_URL = '/'
 
