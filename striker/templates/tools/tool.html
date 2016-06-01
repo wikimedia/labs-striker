@@ -31,6 +31,8 @@
       <li><a href="{% url 'tools:repo_edit' tool=tool.name name=repo.name %}">{{ repo.name }}</a></li>
       {% endfor %}
     </ul>
+  </div>
+  <div class="panel-footer">
     <p><a href="{% url 'tools:repo_create' tool=tool.name %}" class="btn btn-default">{% trans "Create new repository" %}</a></p>
   </div>
 </div>

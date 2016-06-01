@@ -5,12 +5,16 @@
 {% block title %}{% trans "Phabricator settings" %}{% endblock %}
 {% block content %}
 {% if user.phid %}
-<img class="user-image-large pull-right" src="{{ user.phabimage }}">
-<ul>
-  <li>{% trans "Username" %}: {{ user.phabname }}</li>
-  <li>{% trans "Real name" %}: {{ user.phabrealname }}</li>
-  <li>{% trans "Profile" %}: <a href="{{ user.phaburl }}">{{ user.phaburl }}</a></li>
-</ul>
+<div class="panel panel-default">
+  <div class="panel-body">
+    <img class="user-image-large pull-right" src="{{ user.phabimage }}">
+    <ul>
+      <li>{% trans "Username" %}: {{ user.phabname }}</li>
+      <li>{% trans "Real name" %}: {{ user.phabrealname }}</li>
+      <li>{% trans "Profile" %}: <a href="{{ user.phaburl }}">{{ user.phaburl }}</a></li>
+    </ul>
+  </div>
+</div>
 {% else %}
 <div class="panel panel-warning">
   <div class="panel-heading">

@@ -5,11 +5,18 @@
 {% block title %}{% trans "SUL settings" %}{% endblock %}
 {% block content %}
 {% if user.oauthtoken %}
-<ul>
-  <li>{% trans "Username" %}: {{ user.sulname }}</li>
-  <li>{% trans "Real name" %}: {{ user.realname }}</li>
-  <li>{% trans "Email" %}: {{ user.sulemail }}</li>
-</ul>
+<div class="panel panel-default">
+  <div class="panel-body">
+    <ul>
+      <li>{% trans "Username" %}: {{ user.sulname }}</li>
+      <li>{% trans "Real name" %}: {{ user.realname }}</li>
+      <li>{% trans "Email" %}: {{ user.sulemail }}</li>
+    </ul>
+  </div>
+  <div class="panel-footer">
+    <p><a class="btn btn-default" href="{% url 'labsauth:oauth_initiate' %}?next={{ request.path }}">{% trans "Refresh OAuth credentials" %}</a></p>
+  </div>
+</div>
 {% else %}
 <div class="panel panel-warning">
   <div class="panel-heading">
