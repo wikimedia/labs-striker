@@ -52,6 +52,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'csp.middleware.CSPMiddleware',
 )
 
 ROOT_URLCONF = 'striker.urls'
@@ -123,6 +124,28 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 SECURE_BROWSER_XSS_FILTER = True
 
+# Content-Security-Policy
+# https://django-csp.readthedocs.io/en/latest/configuration.html
+CSP_DEFAULT_SRC = ["'none'"]  # Use a whitelist only approach
+CSP_SCRIPT_SRC = ["'self'"]
+CSP_IMG_SRC = ["'self'"]
+CSP_OBJECT_SRC = ["'none'"]
+CSP_MEDIA_SRC = ["'none'"]
+CSP_FONT_SRC = ["'self'"]
+CSP_CONNECT_SRC = ["'self'"]
+CSP_STYLE_SRC = ["'self'"]
+CSP_BASE_URI = ["'none'"]
+CSP_CHILD_SRC = ["'none'"]
+CSP_FRAME_ANCESTORS = ["'none'"]
+CSP_FORM_ACTION = ["'self'"]
+CSP_SANDBOX = [
+    'allow-forms',
+    'allow-same-origin',
+    'allow-scripts',
+    'allow-top-navigation',
+]
+CSP_REPORT_URI = '/csp-report'
+
 # Default redirect location after login
 LOGIN_REDIRECT_URL = '/'
 
@@ -136,6 +159,7 @@ PHABRICATOR_REPO_ADMIN_GROUP = 'PHID-PROJ-rzvwdtume4to5fnuh3rj'
 BOOTSTRAP3 = {
     'jquery_url': STATIC_URL + 'js/jquery.min.js',
     'base_url': STATIC_URL,
+    'javascript_url': STATIC_URL + 'js/bootstrap.js',
     'include_jquery': True,
 }
 

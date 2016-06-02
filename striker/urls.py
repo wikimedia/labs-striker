@@ -34,6 +34,7 @@ urlpatterns = [
         TemplateView.as_view(template_name='index.html'),
         name='index'
     ),
+    urls.url(r'^csp-report', 'striker.views.csp_report', name='csp_report'),
 
     urls.url(
         r'^auth/', urls.include(striker.labsauth.urls, namespace='labsauth')),

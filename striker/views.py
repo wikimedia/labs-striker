@@ -17,3 +17,21 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
+
+from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
+import logging
+
+
+logger = logging.getLogger(__name__)
+
+
+@require_POST
+@csrf_exempt
+def csp_report(req):
+    # Ignore a spam report caused by uBlock browser plugin
+    # https://github.com/gorhill/uBlock/issues/1170
+    if '":root #content > #right > .dose > .doses..."' not in req.body:
+        logger.debug('Content Security Policy violation: %s', req.body)
+    return HttpResponse('')
