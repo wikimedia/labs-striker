@@ -16,7 +16,7 @@ import Queue
 import signal
 import sys
 import threading
-import time
+
 
 _interval = 1.0
 _times = {}
@@ -26,12 +26,14 @@ _running = False
 _queue = Queue.Queue()
 _lock = threading.Lock()
 
+
 def _restart(path):
     _queue.put(True)
     prefix = 'monitor (pid=%d):' % os.getpid()
     print >> sys.stderr, '%s Change detected to \'%s\'.' % (prefix, path)
     print >> sys.stderr, '%s Triggering process restart.' % prefix
     os.kill(os.getpid(), signal.SIGINT)
+
 
 def _modified(path):
     try:
@@ -61,6 +63,7 @@ def _modified(path):
 
     return False
 
+
 def _monitor():
     while 1:
         # Check modification times on all files in sys.modules.
@@ -87,21 +90,27 @@ def _monitor():
         except:
             pass
 
+
 _thread = threading.Thread(target=_monitor)
 _thread.setDaemon(True)
+
 
 def _exiting():
     try:
         _queue.put(True)
     except:
         pass
-    _thread.join()
+    if _thread.is_alive():
+        _thread.join()
+
 
 atexit.register(_exiting)
 
+
 def track(path):
-    if not path in _files:
+    if path not in _files:
         _files.append(path)
+
 
 def start(interval=1.0):
     global _interval
