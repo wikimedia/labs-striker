@@ -18,8 +18,9 @@
 # You should have received a copy of the GNU General Public License
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
 
-import os
 from django.core.wsgi import get_wsgi_application
+import os
+import striker.monitor
 
 
 def bootstrap_env(wsgi_env, start_resp):
@@ -28,11 +29,14 @@ def bootstrap_env(wsgi_env, start_resp):
     Inspired by http://stackoverflow.com/a/32416606/8171
     """
     global application
-    for key in ['DJANGO_SETTINGS_MODULE', 'DJANGO_LOG_LEVEL']:
-        try:
+    for key in wsgi_env.keys():
+        # Pass DJANGO_* env vars to the application
+        if key.startswith('DJANGO_'):
             os.environ[key] = wsgi_env[key]
-        except KeyError:
-            pass
+
+    if os.environ.get('DJANGO_DEBUG', '').upper() == 'TRUE':
+        striker.monitor.start()
+
     # Replace self in global scope with Django's handler
     application = get_wsgi_application()
     # Handle initial request
