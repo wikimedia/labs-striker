@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load bootstrap3 %}
 {% load i18n %}
+{% load tools %}
 
 {% block title %}{% blocktrans with name=tool.name %}Tool: {{ name }}{% endblocktrans %}{% endblock %}
 
@@ -15,10 +16,38 @@
 {% endblock %}
 
 {% block content %}
-<div class="panel panel-default">
-  <div class="panel-heading">{{ repo_name }}</div>
-  <div class="panel-body">
-    {{ repo }}
+<div class="panel-group">
+  <div class="panel panel-default">
+    <div class="panel-heading">{% trans "Repostory information" %}</div>
+    <div class="panel-body">
+      <dl class="dl-horizontal">
+        <dt>{% trans "Name" %}</dt>
+        <dd>{{ repo_name }}</dd>
+        <dt>{% trans "Status" %}</dt>
+        <dd>{{ status }}</dd>
+        <dt>{% trans "URLs" %}</dt>
+        <dd><ul class="list-unstyled">
+            {% for u in urls %}
+            <li>{{ u }}</li>
+            {% endfor %}
+        </ul></dd>
+      </dl>
+    </div>
+  </div>
+  <div class="panel panel-default">
+    <div class="panel-heading">{% trans "Policies" %}</div>
+    <div class="panel-body">
+      <dl class="dl-horizontal">
+        <dt>{% trans "View" %}</dt>
+        <dd>{% phab_policy policy.view phids %}</dd>
+        <dt>{% trans "Edit" %}</dt>
+        <dd>{% phab_policy policy.edit phids %}</dd>
+        <dt>{% trans "Push" %}</dt>
+        <dd>{% phab_policy policy.push phids %}</dd>
+      </dl>
+    </div>
   </div>
 </div>
+</div>
 {% endblock %}
+{# vim:sw=2:ts=2:sts=2:et:ft=htmldjango: #}

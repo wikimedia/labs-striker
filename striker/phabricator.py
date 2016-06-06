@@ -96,6 +96,28 @@ class Client(object):
         else:
             return r
 
+    def user_mediawikiquery(self, names):
+        """Lookup Phabricator user data associated with mediawiki accounts."""
+        try:
+            r = self.post('user.mediawikiquery', {
+                'names': names,
+                'offset': 0,
+                'limit': len(names),
+            })
+        except APIError, e:
+            if e.code == 'ERR-INVALID-PARAMETER' and \
+                    'Unknown or missing mediawiki names' in e.message:
+                logger.warn(e.message)
+                if e.result is None:
+                    raise KeyError('Users not found for %s' % ', '.join(names))
+                else:
+                    # Return the partial result
+                    r = e.result
+            else:
+                raise e
+        else:
+            return r
+
     def get_repository(self, name):
         """Lookup information on a diffusion repository by name."""
         r = self.post('diffusion.repository.search', {
@@ -152,6 +174,35 @@ class Client(object):
             ],
         })
         return r['phid']
+
+    def get_policies(self, phids):
+        """Get security policy information."""
+        try:
+            r = self.post('policy.query', {
+                'phids': phids,
+                'offset': 0,
+                'limit': len(phids),
+            })
+        except APIError, e:
+            if e.code == 'ERR-INVALID-PARAMETER' and \
+                    'Unknown policies' in e.message:
+                logger.warn(e.message)
+                if e.result is None:
+                    raise KeyError(
+                        'Policies not found for %s' % ', '.join(phids))
+                else:
+                    # Return the partial result
+                    r = e.result
+            else:
+                raise e
+        else:
+            return r
+
+    def get_phids(self, phids):
+        """Get phid information."""
+        return self.post('phid.query', {
+            'phids': phids,
+        })
 
     def task(self, task):
         r = self.post('phid.lookup', {'names': [task]})

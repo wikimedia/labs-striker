@@ -110,9 +110,38 @@ def repo_create(req, tool):
 @login_required
 @inject_tool
 def repo_edit(req, tool, name):
+    ctx = {
+        'tool': tool,
+        'repo_name': name,
+        'status': 'unknown',
+        'urls': [],
+        'policy': {'view': None, 'edit': None, 'push': None},
+    }
     try:
         repo = phab.get_repository(name)
+        ctx['status'] = repo['fields']['status']
+        ctx['urls'] = [
+            u['fields']['uri']['display'] for u in
+            repo['attachments']['uris']['uris']
+        ]
+
+        # Lookup policy details
+        policy = repo['fields']['policy']
+        policies = phab.get_policies(list(set(policy.values())))
+        ctx['policy']['view'] = policies[policy['view']]
+        ctx['policy']['edit'] = policies[policy['edit']]
+        ctx['policy']['push'] = policies[policy['diffusion.push']]
+
+        # Lookup phid details for custom rules
+        phids = []
+        for p in policies.values():
+            if p['type'] == 'custom':
+                for r in p['rules']:
+                    phids.extend(r['value'])
+        ctx['phids'] = phab.get_phids(list(set(phids)))
     except KeyError:
-        repo = None
-    return shortcuts.render(req, 'tools/repo.html', {
-        'tool': tool, 'repo_name': name, 'repo': repo})
+        pass
+    except phabricator.APIError, e:
+        logger.error(e)
+
+    return shortcuts.render(req, 'tools/repo.html', ctx)
