@@ -7,11 +7,11 @@
 {% if user.phid %}
 <div class="panel panel-default">
   <div class="panel-body">
-    <ul>
-      <li>{% trans "Username" %}: {{ user.phabname }}</li>
-      <li>{% trans "Real name" %}: {{ user.phabrealname }}</li>
-      <li>{% trans "Profile" %}: <a href="{{ user.phaburl }}">{{ user.phaburl }}</a></li>
-    </ul>
+    <dl class="dl-horizontal">
+      <dt>{% trans "Username" %}</dt><dd>{{ user.phabname }}</dd>
+      <dt>{% trans "Real name" %}</dt><dd>{{ user.phabrealname }}</dd>
+      <dt>{% trans "Profile" %}</dt><dd><a href="{{ user.phaburl }}">{{ user.phaburl }}</a></dd>
+    </dl>
   </div>
 </div>
 {% else %}

@@ -7,11 +7,11 @@
 {% if user.oauthtoken %}
 <div class="panel panel-default">
   <div class="panel-body">
-    <ul>
-      <li>{% trans "Username" %}: {{ user.sulname }}</li>
-      <li>{% trans "Real name" %}: {{ user.realname }}</li>
-      <li>{% trans "Email" %}: {{ user.sulemail }}</li>
-    </ul>
+    <dl class="dl-horizontal">
+      <dt>{% trans "Username" %}</dt><dd>{{ user.sulname }}</dd>
+      <dt>{% trans "Real name" %}</dt><dd>{{ user.realname }}</dd>
+      <dt>{% trans "Email" %}</dt><dd>{{ user.sulemail }}</dd>
+    </dl>
   </div>
   <div class="panel-footer">
     <p><a class="btn btn-default" href="{% url 'labsauth:oauth_initiate' %}?next={{ request.path }}">{% trans "Refresh OAuth credentials" %}</a></p>
