@@ -19,6 +19,7 @@
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
 
 from django import forms
+from django.contrib.auth.forms import AuthenticationForm
 
 import striker.labsauth.models
 
@@ -33,3 +34,10 @@ class LabsUserChangeForm(forms.ModelForm):
     class Meta:
         model = striker.labsauth.models.LabsUser
         fields = '__all__'
+
+
+class LabsAuthenticationForm(AuthenticationForm):
+    username = forms.CharField(
+        max_length=254,
+        widget=forms.TextInput(attrs={'autofocus': ''}),
+    )

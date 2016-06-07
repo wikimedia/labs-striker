@@ -28,6 +28,7 @@ from django.core import urlresolvers
 from django.utils.translation import ugettext_lazy as _
 import mwoauth
 
+from striker.labsauth import forms
 
 NEXT_PAGE = 'striker.oauth.next_page'
 REQUEST_TOKEN_KEY = 'striker.oauth.request_token'
@@ -37,7 +38,10 @@ logger = logging.getLogger(__name__)
 
 
 def login(req):
-    resp = auth_views.login(req, template_name='labsauth/login.html')
+    resp = auth_views.login(
+        req,
+        template_name='labsauth/login.html',
+        authentication_form=forms.LabsAuthenticationForm)
     if 'remember_me' in req.POST:
         req.session.set_expiry(1209600)  # 2 weeks
         req.session.save()
