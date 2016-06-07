@@ -19,7 +19,9 @@
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
 
 import django.contrib.admin
+
 from striker.tools import models
+
 
 django.contrib.admin.site.register(models.DiffusionRepo)
 django.contrib.admin.site.register(models.Maintainer)

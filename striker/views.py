@@ -18,10 +18,11 @@
 # You should have received a copy of the GNU General Public License
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
 
+import logging
+
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
-import logging
 
 
 logger = logging.getLogger(__name__)

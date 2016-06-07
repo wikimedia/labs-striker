@@ -18,12 +18,14 @@
 # You should have received a copy of the GNU General Public License
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
 
+import logging
+
 from django.conf import settings
 from django.contrib.auth.signals import user_logged_in
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+
 from striker.goals import GOALS
-import logging
 
 
 logger = logging.getLogger(__name__)

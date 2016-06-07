@@ -19,8 +19,10 @@
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
 """Default settings for authentication."""
 
-import django_auth_ldap.config
 import ldap
+
+import django_auth_ldap.config
+
 
 # Install our custom User model
 AUTH_USER_MODEL = 'labsauth.LabsUser'

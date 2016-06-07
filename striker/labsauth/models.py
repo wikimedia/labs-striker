@@ -18,15 +18,16 @@
 # You should have received a copy of the GNU General Public License
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
 
-import mwoauth
 import random
 import string
+
 from django.contrib.auth.models import AbstractBaseUser
 from django.contrib.auth.models import BaseUserManager
 from django.contrib.auth.models import PermissionsMixin
 from django.db import models
 from django.utils.crypto import salted_hmac
 from django.utils.translation import ugettext_lazy as _
+import mwoauth
 
 
 class LabsUserManager(BaseUserManager):

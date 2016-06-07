@@ -18,10 +18,12 @@
 # You should have received a copy of the GNU General Public License
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
 
+import re
+
 from django import forms
 from django.utils.translation import ugettext_lazy as _
+
 from striker import phabricator
-import re
 
 
 phab = phabricator.Client.default_client()

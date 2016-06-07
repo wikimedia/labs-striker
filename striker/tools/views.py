@@ -18,6 +18,9 @@
 # You should have received a copy of the GNU General Public License
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
 
+import functools
+import logging
+
 from django import shortcuts
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -26,12 +29,11 @@ from django.contrib.auth.decorators import login_required
 from django.core import urlresolvers
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils.translation import ugettext_lazy as _
+
 from striker import phabricator
 from striker.tools.forms import RepoCreateForm
 from striker.tools.models import DiffusionRepo
 from striker.tools.models import Tool
-import functools
-import logging
 
 
 logger = logging.getLogger(__name__)

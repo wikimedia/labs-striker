@@ -18,8 +18,10 @@
 # You should have received a copy of the GNU General Public License
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.core.wsgi import get_wsgi_application
 import os
+
+from django.core.wsgi import get_wsgi_application
+
 import striker.monitor
 
 

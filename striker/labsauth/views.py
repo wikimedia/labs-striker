@@ -19,13 +19,14 @@
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
 
 import logging
-import mwoauth
+
 from django import shortcuts
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import views as auth_views
 from django.core import urlresolvers
 from django.utils.translation import ugettext_lazy as _
+import mwoauth
 
 
 NEXT_PAGE = 'striker.oauth.next_page'

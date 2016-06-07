@@ -19,6 +19,7 @@
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
 
 from django import forms
+
 import striker.labsauth.models
 
 

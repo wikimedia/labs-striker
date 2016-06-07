@@ -19,6 +19,7 @@
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
 
 import django.contrib.admin
+
 from striker.goals import models
 
 django.contrib.admin.site.register(models.Milestone)

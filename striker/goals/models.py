@@ -18,14 +18,16 @@
 # You should have received a copy of the GNU General Public License
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
 
+from operator import attrgetter
+import datetime
+import logging
+
 from django.conf import settings
 from django.db import IntegrityError
 from django.db import models
-from operator import attrgetter
+
 from striker.goals import GOALS
 from striker.goals import GOALS_BY_ID
-import datetime
-import logging
 
 
 logger = logging.getLogger(__name__)

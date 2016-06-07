@@ -18,10 +18,11 @@
 # You should have received a copy of the GNU General Public License
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
 
+import datetime
+
 from django.conf import settings
 from django.db import models
 from ldapdb.models import fields
-import datetime
 import ldapdb.models
 
 

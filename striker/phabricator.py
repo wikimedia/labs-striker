@@ -18,10 +18,11 @@
 # You should have received a copy of the GNU General Public License
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.conf import settings
 import json
 import logging
 import requests
+
+from django.conf import settings
 
 
 logger = logging.getLogger(__name__)

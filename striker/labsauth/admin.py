@@ -18,9 +18,10 @@
 # You should have received a copy of the GNU General Public License
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
 
+from django.utils.translation import ugettext_lazy as _
 import django.contrib.admin
 import django.contrib.auth.admin
-from django.utils.translation import ugettext_lazy as _
+
 import striker.labsauth.forms
 import striker.labsauth.models
 
