@@ -19,8 +19,8 @@
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
 
 GOALS = {
-    'ACCOUNT_PHAB': 101,
-    'ACCOUNT_SUL': 102,
+    'ACCOUNT_SUL': 101,
+    'ACCOUNT_PHAB': 102,
     'TOOL_MEMBER': 201,
     'TOOL_MAINTAINER': 202,
     'TOOL_GIT': 203,

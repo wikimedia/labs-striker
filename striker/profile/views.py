@@ -22,6 +22,7 @@ from django import shortcuts
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.core import urlresolvers
 from django.utils.translation import ugettext_lazy as _
 from striker import phabricator
 import logging
@@ -32,22 +33,29 @@ logger = logging.getLogger(__name__)
 
 @login_required
 def phab(req):
-    if not req.user.phid:
-        client = phabricator.Client.default_client()
-        try:
-            r = client.user_ldapquery([req.user.ldapname])[0]
-        except phabricator.APIError:
-            logger.exception('phab.user_ldapquery failed')
-            messages.error(req, _("Error contacting Phabricator."))
-        except KeyError:
-            pass
-        else:
-            req.user.phid = r['phid']
-            req.user.phabname = r['userName']
-            req.user.phabrealname = r['realName']
-            req.user.phaburl = r['uri']
-            req.user.phabimage = r['image']
-            req.user.save()
-    return shortcuts.render(
-        req, 'profile/settings/phabricator.html',
-        context={'phab_url': settings.PHABRICATOR_URL})
+    ctx = {
+        'phab_url': settings.PHABRICATOR_URL,
+    }
+    return shortcuts.render(req, 'profile/settings/phabricator.html', ctx)
+
+
+@login_required
+def phab_attach(req):
+    client = phabricator.Client.default_client()
+    try:
+        r = client.user_external_lookup(
+            [req.user.ldapname], [req.user.sulname])[0]
+    except phabricator.APIError:
+        logger.exception('phabricator.user_external_lookup failed')
+        messages.error(req, _("Error contacting Phabricator."))
+    except (KeyError, IndexError):
+        messages.warning(req, _("No related Phabricator accounts found."))
+    else:
+        req.user.phid = r['phid']
+        req.user.phabname = r['userName']
+        req.user.phabrealname = r['realName']
+        req.user.phaburl = r['uri']
+        req.user.phabimage = r['image']
+        req.user.save()
+        messages.info(req, _("Attached Phabricator account."))
+    return shortcuts.redirect(urlresolvers.reverse('profile:phabricator'))

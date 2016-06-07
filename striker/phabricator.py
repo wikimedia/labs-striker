@@ -118,6 +118,38 @@ class Client(object):
         else:
             return r
 
+    def user_external_lookup(self, ldap=None, mw=None):
+        """Lookup Phabricator user data associated with external accounts."""
+        r = []
+        if ldap is not None and len(ldap) and ldap[0] is not None:
+            try:
+                r.extend(self.user_ldapquery(ldap))
+            except KeyError, e:
+                logger.debug(e)
+                pass
+        if mw is not None and len(mw) and mw[0] is not None:
+            try:
+                mw_r = self.user_mediawikiquery(mw)
+            except KeyError, e:
+                logger.debug(e)
+                pass
+            else:
+                # Deep merge results
+                for u in mw_r:
+                    logger.debug(u)
+                    for u2 in r:
+                        if u2['phid'] == u['phid']:
+                            # Decorate existing record with found mw username
+                            u2[u'mediawiki_username'] = u['mediawiki_username']
+                            logger.debug('Added to %s', u2['phid'])
+                            break
+                    else:
+                        # An else attached to a for loop is reached if a break
+                        # was not issued inside the for loop.
+                        logger.debug('Fall through for %s', u['phid'])
+                        r.append(u)
+        return r
+
     def get_repository(self, name):
         """Lookup information on a diffusion repository by name."""
         r = self.post('diffusion.repository.search', {

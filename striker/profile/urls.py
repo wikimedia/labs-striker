@@ -49,4 +49,9 @@ urlpatterns = [
         'striker.profile.views.phab',
         name='phabricator'
     ),
+    urls.url(
+        r'^settings/phabricator/attach$',
+        'striker.profile.views.phab_attach',
+        name='phabricator_attach'
+    ),
 ]
