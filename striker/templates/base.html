@@ -17,7 +17,7 @@
   <body>
     {% block navbar %}
     <nav class="navbar navbar-default navbar-static-top">
-      <div class="container">
+      <div class="container-fluid">
         <div class="navbar-header">
           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
             <span class="sr-only">Toggle navigation</span>
@@ -53,7 +53,7 @@
     </nav>
     {% endblock navbar %}
     {% block banner %}{% endblock banner %}
-    <div id="content" class="container">
+    <div id="content" class="container-fluid">
       {% block pre_content %}
       {% bootstrap_messages %}
       {% endblock pre_content %}
@@ -62,7 +62,7 @@
     </div>
     <footer class="footer" role="contentinfo">
       <p class="pull-left"></p>
-      <div class="container pull-right">
+      <div class="container-fluid pull-right">
         <ul class="list-inline">
           <li><a href="https://wikitech.wikimedia.org/wiki/Nova_Resource:Tools/Privacy">{% trans "Privacy policy" %}</a></li>
         </ul>

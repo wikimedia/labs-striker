@@ -40,7 +40,8 @@ form.hidden-labels label.no-hide {
   top:initial;
   width:initial;
 }
-.tools-maintainers {
+.tools-maintainers,
+.tools-diffusion-repos {
   -webkit-column-gap:2em;
   -moz-column-gap:2em;
   column-gap:2em;
