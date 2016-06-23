@@ -18,17 +18,79 @@
 # You should have received a copy of the GNU General Public License
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
 
+import ConfigParser
+import ldap
 import os
 
-from striker.labsauth.default_settings import *  # noqa
-from striker.tools.default_settings import *  # noqa
+import django_auth_ldap.config
 
 
 STRIKER_DIR = os.path.dirname(os.path.abspath(__file__))
 BASE_DIR = os.path.dirname(STRIKER_DIR)
 
-SECRET_KEY = '000000000000000000000000000000000000000000000000000000'
-DEBUG = True
+# Read configuration settings from ini files
+# Based on example given at:
+# https://code.djangoproject.com/wiki/SplitSettings#ini-stylefilefordeployment
+ini = ConfigParser.RawConfigParser(allow_no_value=True)
+ini.read([
+    os.path.join(STRIKER_DIR, 'striker.ini'),
+    os.path.join(BASE_DIR, 'striker.ini'),
+    '/etc/striker/striker.ini',
+])
+
+# == Authentication settings ==
+# LDAP Authentication
+AUTH_LDAP_SERVER_URI = ini.get('ldap', 'SERVER_URI')
+AUTH_LDAP_START_TLS = ini.getboolean('ldap', 'TLS')
+AUTH_LDAP_USER_DN_TEMPLATE = ini.get('ldap', 'USER_DN_TEMPLATE')
+AUTH_LDAP_USER_ATTR_MAP = {
+    'ldapname': 'sn',
+    'ldapemail': 'mail',
+    'shellname': 'uid',
+}
+AUTH_LDAP_GROUP_SEARCH = django_auth_ldap.config.LDAPSearch(
+    ini.get('ldap', 'BASE_DN'),
+    ldap.SCOPE_SUBTREE,
+    '(objectClass=groupOfNames)'
+)
+AUTH_LDAP_GROUP_TYPE = django_auth_ldap.config.GroupOfNamesType()
+AUTH_LDAP_MIRROR_GROUPS = True
+AUTH_LDAP_USER_FLAGS_BY_GROUP = {
+    'is_staff': ini.get('ldap', 'STAFF_GROUP_DN'),
+    'is_superuser': ini.get('ldap', 'SUPERUSER_GROUP_DN'),
+}
+
+AUTHENTICATION_BACKENDS = (
+    'django_auth_ldap.backend.LDAPBackend',
+    'django.contrib.auth.backends.ModelBackend',
+)
+
+# Install our custom User model
+AUTH_USER_MODEL = 'labsauth.LabsUser'
+
+LOGIN_URL = 'labsauth:login'
+LOGIN_REDIRECT_URL = '/'
+
+# == OAuth settings ==
+OAUTH_CONSUMER_KEY = ini.get('oauth', 'CONSUMER_KEY')
+OAUTH_CONSUMER_SECRET = ini.get('oauth', 'CONSUMER_SECRET')
+OAUTH_MWURL = ini.get('oauth', 'MWURL')
+
+# == Phabricator settings ==
+PHABRICATOR_URL = ini.get('phabricator', 'SERVER_URL')
+PHABRICATOR_USER = ini.get('phabricator', 'USER')
+PHABRICATOR_TOKEN = ini.get('phabricator', 'TOKEN')
+# phid of group granted Diffusion admin rights (i.e. #Repository-Admins)
+PHABRICATOR_REPO_ADMIN_GROUP = ini.get('phabricator', 'REPO_ADMIN_GROUP')
+
+# == Tools settings ==
+TOOLS_MAINTAINER_BASE_DN = ini.get('ldap', 'TOOLS_MAINTAINER_BASE_DN')
+TOOLS_TOOL_BASE_DN = ini.get('ldap', 'TOOLS_TOOL_BASE_DN')
+TOOLS_TOOL_LABS_GROUP_NAME = ini.get('ldap', 'TOOLS_TOOL_LABS_GROUP_NAME')
+
+# == Django settings ==
+SECRET_KEY = ini.get('secrets', 'SECRET_KEY')
+DEBUG = ini.getboolean('debug', 'DEBUG')
 ALLOWED_HOSTS = []
 
 INSTALLED_APPS = (
@@ -85,14 +147,18 @@ WSGI_APPLICATION = 'striker.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': ini.get('db', 'ENGINE'),
+        'NAME': ini.get('db', 'NAME'),
+        'USER': ini.get('db', 'USER'),
+        'PASSWORD': ini.get('db', 'PASSWORD'),
+        'HOST': ini.get('db', 'HOST'),
+        'PORT': ini.get('db', 'PORT'),
     },
     'ldap': {
         'ENGINE': 'ldapdb.backends.ldap',
-        'NAME': AUTH_LDAP_SERVER_URI,
-        'USER': '',
-        'PASSWORD': '',
+        'NAME': ini.get('ldap', 'SERVER_URI'),
+        'USER': ini.get('ldap', 'BIND_USER'),
+        'PASSWORD': ini.get('ldap', 'BIND_PASSWORD'),
     },
 }
 DATABASE_ROUTERS = [
@@ -122,11 +188,11 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
-# django.middleware.security.SecurityMiddleware flags
+# == django.middleware.security.SecurityMiddleware flags ==
 SECURE_CONTENT_TYPE_NOSNIFF = True
 SECURE_BROWSER_XSS_FILTER = True
 
-# Content-Security-Policy
+# == Content-Security-Policy ==
 # https://django-csp.readthedocs.io/en/latest/configuration.html
 CSP_DEFAULT_SRC = ["'none'"]  # Use a whitelist only approach
 CSP_SCRIPT_SRC = ["'self'"]
@@ -148,16 +214,7 @@ CSP_SANDBOX = [
 ]
 CSP_REPORT_URI = '/csp-report'
 
-# Default redirect location after login
-LOGIN_REDIRECT_URL = '/'
-
-PHABRICATOR_URL = 'https://phabricator.wikimedia.org'
-PHABRICATOR_USER = ''
-PHABRICATOR_TOKEN = ''
-# phid of group granted Diffusion admin rights (i.e. #Repository-Admins)
-PHABRICATOR_REPO_ADMIN_GROUP = 'PHID-PROJ-rzvwdtume4to5fnuh3rj'
-
-
+# == Bootstrap3 settings ==
 BOOTSTRAP3 = {
     'jquery_url': STATIC_URL + 'js/jquery.min.js',
     'base_url': STATIC_URL,
@@ -165,6 +222,8 @@ BOOTSTRAP3 = {
     'include_jquery': True,
 }
 
+# == Logging ==
+# FIXME: set LOGGING_CONFIG to None and supply our own Python logging config
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': True,
@@ -181,21 +240,27 @@ LOGGING = {
             'formatter': 'line',
             'level': 'DEBUG',
         },
+        'file': {
+            'class': 'logging.FileHandler',
+            'filename': ini.get('logging', 'FILE_FILENAME'),
+            'formatter': 'line',
+            'level': 'DEBUG',
+         },
     },
     'loggers': {
         'django_auth_ldap': {
-            'handlers': ['console'],
-            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
+            'handlers': ini.get('logging', 'HANDLERS').split(),
+            'level': ini.get('logging', 'LEVEL'),
             'propagate': False,
         },
         'ldapdb': {
-            'handlers': ['console'],
-            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
+            'handlers': ini.get('logging', 'HANDLERS').split(),
+            'level': ini.get('logging', 'LEVEL'),
             'propagate': False,
         },
     },
     'root': {
-        'handlers': ['console'],
-        'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
+        'handlers': ini.get('logging', 'HANDLERS').split(),
+        'level': ini.get('logging', 'LEVEL'),
     },
 }
