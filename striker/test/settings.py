@@ -19,6 +19,7 @@
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
 
 from striker.settings import *  # noqa
+from striker.settings import INSTALLED_APPS
 
 INSTALLED_APPS += (
     'django_nose',
