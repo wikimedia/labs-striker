@@ -218,7 +218,7 @@ CSP_REPORT_URI = '/csp-report'
 BOOTSTRAP3 = {
     'jquery_url': STATIC_URL + 'js/jquery.min.js',
     'base_url': STATIC_URL,
-    'javascript_url': STATIC_URL + 'js/bootstrap.js',
+    'javascript_url': STATIC_URL + 'js/bootstrap.min.js',
     'include_jquery': True,
 }
 
