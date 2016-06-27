@@ -9,7 +9,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="imagetoolbar" content="no">
     <title>{% block title %}{% endblock title %}</title>
+    <link rel="apple-touch-icon-precomposed" sizes="144x144 72x72" href="{% static "img/favicon-apple-touch-144.png" %}">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114 57x57" href="{% static "img/favicon-apple-touch-114.png" %}">
+    <link rel="icon" type="image/icns" sizes="128x128" href="{% static "img/favicon.icns" %}">
     <link rel="icon" type="image/x-icon" sizes="48x48" href="{% static "img/favicon.ico" %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static "img/favicon.png" %}">
     {% bootstrap_css %}
     <link rel="stylesheet" href="{% static "css/bootstrap-theme.min.css" %}">
     <link rel="stylesheet" href="{% static "css/site.css" %}">
