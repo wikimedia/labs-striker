@@ -18,16 +18,19 @@
 # You should have received a copy of the GNU General Public License
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
 
-import logging
-
-from django_auth_ldap.backend import LDAPBackend
-from ratelimitbackend.backends import RateLimitMixin
+from django.conf import settings
+import ipware.ip
 
 
-logger = logging.getLogger(__name__)
-
-
-class RateLimitedLDAPBackend(RateLimitMixin, LDAPBackend):
-    """Add rate limiting to LDAPBackend."""
-    minutes = 5
-    requests = 15
+class XForwaredForMiddleware(object):
+    """Replace request.META['REMOTE_ADDR'] with X-Forwared-For data."""
+    def process_request(self, request):
+        if settings.STRIKER_USE_XFF_HEADER:
+            ip = None
+            if settings.IPWARE_TRUSTED_PROXY_LIST:
+                ip = ipware.ip.get_trusted_ip(request)
+            else:
+                ip = ipware.ip.get_ip(request)
+            if ip is not None:
+                request.META['REMOTE_ADDR'] = ip
+        return None

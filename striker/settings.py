@@ -106,6 +106,7 @@ INSTALLED_APPS = (
 )
 
 MIDDLEWARE_CLASSES = (
+    'striker.middleware.XForwaredForMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -195,7 +196,7 @@ STATICFILES_STORAGE = \
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # Should we be using X-Forwared-For headers?
-XFF_USE_XFF_HEADER = ini.get('xff', 'USE_XFF_HEADER')
+STRIKER_USE_XFF_HEADER = ini.get('xff', 'USE_XFF_HEADER')
 IPWARE_TRUSTED_PROXY_LIST = ini.get('xff', 'TRUSTED_PROXY_LIST').split()
 
 # Default session cookie TTL is until browser close. The "remember me" option
