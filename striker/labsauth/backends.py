@@ -20,8 +20,10 @@
 
 import logging
 
+from django.conf import settings
 from django_auth_ldap.backend import LDAPBackend
 from ratelimitbackend.backends import RateLimitMixin
+import ipware.ip
 
 
 logger = logging.getLogger(__name__)
@@ -29,5 +31,11 @@ logger = logging.getLogger(__name__)
 
 class RateLimitedLDAPBackend(RateLimitMixin, LDAPBackend):
     """Add rate limiting to LDAPBackend."""
-    # FIXME override get_ip() to account for proxies (via XFF header)
-    pass
+    minutes = 5
+    requests = 15
+
+    def get_ip(self, request):
+        """If use of X-Forwared-For headers is enabled, get IP using them."""
+        if settings.XFF_USE_XFF_HEADER:
+            return ipware.ip.get_trusted_ip(request)
+        return super(RateLimitedLDAPBackend, self).get_ip(request)

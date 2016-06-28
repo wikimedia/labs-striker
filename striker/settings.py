@@ -194,6 +194,12 @@ STATICFILES_STORAGE = \
 # Honor the 'X-Forwarded-Proto' header for request.is_secure()
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
+# Should we be using X-Forwared-For headers?
+XFF_USE_XFF_HEADER = ini.get('xff', 'USE_XFF_HEADER')
+IPWARE_TRUSTED_PROXY_LIST = ini.get('xff', 'TRUSTED_PROXY_LIST').split()
+
+# Default session cookie TTL is until browser close. The "remember me" option
+# at login will change this.
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 # == django.middleware.security.SecurityMiddleware flags ==
