@@ -22,7 +22,7 @@ from django.conf import settings
 from django.conf import urls
 from django.conf.urls.static import static
 from django.views.generic import TemplateView
-import django.contrib.admin
+import ratelimitbackend.admin
 
 import striker.labsauth.urls
 import striker.profile.urls
@@ -44,5 +44,6 @@ urlpatterns = [
     urls.url(
         r'^tools/', urls.include(striker.tools.urls, namespace='tools')),
 
-    urls.url(r'^contrib-admin/', urls.include(django.contrib.admin.site.urls)),
+    urls.url(
+        r'^contrib-admin/', urls.include(ratelimitbackend.admin.site.urls)),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

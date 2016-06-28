@@ -26,6 +26,7 @@ from django.contrib import messages
 from django.contrib.auth import views as auth_views
 from django.core import urlresolvers
 from django.utils.translation import ugettext_lazy as _
+from ratelimitbackend import views as ratelimit_views
 import mwoauth
 
 from striker.labsauth import forms
@@ -38,8 +39,8 @@ logger = logging.getLogger(__name__)
 
 
 def login(req):
-    resp = auth_views.login(
-        req,
+    resp = ratelimit_views.login(
+        request=req,
         template_name='labsauth/login.html',
         authentication_form=forms.LabsAuthenticationForm)
     if 'remember_me' in req.POST:

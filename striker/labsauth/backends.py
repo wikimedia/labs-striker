@@ -18,26 +18,16 @@
 # You should have received a copy of the GNU General Public License
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
 
-from django import forms
-from ratelimitbackend.forms import AuthenticationForm
+import logging
 
-import striker.labsauth.models
-
-
-class LabsUserCreationForm(forms.ModelForm):
-    class Meta:
-        model = striker.labsauth.models.LabsUser
-        fields = ('ldapname',)
+from django_auth_ldap.backend import LDAPBackend
+from ratelimitbackend.backends import RateLimitMixin
 
 
-class LabsUserChangeForm(forms.ModelForm):
-    class Meta:
-        model = striker.labsauth.models.LabsUser
-        fields = '__all__'
+logger = logging.getLogger(__name__)
 
 
-class LabsAuthenticationForm(AuthenticationForm):
-    def __init__(self, *args, **kwargs):
-        super(LabsAuthenticationForm, self).__init__(*args, **kwargs)
-        self.fields['username'].widget = forms.TextInput(
-            attrs={'autofocus': ''})
+class RateLimitedLDAPBackend(RateLimitMixin, LDAPBackend):
+    """Add rate limiting to LDAPBackend."""
+    # FIXME override get_ip() to account for proxies (via XFF header)
+    pass
