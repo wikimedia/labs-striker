@@ -37,5 +37,8 @@ class RateLimitedLDAPBackend(RateLimitMixin, LDAPBackend):
     def get_ip(self, request):
         """If use of X-Forwared-For headers is enabled, get IP using them."""
         if settings.XFF_USE_XFF_HEADER:
-            return ipware.ip.get_trusted_ip(request)
+            if settings.IPWARE_TRUSTED_PROXY_LIST:
+                return ipware.ip.get_trusted_ip(request)
+            else:
+                return ipware.ip.get_ip(request)
         return super(RateLimitedLDAPBackend, self).get_ip(request)
