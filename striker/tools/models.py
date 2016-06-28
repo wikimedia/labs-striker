@@ -18,10 +18,9 @@
 # You should have received a copy of the GNU General Public License
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
 
-import datetime
-
 from django.conf import settings
 from django.db import models
+from django.utils import timezone
 from ldapdb.models import fields
 import ldapdb.models
 
@@ -88,7 +87,7 @@ class DiffusionRepo(models.Model):
     phid = models.CharField(max_length=255)
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL)
     created_date = models.DateTimeField(
-        default=datetime.datetime.now, blank=True, editable=False)
+        default=timezone.now, blank=True, editable=False)
 
     def __str__(self):
         return self.name

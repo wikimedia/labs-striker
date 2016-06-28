@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import datetime
-
 from django.db import migrations, models
 from django.conf import settings
+from django.utils import timezone
 
 import ldapdb.models.fields
 
@@ -26,7 +25,7 @@ class Migration(migrations.Migration):
                 ('name', models.CharField(max_length=255)),
                 ('phid', models.CharField(max_length=255)),
                 ('created_by', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
-                ('created_date', models.DateTimeField(default=datetime.datetime.now, editable=False, blank=True)),
+                ('created_date', models.DateTimeField(default=timezone.now, editable=False, blank=True)),
             ],
         ),
         migrations.CreateModel(

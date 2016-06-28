@@ -19,12 +19,12 @@
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
 
 from operator import attrgetter
-import datetime
 import logging
 
 from django.conf import settings
 from django.db import IntegrityError
 from django.db import models
+from django.utils import timezone
 
 from striker.goals import GOALS
 from striker.goals import GOALS_BY_ID
@@ -99,7 +99,7 @@ class Milestone(models.Model):
         settings.AUTH_USER_MODEL,
         db_index=True, related_name='milestones', on_delete=models.CASCADE)
     completed_date = models.DateTimeField(
-        default=datetime.datetime.now, blank=True, editable=False)
+        default=timezone.now, blank=True, editable=False)
 
     objects = MilestoneManager()
 
