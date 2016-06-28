@@ -200,6 +200,9 @@ SECURE_SSL_REDIRECT = ini.getboolean('https', 'REQUIRE_HTTPS')
 STRIKER_USE_XFF_HEADER = ini.get('xff', 'USE_XFF_HEADER')
 IPWARE_TRUSTED_PROXY_LIST = ini.get('xff', 'TRUSTED_PROXY_LIST').split()
 
+# === Sessions ===
+# Cache session data in memcached but keep db persistance as backup
+SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
 # Default session cookie TTL is until browser close. The "remember me" option
 # at login will change this.
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
