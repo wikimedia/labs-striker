@@ -19,6 +19,7 @@
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
 
 import logging
+import json
 
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -31,8 +32,28 @@ logger = logging.getLogger(__name__)
 @require_POST
 @csrf_exempt
 def csp_report(req):
-    # Ignore a spam report caused by uBlock browser plugin
-    # https://github.com/gorhill/uBlock/issues/1170
-    if '":root #content > #right > .dose > .doses..."' not in req.body:
-        logger.debug('Content Security Policy violation: %s', req.body)
-    return HttpResponse('')
+    # Adapted from https://github.com/adamalton/django-csp-reports/
+    resp = HttpResponse('')
+    raw_report = req.body
+    if isinstance(raw_report, bytes):
+        raw_report = raw_report.decode('utf-8')
+    try:
+        report = json.loads(raw_report)
+    except ValueError:
+        # Ignore malformed reports
+        pass
+    else:
+        if 'csp-report' not in report:
+            return resp
+
+        if 'line-number' not in report['csp-report']:
+            return resp
+
+        if report['csp-report']['line-number'] == 1:
+            # Ignore reports of errors on line 1. This is a common signature
+            # for CSP errors triggered by client controlled code (e.g. browser
+            # plugins that inject CSS/JS into all pages).
+            return resp
+
+        logger.info('Content Security Policy violation: %s', raw_report)
+    return resp
