@@ -8,7 +8,7 @@ from django.utils import timezone
 
 class Migration(migrations.Migration):
 
-    replaces = [(b'goals', '0001_initial'), (b'goals', '0002_auto_20160531_1721')]
+    replaces = [('goals', '0001_initial'), ('goals', '0002_auto_20160531_1721')]
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),

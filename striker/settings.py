@@ -18,7 +18,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
 
-import ConfigParser
+import configparser
 import ldap
 import os
 
@@ -31,7 +31,7 @@ BASE_DIR = os.path.dirname(STRIKER_DIR)
 # Read configuration settings from ini files
 # Based on example given at:
 # https://code.djangoproject.com/wiki/SplitSettings#ini-stylefilefordeployment
-ini = ConfigParser.RawConfigParser(allow_no_value=True)
+ini = configparser.RawConfigParser(allow_no_value=True)
 ini.read([
     os.path.join(STRIKER_DIR, 'striker.ini'),
     os.path.join(BASE_DIR, 'striker.ini'),

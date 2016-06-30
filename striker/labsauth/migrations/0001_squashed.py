@@ -8,7 +8,7 @@ import striker.labsauth.models
 
 class Migration(migrations.Migration):
 
-    replaces = [(b'labsauth', '0001_initial'), (b'labsauth', '0002_auto_20160508_0419')]
+    replaces = [('labsauth', '0001_initial'), ('labsauth', '0002_auto_20160508_0419')]
 
     dependencies = [
         ('auth', '0006_require_contenttypes_0002'),
@@ -35,8 +35,8 @@ class Migration(migrations.Migration):
                 ('is_active', models.BooleanField(default=True, verbose_name='active')),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('updated_at', models.DateTimeField(auto_now=True)),
-                ('groups', models.ManyToManyField(related_query_name='user', related_name='user_set', to=b'auth.Group', blank=True, help_text='The groups this user belongs to. A user will get all permissions granted to each of their groups.', verbose_name='groups')),
-                ('user_permissions', models.ManyToManyField(related_query_name='user', related_name='user_set', to=b'auth.Permission', blank=True, help_text='Specific permissions for this user.', verbose_name='user permissions')),
+                ('groups', models.ManyToManyField(related_query_name='user', related_name='user_set', to='auth.Group', blank=True, help_text='The groups this user belongs to. A user will get all permissions granted to each of their groups.', verbose_name='groups')),
+                ('user_permissions', models.ManyToManyField(related_query_name='user', related_name='user_set', to='auth.Permission', blank=True, help_text='Specific permissions for this user.', verbose_name='user permissions')),
                 ('phabimage', models.CharField(max_length=255, null=True, verbose_name='image', blank=True)),
                 ('phabname', models.CharField(max_length=255, unique=True, null=True, verbose_name='Phabricator username', blank=True)),
                 ('phabrealname', models.CharField(max_length=255, null=True, verbose_name='Phabricator real name', blank=True)),

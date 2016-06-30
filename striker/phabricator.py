@@ -35,7 +35,7 @@ class APIError(Exception):
         self.result = result
 
     def __str__(self):
-        return '%s (%s)' % (self.message, self.code)
+        return '{0} ({1})'.format(self.message, self.code)
 
 
 class Client(object):
@@ -62,7 +62,7 @@ class Client(object):
 
     def post(self, path, data):
         data['__conduit__'] = self.session
-        r = requests.post('%s/api/%s' % (self.url, path), data={
+        r = requests.post('{0}/api/{1}'.format(self.url, path), data={
             'params': json.dumps(data),
             'output': 'json',
         })
@@ -83,12 +83,13 @@ class Client(object):
                 'offset': 0,
                 'limit': len(names),
             })
-        except APIError, e:
+        except APIError as e:
             if e.code == 'ERR-INVALID-PARAMETER' and \
                     'Unknown or missing ldap names' in e.message:
                 logger.warn(e.message)
                 if e.result is None:
-                    raise KeyError('Users not found for %s' % ', '.join(names))
+                    raise KeyError(
+                        'Users not found for {0}'.format(', '.join(names)))
                 else:
                     # Return the partial result
                     r = e.result
@@ -105,12 +106,13 @@ class Client(object):
                 'offset': 0,
                 'limit': len(names),
             })
-        except APIError, e:
+        except APIError as e:
             if e.code == 'ERR-INVALID-PARAMETER' and \
                     'Unknown or missing mediawiki names' in e.message:
                 logger.warn(e.message)
                 if e.result is None:
-                    raise KeyError('Users not found for %s' % ', '.join(names))
+                    raise KeyError(
+                        'Users not found for {0}'.format(', '.join(names)))
                 else:
                     # Return the partial result
                     r = e.result
@@ -125,13 +127,13 @@ class Client(object):
         if ldap is not None and len(ldap) and ldap[0] is not None:
             try:
                 r.extend(self.user_ldapquery(ldap))
-            except KeyError, e:
+            except KeyError as e:
                 logger.debug(e)
                 pass
         if mw is not None and len(mw) and mw[0] is not None:
             try:
                 mw_r = self.user_mediawikiquery(mw)
-            except KeyError, e:
+            except KeyError as e:
                 logger.debug(e)
                 pass
             else:
@@ -165,7 +167,7 @@ class Client(object):
         if 'data' in r and len(r['data']) == 1:
             return r['data'][0]
         else:
-            raise KeyError('Repository %s not found' % name)
+            raise KeyError('Repository {0} not found'.format(name))
 
     def create_repository(self, name, owners):
         """Create a new diffusion repository."""
@@ -216,13 +218,13 @@ class Client(object):
                 'offset': 0,
                 'limit': len(phids),
             })
-        except APIError, e:
+        except APIError as e:
             if e.code == 'ERR-INVALID-PARAMETER' and \
                     'Unknown policies' in e.message:
                 logger.warn(e.message)
                 if e.result is None:
                     raise KeyError(
-                        'Policies not found for %s' % ', '.join(phids))
+                        'Policies not found for {0}'.format(', '.join(phids)))
                 else:
                     # Return the partial result
                     r = e.result
@@ -241,7 +243,7 @@ class Client(object):
         r = self.post('phid.lookup', {'names': [task]})
         if task in r:
             return r[task]
-        raise KeyError('Task %s not found' % task)
+        raise KeyError('Task {0} not found'.format(task))
 
     def comment(self, task, comment):
         """Add a comment to a task.

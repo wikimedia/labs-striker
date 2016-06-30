@@ -10,7 +10,7 @@ import ldapdb.models.fields
 
 class Migration(migrations.Migration):
 
-    replaces = [(b'tools', '0001_initial'), (b'tools', '0002_auto_20160531_1653')]
+    replaces = [('tools', '0001_initial'), ('tools', '0002_auto_20160531_1653')]
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
@@ -32,8 +32,8 @@ class Migration(migrations.Migration):
             name='Maintainer',
             fields=[
                 ('dn', models.CharField(max_length=200)),
-                ('username', ldapdb.models.fields.CharField(max_length=200, serialize=False, primary_key=True, db_column=b'uid')),
-                ('full_name', ldapdb.models.fields.CharField(max_length=200, db_column=b'cn')),
+                ('username', ldapdb.models.fields.CharField(max_length=200, serialize=False, primary_key=True, db_column='uid')),
+                ('full_name', ldapdb.models.fields.CharField(max_length=200, db_column='cn')),
             ],
             options={
                 'abstract': False,
@@ -43,9 +43,9 @@ class Migration(migrations.Migration):
             name='Tool',
             fields=[
                 ('dn', models.CharField(max_length=200)),
-                ('group_name', ldapdb.models.fields.CharField(max_length=200, serialize=False, primary_key=True, db_column=b'cn')),
-                ('gid', ldapdb.models.fields.IntegerField(unique=True, db_column=b'gidNumber')),
-                ('maintainer_ids', ldapdb.models.fields.ListField(db_column=b'member')),
+                ('group_name', ldapdb.models.fields.CharField(max_length=200, serialize=False, primary_key=True, db_column='cn')),
+                ('gid', ldapdb.models.fields.IntegerField(unique=True, db_column='gidNumber')),
+                ('maintainer_ids', ldapdb.models.fields.ListField(db_column='member')),
             ],
             options={
                 'abstract': False,

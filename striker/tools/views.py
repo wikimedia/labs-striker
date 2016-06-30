@@ -47,11 +47,12 @@ def inject_tool(f):
         if 'tool' in kwargs:
             name = kwargs['tool']
             try:
-                kwargs['tool'] = Tool.objects.get(group_name='tools.%s' % name)
+                kwargs['tool'] = Tool.objects.get(
+                    group_name='tools.{0}'.format(name))
             except ObjectDoesNotExist:
                 req = args[0]
                 messages.error(
-                    req, _('Tool %(tool)s not found') % {'tool': name})
+                    req, _('Tool {tool} not found').format(tool=name))
                 return shortcuts.redirect(
                     urlresolvers.reverse('tools:index'))
         return f(*args, **kwargs)
@@ -143,7 +144,7 @@ def repo_edit(req, tool, name):
         ctx['phids'] = phab.get_phids(list(set(phids)))
     except KeyError:
         pass
-    except phabricator.APIError, e:
+    except phabricator.APIError as e:
         logger.error(e)
 
     return shortcuts.render(req, 'tools/repo.html', ctx)
