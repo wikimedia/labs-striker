@@ -111,7 +111,4 @@ class Milestone(models.Model):
         return GOALS_BY_ID[self.goal]
 
     def __str__(self):
-        return '%s: %s' % (self.user, self.name)
-
-    def __unicode__(self):
-        return '%s: %s' % (self.user, self.name)
+        return '{0}: {1}'.format(self.user, self.name)

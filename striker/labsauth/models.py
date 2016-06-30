@@ -45,7 +45,7 @@ class LabsUserManager(BaseUserManager):
 def make_authhash():
     """Make a random string."""
     return ''.join(
-        random.SystemRandom().choice(string.printable) for _ in xrange(128))
+        random.SystemRandom().choice(string.printable) for _ in range(128))
 
 
 class LabsUser(AbstractBaseUser, PermissionsMixin):

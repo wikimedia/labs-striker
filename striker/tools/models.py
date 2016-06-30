@@ -36,9 +36,6 @@ class Maintainer(ldapdb.models.Model):
     def __str__(self):
         return self.username
 
-    def __unicode__(self):
-        return self.username
-
 
 class ToolManager(models.Manager):
     def get_queryset(self):
@@ -64,7 +61,7 @@ class Tool(ldapdb.models.Model):
 
     @name.setter
     def name(self, value):
-        self.group_name = 'tools.%s' % value
+        self.group_name = 'tools.{0!s}'.format(value)
 
     def maintainers(self):
         # OMG, this is horrible. You can't search LDAP by dn.
@@ -73,9 +70,6 @@ class Tool(ldapdb.models.Model):
                 dn.split(',')[0].split('=')[1] for dn in self.maintainer_ids))
 
     def __str__(self):
-        return self.name
-
-    def __unicode__(self):
         return self.name
 
 
@@ -90,7 +84,4 @@ class DiffusionRepo(models.Model):
         default=timezone.now, blank=True, editable=False)
 
     def __str__(self):
-        return self.name
-
-    def __unicode__(self):
         return self.name

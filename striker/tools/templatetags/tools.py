@@ -66,7 +66,7 @@ def phab_rule(rule, phids):
 def get(dictionary, key):
     try:
         return dictionary.get(key)
-    except TypeError, e:
+    except TypeError as e:
         logger.error(
             'Invalid arguments: dictionary=%s key=%s %s', dictionary, key, e)
         return None
