@@ -123,8 +123,9 @@ class LabsUser(AbstractBaseUser, PermissionsMixin):
         return salted_hmac(LabsUser.__name__, self.authhash).hexdigest()
 
     def set_accesstoken(self, token):
-        self.oauthtoken = token.key
-        self.oauthsecret = token.secret
+        self.oauthtoken = token.key.decode('utf-8')
+        self.oauthsecret = token.secret.decode('utf-8')
 
     def get_accesstoken(self):
-        return mwoauth.AccessToken(self.oauthtoken, self.oauthsecret)
+        return mwoauth.AccessToken(
+            self.oauthtoken.encode('utf-8'), self.oauthsecret.encode('utf-8'))

@@ -30,6 +30,7 @@ from ratelimitbackend import views as ratelimit_views
 import mwoauth
 
 from striker.labsauth import forms
+from striker.labsauth import utils
 
 NEXT_PAGE = 'striker.oauth.next_page'
 REQUEST_TOKEN_KEY = 'striker.oauth.request_token'
@@ -73,7 +74,8 @@ def oauth_initiate(req):
         messages.error(req, _("OAuth handshake failed."))
         return shortcuts.redirect(next_page or '/')
     else:
-        req.session[REQUEST_TOKEN_KEY] = request_token
+        # Convert to unicode for session storage
+        req.session[REQUEST_TOKEN_KEY] = utils.tuple_to_unicode(request_token)
         return shortcuts.redirect(redirect)
 
 
@@ -84,6 +86,8 @@ def oauth_callback(req):
         messages.error(req, _("Session invalid."))
         return shortcuts.redirect(
             urlresolvers.reverse('labsauth:oauth_initiate'))
+    # Convert from unicode stored in session to bytes expected by mwoauth
+    serialized_token = utils.tuple_to_bytes(serialized_token)
 
     consumer_token = mwoauth.ConsumerToken(
         settings.OAUTH_CONSUMER_KEY, settings.OAUTH_CONSUMER_SECRET)
@@ -93,7 +97,8 @@ def oauth_callback(req):
         consumer_token,
         request_token,
         req.META['QUERY_STRING'])
-    req.session[ACCESS_TOKEN_KEY] = access_token
+    # Convert to unicode for session storage
+    req.session[ACCESS_TOKEN_KEY] = utils.tuple_to_unicode(access_token)
     req.user.set_accesstoken(access_token)
 
     sul_user = mwoauth.identify(
