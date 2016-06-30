@@ -108,4 +108,6 @@ def oauth_callback(req):
     req.user.realname = sul_user['realname']
     req.user.save()
 
+    messages.info(req, _(
+        "Authenticated as SUL user {user}".format(user=sul_user['username'])))
     return shortcuts.redirect(req.session.get(NEXT_PAGE, '/'))
