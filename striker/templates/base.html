@@ -74,6 +74,8 @@
       </div>
     </footer>
     {% bootstrap_javascript %}
-    {% block js %}{% endblock js %}
+    {% block js %}
+    <script lang="javascript" src="{% static "js/site.js" %}"></script>
+    {% endblock js %}
   </body>
 </html>
