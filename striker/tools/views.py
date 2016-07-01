@@ -24,6 +24,7 @@ import logging
 from django import shortcuts
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.core import paginator
 from django.core import urlresolvers
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils.translation import ugettext_lazy as _
@@ -58,27 +59,45 @@ def inject_tool(f):
 
 
 def tool_member(tool, user):
+    if user.is_anonymous():
+        return False
     return user.ldap_dn in tool.maintainer_ids
 
 
-@login_required
 def index(req):
-    my_tools = Tool.objects.filter(
-        maintainer_ids__contains=req.user.ldap_dn).order_by('group_name')
-    return shortcuts.render(req, 'tools/index.html', {'my_tools': my_tools})
+    ctx = {
+        'my_tools': [],
+        'query': req.GET.get('q', ''),
+    }
+    if not req.user.is_anonymous():
+        # TODO: do we need to paginate the user's tools too? Magnus has 60!
+        ctx['my_tools'] = Tool.objects.filter(
+            maintainer_ids__contains=req.user.ldap_dn).order_by('group_name')
+
+    page = req.GET.get('p')
+    if ctx['query'] == '':
+        tool_list = Tool.objects.all()
+    else:
+        tool_list = Tool.objects.filter(group_name__icontains=ctx['query'])
+    tool_list = tool_list.order_by('group_name')
+    pager = paginator.Paginator(tool_list, 10)
+    try:
+        tools = pager.page(page)
+    except paginator.PageNotAnInteger:
+        tools = pager.page(1)
+    except paginator.EmptyPage:
+        tools = pager.page(pager.num_pages)
+    ctx['all_tools'] = tools
+
+    return shortcuts.render(req, 'tools/index.html', ctx)
 
 
-@login_required
 @inject_tool
 def tool(req, tool):
-    if not tool_member(tool, req.user):
-        messages.error(
-            req, _('You are not a member of {tool}').format(tool=tool.name))
-        return shortcuts.redirect(urlresolvers.reverse('tools:index'))
-
     return shortcuts.render(req, 'tools/tool.html', {
         'tool': tool,
         'repos': DiffusionRepo.objects.filter(tool=tool.name),
+        'can_edit': tool_member(tool, req.user),
     })
 
 
@@ -111,7 +130,7 @@ def repo_create(req, tool):
             repo_model.save()
             # Redirect to repo view
             return shortcuts.redirect(
-                urlresolvers.reverse('tools:repo_edit', kwargs={
+                urlresolvers.reverse('tools:repo_view', kwargs={
                     'tool': tool.name,
                     'name': name,
                 }))
@@ -120,14 +139,8 @@ def repo_create(req, tool):
         'tool': tool, 'form': form})
 
 
-@login_required
 @inject_tool
-def repo_edit(req, tool, name):
-    if not tool_member(tool, req.user):
-        messages.error(
-            req, _('You are not a member of {tool}').format(tool=tool.name))
-        return shortcuts.redirect(urlresolvers.reverse('tools:index'))
-
+def repo_view(req, tool, name):
     ctx = {
         'tool': tool,
         'repo_name': name,

@@ -38,15 +38,16 @@
           <ul class="nav navbar-nav">
             {% url 'index' as index %}
             <li class="{% if request.path == index %}active{% endif %}"><a href="{{ index }}">{% bootstrap_icon "home" %} {% trans "Home" %}</a></li>
-            {% if user.is_authenticated %}
-              {% include "_nav_user.html" %}
-            {% endif %}
+            <li class="{% if '/tools/' in request.path %}active{% endif %}"><a href="{% url 'tools:index' %}">{% bootstrap_icon "wrench" %} {% trans "Tools" %}</a></li>
           </ul>
           <ul class="nav navbar-nav navbar-right">
             {% if user.is_authenticated %}
             <li class="dropdown {% if '/profile/' in request.path %}active{% endif %}">
               <a class="dropdown-toggle" aria-expanded="false" aria-haspopup="true" role="button" data-toggle="dropdown" href="{% url 'profile:nojs' %}">{{ user }} <span class="caret"></span></a>
-              {% include "_nav_user_right.html" %}
+              <ul class="dropdown-menu">
+                  <li><a href="{% url 'profile:ldap' %}">{% bootstrap_icon "cog" %} {% trans "Settings" %}</a></li>
+                  <li><a href="{% url 'labsauth:logout' %}">{% bootstrap_icon "log-out" %} {% trans "Logout" %}</a></li>
+              </ul>
             </li>
             {% else %}
             {% url 'labsauth:login' as login %}

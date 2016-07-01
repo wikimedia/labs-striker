@@ -33,13 +33,15 @@
     <div class="panel-body">
       <ul class="tools-diffusion-repos">
         {% for repo in repos %}
-        <li><a href="{% url 'tools:repo_edit' tool=tool.name name=repo.name %}">{{ repo.name }}</a></li>
+        <li><a href="{% url 'tools:repo_view' tool=tool.name name=repo.name %}">{{ repo.name }}</a></li>
         {% endfor %}
       </ul>
     </div>
+    {% if can_edit %}
     <div class="panel-footer">
       <p><a href="{% url 'tools:repo_create' tool=tool.name %}" class="btn btn-default">{% bootstrap_icon "plus" %} {% trans "Create new repository" %}</a></p>
     </div>
+    {% endif %}
   </div>
 </div>
 {% endblock %}

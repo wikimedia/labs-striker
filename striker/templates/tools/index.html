@@ -4,14 +4,60 @@
 
 {% block title %}{% trans "Tools" %}{% endblock %}
 {% block content %}
-<div class="panel panel-default">
-  <div class="panel-heading">{% trans "Your tools" %}</div>
-  <div class="list-group">
-    {% for tool in my_tools %}
-    <a href="{% url 'tools:tool' tool=tool %}" class="list-group-item">{{ tool.name }}</a>
-    {% empty %}
-    <div class="list-group-item">{% blocktrans with url='https://tools.wmflabs.org/' %}Your account is not associated with any tools. Visit <a href="{{ url }}">tools.wmflabs.org</a> to find a existing tool to join or create a new tool.{% endblocktrans %}</div>
-    {% endfor %}
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-3">
+      <div class="panel panel-default">
+        <div class="panel-heading">{% bootstrap_icon "star" %} {% trans "Your tools" %}</div>
+        {% if not user.is_anonymous %}
+        <div class="list-group">
+          {% for tool in my_tools %}
+          <a href="{% url 'tools:tool' tool=tool %}" class="list-group-item">{{ tool.name }}</a>
+          {% empty %}
+          <div class="list-group-item">{% blocktrans with url='https://tools.wmflabs.org/' %}Your account is not associated with any tools. Visit <a href="{{ url }}">tools.wmflabs.org</a> to find a existing tool to join or create a new tool.{% endblocktrans %}</div>
+          {% endfor %}
+        </div>
+        {% else %}
+        <div class="panel-body">
+          {% url 'labsauth:login' as login_url %}
+          {% url 'tools:index' as tools_url %}
+          {% blocktrans with login_url=login_url tools_url=tools_url %}
+          <p><a href="{{ login_url }}?next={{ tools_url }}">Login</a> to see your tools.</p>
+          {% endblocktrans %}
+        </div>
+        {% endif %}
+      </div>
+    </div>
+    <div class="col-md-9">
+      <div class="panel panel-default">
+        <div class="panel-heading">{% bootstrap_icon "wrench" %} {% trans "Tools" %}</div>
+        <div class="panel-body">
+          <form method="get" action="{% url 'tools:index' %}" class="form-inline">
+            <div class="form-group">
+              <div class="input-group">
+                <input type="text" name="q" value="{{ query }}" class="form-control" placeholder="{% trans 'Search for...' %}">
+                <span class="input-group-btn">
+                  <button type="submit" class="btn btn-success">
+                    {% bootstrap_icon "search" %} {% trans 'Search' %}
+                  </button>
+                </span>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="list-group">
+          {% for tool in all_tools %}
+          <a href="{% url 'tools:tool' tool=tool %}" class="list-group-item">{{ tool.name }}</a>
+          {% endfor %}
+        </div>
+        <div class="panel-footer">
+          {% with "q="|add:query as q  %}
+          {% bootstrap_pagination all_tools size="small" parameter_name="p" extra=q %}
+          {% endwith %}
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 {% endblock %}
+{# vim:sw=2:ts=2:sts=2:et:ft=htmldjango: #}

@@ -34,8 +34,8 @@ urlpatterns = [
         name='repo_create'
     ),
     urls.url(
-        r'^(?P<tool>[_a-z][-0-9_a-z]*)/edit/repo/(?P<name>[a-z0-9-]+)$',
-        'striker.tools.views.repo_edit',
-        name='repo_edit'
+        r'^(?P<tool>[_a-z][-0-9_a-z]*)/view/repo/(?P<name>[a-z0-9-]+)$',
+        'striker.tools.views.repo_view',
+        name='repo_view'
     ),
 ]
