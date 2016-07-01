@@ -24,8 +24,6 @@ import logging
 from django import shortcuts
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-# FIXME add tool membership validation
-# from django.contrib.auth.decorators import user_passes_test
 from django.core import urlresolvers
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils.translation import ugettext_lazy as _
@@ -59,18 +57,25 @@ def inject_tool(f):
     return decorated
 
 
+def tool_member(tool, user):
+    return user.ldap_dn in tool.maintainer_ids
+
+
 @login_required
 def index(req):
-    # FIXME: Should we do this with the Tools model instead? probably.
-    tools = sorted(name[6:] for name in req.user.groups.filter(
-        name__startswith='tools.').values_list(
-            'name', flat=True))
-    return shortcuts.render(req, 'tools/index.html', {'tools': tools})
+    my_tools = Tool.objects.filter(
+        maintainer_ids__contains=req.user.ldap_dn).order_by('group_name')
+    return shortcuts.render(req, 'tools/index.html', {'my_tools': my_tools})
 
 
 @login_required
 @inject_tool
 def tool(req, tool):
+    if not tool_member(tool, req.user):
+        messages.error(
+            req, _('You are not a member of {tool}').format(tool=tool.name))
+        return shortcuts.redirect(urlresolvers.reverse('tools:index'))
+
     return shortcuts.render(req, 'tools/tool.html', {
         'tool': tool,
         'repos': DiffusionRepo.objects.filter(tool=tool.name),
@@ -81,6 +86,11 @@ def tool(req, tool):
 @inject_tool
 def repo_create(req, tool):
     """Create a new Diffusion repo."""
+    if not tool_member(tool, req.user):
+        messages.error(
+            req, _('You are not a member of {tool}').format(tool=tool.name))
+        return shortcuts.redirect(urlresolvers.reverse('tools:index'))
+
     form = RepoCreateForm(req.POST or None, req.FILES or None, tool=tool)
     if req.method == 'POST':
         if form.is_valid():
@@ -113,6 +123,11 @@ def repo_create(req, tool):
 @login_required
 @inject_tool
 def repo_edit(req, tool, name):
+    if not tool_member(tool, req.user):
+        messages.error(
+            req, _('You are not a member of {tool}').format(tool=tool.name))
+        return shortcuts.redirect(urlresolvers.reverse('tools:index'))
+
     ctx = {
         'tool': tool,
         'repo_name': name,

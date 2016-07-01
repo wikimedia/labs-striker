@@ -21,6 +21,7 @@
 import random
 import string
 
+from django.conf import settings
 from django.contrib.auth.models import AbstractBaseUser
 from django.contrib.auth.models import BaseUserManager
 from django.contrib.auth.models import PermissionsMixin
@@ -129,3 +130,9 @@ class LabsUser(AbstractBaseUser, PermissionsMixin):
     def get_accesstoken(self):
         return mwoauth.AccessToken(
             self.oauthtoken.encode('utf-8'), self.oauthsecret.encode('utf-8'))
+
+    @property
+    def ldap_dn(self):
+        # DN template uses legacy ('%') style string formatting
+        dn = settings.AUTH_LDAP_USER_DN_TEMPLATE % {'user': self.ldapname}
+        return dn
