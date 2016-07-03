@@ -140,24 +140,24 @@ def repo_create(req, tool):
 
 
 @inject_tool
-def repo_view(req, tool, name):
+def repo_view(req, tool, repo):
     ctx = {
         'tool': tool,
-        'repo_name': name,
+        'repo': repo,
         'status': 'unknown',
         'urls': [],
         'policy': {'view': None, 'edit': None, 'push': None},
     }
     try:
-        repo = phab.get_repository(name)
-        ctx['status'] = repo['fields']['status']
+        repository = phab.get_repository(repo)
+        ctx['status'] = repository['fields']['status']
         ctx['urls'] = [
             u['fields']['uri']['display'] for u in
-            repo['attachments']['uris']['uris']
+            repository['attachments']['uris']['uris']
         ]
 
         # Lookup policy details
-        policy = repo['fields']['policy']
+        policy = repository['fields']['policy']
         policies = phab.get_policies(list(set(policy.values())))
         ctx['policy']['view'] = policies[policy['view']]
         ctx['policy']['edit'] = policies[policy['edit']]

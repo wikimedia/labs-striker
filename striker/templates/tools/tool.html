@@ -33,7 +33,7 @@
     <div class="panel-body">
       <ul class="tools-diffusion-repos">
         {% for repo in repos %}
-        <li><a href="{% url 'tools:repo_view' tool=tool.name name=repo.name %}">{{ repo.name }}</a></li>
+        <li><a href="{% url 'tools:repo_view' tool=tool.name repo=repo.name %}">{{ repo.name }}</a></li>
         {% endfor %}
       </ul>
     </div>

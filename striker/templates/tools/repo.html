@@ -10,7 +10,7 @@
   <li><a href="{% url 'tools:index' %}">{% trans "Tools" %}</a></li>
   <li><a href="{% url 'tools:tool' tool=tool.name %}">{{ tool.name }}</a></li>
   <li>{% trans "Repositories" %}</li>
-  <li class="active">{{ repo_name }}</li>
+  <li class="active">{{ repo }}</li>
 </ol>
 {{ block.super }}
 {% endblock %}
@@ -22,7 +22,7 @@
     <div class="panel-body">
       <dl class="dl-horizontal">
         <dt>{% trans "Name" %}</dt>
-        <dd>{{ repo_name }}</dd>
+        <dd>{{ repo }}</dd>
         <dt>{% trans "Status" %}</dt>
         <dd>{{ status }}</dd>
         <dt>{% trans "URLs" %}</dt>

@@ -21,20 +21,23 @@
 from django.conf import urls
 
 
+TOOL = r'(?P<tool>[_a-z][-0-9_a-z]*)'
+REPO = r'(?P<repo>[_a-z][-0-9_a-z]*)'
+
 urlpatterns = [
     urls.url(r'^$', 'striker.tools.views.index', name='index'),
     urls.url(
-        r'^(?P<tool>[_a-z][-0-9_a-z]*)$',
+        r'^id/{tool}$'.format(tool=TOOL),
         'striker.tools.views.tool',
         name='tool'
     ),
     urls.url(
-        r'^(?P<tool>[_a-z][-0-9_a-z]*)/create/repo$',
+        r'^id/{tool}/repos/create$'.format(tool=TOOL),
         'striker.tools.views.repo_create',
         name='repo_create'
     ),
     urls.url(
-        r'^(?P<tool>[_a-z][-0-9_a-z]*)/view/repo/(?P<name>[a-z0-9-]+)$',
+        r'^id/{tool}/repos/id/{repo}$'.format(tool=TOOL, repo=REPO),
         'striker.tools.views.repo_view',
         name='repo_view'
     ),
