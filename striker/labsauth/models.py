@@ -133,6 +133,5 @@ class LabsUser(AbstractBaseUser, PermissionsMixin):
 
     @property
     def ldap_dn(self):
-        # DN template uses legacy ('%') style string formatting
-        dn = settings.AUTH_LDAP_USER_DN_TEMPLATE % {'user': self.ldapname}
-        return dn
+        return 'uid={0},{1}'.format(
+            self.shellname, settings.LABSAUTH_USER_BASE)

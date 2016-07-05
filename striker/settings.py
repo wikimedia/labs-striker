@@ -250,7 +250,11 @@ BOOTSTRAP3 = {
 # LDAP Authentication
 AUTH_LDAP_SERVER_URI = ini.get('ldap', 'SERVER_URI')
 AUTH_LDAP_START_TLS = ini.getboolean('ldap', 'TLS')
-AUTH_LDAP_USER_DN_TEMPLATE = ini.get('ldap', 'USER_DN_TEMPLATE')
+AUTH_LDAP_USER_SEARCH = django_auth_ldap.config.LDAPSearch(
+    ini.get('ldap', 'USER_SEARCH_BASE'),
+    ldap.SCOPE_ONELEVEL,
+    ini.get('ldap', 'USER_SEARCH_FILTER')
+)
 AUTH_LDAP_USER_ATTR_MAP = {
     'ldapname': 'sn',
     'ldapemail': 'mail',
@@ -278,6 +282,8 @@ AUTH_USER_MODEL = 'labsauth.LabsUser'
 
 LOGIN_URL = 'labsauth:login'
 LOGIN_REDIRECT_URL = '/'
+
+LABSAUTH_USER_BASE = ini.get('ldap', 'USER_SEARCH_BASE')
 
 # == OAuth settings ==
 OAUTH_CONSUMER_KEY = ini.get('oauth', 'CONSUMER_KEY')
