@@ -119,21 +119,26 @@ def repo_create(req, tool):
             #   longer be able to edit the object. (ERR-CONDUIT-CORE)
             # Convert list of maintainers to list of phab users
             maintainers = [m.full_name for m in tool.maintainers()]
-            phab_maintainers = [m['phid'] for m in phab.user_ldapquery(
-                maintainers)]
-            # Create repo
-            repo = phab.create_repository(name, phab_maintainers)
-            # Save a local association between the repo and the tool.
-            repo_model = DiffusionRepo(
-                tool=tool.name, name=name, phid=repo['phid'],
-                created_by=req.user)
-            repo_model.save()
-            # Redirect to repo view
-            return shortcuts.redirect(
-                urlresolvers.reverse('tools:repo_view', kwargs={
-                    'tool': tool.name,
-                    'name': name,
-                }))
+            try:
+                phab_maintainers = [m['phid'] for m in phab.user_ldapquery(
+                    maintainers)]
+            except KeyError:
+                messages.error(req,
+                    'No Phabricator accounts found for tool maintainers.')
+            else:
+                # Create repo
+                repo = phab.create_repository(name, phab_maintainers)
+                # Save a local association between the repo and the tool.
+                repo_model = DiffusionRepo(
+                    tool=tool.name, name=name, phid=repo['phid'],
+                    created_by=req.user)
+                repo_model.save()
+                # Redirect to repo view
+                return shortcuts.redirect(
+                    urlresolvers.reverse('tools:repo_view', kwargs={
+                        'tool': tool.name,
+                        'repo': name,
+                    }))
 
     return shortcuts.render(req, 'tools/repo/create.html', {
         'tool': tool, 'form': form})
