@@ -123,8 +123,8 @@ def repo_create(req, tool):
                 phab_maintainers = [m['phid'] for m in phab.user_ldapquery(
                     maintainers)]
             except KeyError:
-                messages.error(req,
-                    'No Phabricator accounts found for tool maintainers.')
+                messages.error(
+                    req, 'No Phabricator accounts found for tool maintainers.')
             else:
                 # Create repo
                 repo = phab.create_repository(name, phab_maintainers)
