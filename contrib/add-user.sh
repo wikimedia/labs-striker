@@ -3,9 +3,9 @@
 # role::striker. This is a quick fix to work around differences between
 # accounts created with OSM (prod) and LdapAuth (mw-vagrant).
 #
-# Usage: add-user.sh WIKI_USER_NAME [SHELL_USER_NAME]
+# Usage: add-user.sh SHELL_USER_NAME [WIKI_USER_NAME]
 
-NEW_UID=${1:?USER required}
+NEW_UID=${1:?SHELL_USER_NAME required}
 NEW_CN=${2:=$NEW_UID}
 BASE_DN="dc=wmftest,dc=net"
 USER_BASE_DN="ou=People,${BASE_DN}"
