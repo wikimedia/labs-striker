@@ -60,4 +60,6 @@ def phab_attach(req):
         req.user.phabimage = r['image']
         req.user.save()
         messages.info(req, _("Attached Phabricator account."))
-    return shortcuts.redirect(urlresolvers.reverse('profile:phabricator'))
+    next_page = req.GET.get(
+        'next', urlresolvers.reverse('profile:phabricator'))
+    return shortcuts.redirect(next_page)
