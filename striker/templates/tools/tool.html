@@ -26,9 +26,18 @@
       </ul>
     </div>
   </div>
-  <div class="panel panel-default">
+  <div class="panel panel-default {% if can_edit %}panel-pager{% endif %}">
     <div class="panel-heading" role="tab" id="diffusion">
-      <h3 class="panel-title">{% bootstrap_icon "hdd" %} {% trans "Diffusion repositories" %}</h3>
+      <div class="row">
+        <div class="col-sm-6">
+          <h3 class="panel-title">{% bootstrap_icon "hdd" %} {% trans "Diffusion repositories" %}</h3>
+        </div>
+        <div class="col-sm-6">
+          {% if can_edit %}
+          <a href="{% url 'tools:repo_create' tool=tool.name %}" class="btn btn-default pull-right">{% bootstrap_icon "plus" %} {% trans "Create new repository" %}</a>
+          {% endif %}
+        </div>
+      </div>
     </div>
     <div class="panel-body">
       <ul class="tools-diffusion-repos">
@@ -37,11 +46,6 @@
         {% endfor %}
       </ul>
     </div>
-    {% if can_edit %}
-    <div class="panel-footer">
-      <p><a href="{% url 'tools:repo_create' tool=tool.name %}" class="btn btn-default">{% bootstrap_icon "plus" %} {% trans "Create new repository" %}</a></p>
-    </div>
-    {% endif %}
   </div>
 </div>
 {% endblock %}
