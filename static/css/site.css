@@ -49,6 +49,15 @@ form.hidden-labels label.no-hide {
   -moz-column-width:30ch;
   column-width:30ch;
 }
+.panel-pager .panel-title {
+  padding-top:.5em;
+}
+.panel-pager .panel-footer {
+  text-align:center;
+}
+.panel-pager .pagination {
+  margin:0;
+}
 .text-2x {
   font-size:2em;
 }

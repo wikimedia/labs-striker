@@ -29,21 +29,26 @@
       </div>
     </div>
     <div class="col-md-9">
-      <div class="panel panel-default">
-        <div class="panel-heading">{% bootstrap_icon "wrench" %} {% trans "Tools" %}</div>
-        <div class="panel-body">
-          <form method="get" action="{% url 'tools:index' %}" class="form-inline">
-            <div class="form-group">
-              <div class="input-group">
-                <input type="text" name="q" value="{{ query }}" class="form-control" placeholder="{% trans 'Search for...' %}">
-                <span class="input-group-btn">
-                  <button type="submit" class="btn btn-success">
-                    {% bootstrap_icon "search" %} {% trans 'Search' %}
-                  </button>
-                </span>
-              </div>
+      <div class="panel panel-default panel-pager">
+        <div class="panel-heading">
+          <div class="row">
+            <div class="col-sm-6">
+              <h3 class="panel-title">{% bootstrap_icon "wrench" %} {% trans "Tools" %}</h3>
             </div>
-          </form>
+            <div class="col-sm-6">
+              <form method="get" action="{% url 'tools:index' %}">
+                <div class="input-group">
+                  <input type="text" name="q" value="{{ query }}" class="form-control" placeholder="{% trans 'Search for...' %}">
+                  <span class="input-group-btn">
+                    <button type="submit" class="btn btn-success">
+                      {% bootstrap_icon "search" %}
+                      <span class="sr-only">{% trans 'Search' %}</span>
+                    </button>
+                  </span>
+                </div>
+              </form>
+            </div>
+          </div>
         </div>
         <div class="list-group">
           {% for tool in all_tools %}
