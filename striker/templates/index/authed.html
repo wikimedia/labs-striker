@@ -1,23 +1,53 @@
 {% load bootstrap3 %}
 {% load i18n %}
 
-<div class="container-fluid">
-  <div class="row">
-    <div class="col-md-9 col-md-push-3">
-      {% with goal=user.milestones.nextGoal %}
-        {% if goal.name %}
-          {% with goal_template="goals/"|add:goal.name|add:".html" %}
-            {% include goal_template with goal=goal%}
-          {% endwith %}
-        {% endif %}
-      {% endwith %}
+<div class="row">
+  <div class="col-sm-9 col-sm-push-3">
+    {% with goal=user.milestones.nextGoal %}
+      {% if goal.name %}
+        {% with goal_template="goals/"|add:goal.name|add:".html" %}
+          {% include goal_template with goal=goal %}
+        {% endwith %}
+      {% endif %}
+    {% endwith %}
+    <div class="row">
+      <div class="col-sm-6">
+        <div class="panel panel-primary">
+          <div class="panel-heading">
+            <div class="row">
+              <div class="col-xs-3">
+                <div class="text-2x">{% bootstrap_icon "wrench" %}</div>
+              </div>
+              <div class="col-xs-9 text-right">
+                <div>{{ tools_count }}</div>
+                <div>{% trans "Hosted Tools" %}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-6">
+        <div class="panel panel-success">
+          <div class="panel-heading">
+            <div class="row">
+              <div class="col-xs-3">
+                <div class="text-2x">{% bootstrap_icon "user" %}</div>
+              </div>
+              <div class="col-xs-9 text-right">
+                <div>{{ maintainers_count }}</div>
+                <div>{% trans "Tool Maintainers" %}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="col-md-3 col-md-pull-9">
-      <ul class="list-group">
-        <li class="list-group-item"><a href="{% url 'tools:index' %}">{% bootstrap_icon "wrench" %} {% trans "Tools" %}</a></li>
-        <li class="list-group-item"><a href="{% url 'profile:ldap' %}">{% bootstrap_icon "cog" %} {% trans "Settings" %}</a></li>
-      </ul>
-    </div>
+  </div>
+  <div class="col-sm-3 col-sm-pull-9">
+    <ul class="list-group">
+      <li class="list-group-item"><a href="{% url 'tools:index' %}">{% bootstrap_icon "wrench" %} {% trans "Tools" %}</a></li>
+      <li class="list-group-item"><a href="{% url 'profile:ldap' %}">{% bootstrap_icon "cog" %} {% trans "Settings" %}</a></li>
+    </ul>
   </div>
 </div>
 {# vim:sw=2:ts=2:sts=2:et:ft=htmldjango: #}

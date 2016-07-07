@@ -1,12 +1,65 @@
 {% load i18n %}
 
-<div class="jumbotron">
-  <h1>{% trans "Welcome!" %}</h1>
-  {% blocktrans with tl_url='https://tools.wmflabs.org/' %}
-  <p><strong>Tool Labs admin console</strong> helps <a href="{{ tl_url }}">Wikimedia Tool Labs</a> users manage their tools.</p>
-  {% endblocktrans %}
-  {% url 'labsauth:login' as login_url %}
-  {% blocktrans with login_url=login_url %}
-  <p><a href="{{ login_url }}" class="btn btn-lg btn-primary" role="button">Get started</a></p>
-  {% endblocktrans %}
+<div class="row">
+  <div class="jumbotron">
+    <h1>{% trans "Welcome!" %}</h1>
+    {% blocktrans with tl_url='https://tools.wmflabs.org/' %}
+    <p><strong>Tool Labs admin console</strong> helps <a href="{{ tl_url }}">Wikimedia Tool Labs</a> users manage their tools.</p>
+    {% endblocktrans %}
+    {% url 'labsauth:login' as login_url %}
+    {% blocktrans with login_url=login_url %}
+    <p><a href="{{ login_url }}" class="btn btn-lg btn-primary" role="button">Get started</a></p>
+    {% endblocktrans %}
+  </div>
 </div>
+<div class="row">
+  <div class="col-sm-6">
+    <div class="panel panel-primary">
+      <div class="panel-heading">
+        <div class="row">
+          <div class="col-xs-3">
+            <div class="text-5x">{% bootstrap_icon "wrench" %}</div>
+          </div>
+          <div class="col-xs-9 text-right">
+            <div class="text-5x">{{ tools_count }}</div>
+            <div>{% trans "Hosted Tools" %}</div>
+          </div>
+        </div>
+      </div>
+      <a href="{% url 'tools:index' %}">
+        <div class="panel-footer">
+          <span class="pull-left">{% trans "Browse Tools" %}</span>
+          <span class="pull-right">
+            {% bootstrap_icon "circle-arrow-right" %}
+          </span>
+          <div class="clearfix"></div>
+        </div>
+      </a>
+    </div>
+  </div>
+  <div class="col-sm-6">
+    <div class="panel panel-success">
+      <div class="panel-heading">
+        <div class="row">
+          <div class="col-xs-3">
+            <div class="text-5x">{% bootstrap_icon "user" %}</div>
+          </div>
+          <div class="col-xs-9 text-right">
+            <div class="text-5x">{{ maintainers_count }}</div>
+            <div>{% trans "Tool Maintainers" %}</div>
+          </div>
+        </div>
+      </div>
+      <a href="https://wikitech.wikimedia.org/wiki/Special:FormEdit/Tools_Access_Request">
+        <div class="panel-footer">
+          <span class="pull-left">{% trans "Join today!" %}</span>
+          <span class="pull-right">
+            {% bootstrap_icon "circle-arrow-right" %}
+          </span>
+          <div class="clearfix"></div>
+        </div>
+      </a>
+    </div>
+  </div>
+</div>
+{# vim:sw=2:ts=2:sts=2:et:ft=htmldjango: #}

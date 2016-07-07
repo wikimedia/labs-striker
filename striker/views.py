@@ -21,12 +21,34 @@
 import logging
 import json
 
+from django import shortcuts
+from django.core.cache import cache
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 
+from striker.tools import models
+
 
 logger = logging.getLogger(__name__)
+
+
+def index(req):
+    tools_count = cache.get('tools_count')
+    if tools_count is None:
+        tools_count = models.Tool.objects.count()
+        cache.set('tools_count', tools_count, 900)
+
+    maintainers_count = cache.get('maintainers_count')
+    if maintainers_count is None:
+        maintainers_count = models.Maintainer.objects.count()
+        cache.set('maintainers_count', maintainers_count, 900)
+
+    ctx = {
+        'tools_count': tools_count,
+        'maintainers_count': maintainers_count,
+    }
+    return shortcuts.render(req, 'index.html', ctx)
 
 
 @require_POST

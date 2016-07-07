@@ -30,11 +30,7 @@ import striker.tools.urls
 
 
 urlpatterns = [
-    urls.url(
-        r'^$',
-        TemplateView.as_view(template_name='index.html'),
-        name='index'
-    ),
+    urls.url(r'^$', 'striker.views.index', name='index'),
     urls.url(r'^csp-report', 'striker.views.csp_report', name='csp_report'),
 
     urls.url(

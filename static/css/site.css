@@ -49,3 +49,9 @@ form.hidden-labels label.no-hide {
   -moz-column-width:30ch;
   column-width:30ch;
 }
+.text-2x {
+  font-size:2em;
+}
+.text-5x {
+  font-size:5em;
+}
