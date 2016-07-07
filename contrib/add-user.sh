@@ -6,7 +6,7 @@
 # Usage: add-user.sh SHELL_USER_NAME [WIKI_USER_NAME]
 
 NEW_UID=${1:?SHELL_USER_NAME required}
-NEW_CN=${2:=$NEW_UID}
+NEW_CN=${2:-$NEW_UID}
 BASE_DN="dc=wmftest,dc=net"
 USER_BASE_DN="ou=People,${BASE_DN}"
 ADMIN_DN="cn=admin,${BASE_DN}"
