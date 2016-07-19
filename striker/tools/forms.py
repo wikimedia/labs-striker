@@ -41,7 +41,7 @@ class RepoCreateForm(forms.Form):
             help_text=_("Repository name must begin with {prefix}.".format(
                 prefix=default_name)),
             min_length=len(default_name),
-            max_length=50)
+            max_length=255)
 
     def clean_repo_name(self):
         name = self.cleaned_data.get('repo_name')

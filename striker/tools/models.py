@@ -75,10 +75,9 @@ class Tool(ldapdb.models.Model):
 
 class DiffusionRepo(models.Model):
     """Associate diffusion repos with Tools."""
-    # FIXME: find real length limits
-    tool = models.CharField(max_length=255)
+    tool = models.CharField(max_length=64)
     name = models.CharField(max_length=255)
-    phid = models.CharField(max_length=255)
+    phid = models.CharField(max_length=64)
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL)
     created_date = models.DateTimeField(
         default=timezone.now, blank=True, editable=False)
