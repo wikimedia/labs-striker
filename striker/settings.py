@@ -207,6 +207,7 @@ SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
 # at login will change this.
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 SESSION_COOKIE_SECURE = ini.getboolean('https', 'REQUIRE_HTTPS')
+REMEMBER_ME_TTL = int(ini.get('user_session', 'REMEMBER_ME_TTL'))
 
 # === CSRF ===
 CSRF_COOKIE_HTTPONLY = True

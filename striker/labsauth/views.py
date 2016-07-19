@@ -45,7 +45,7 @@ def login(req):
         template_name='labsauth/login.html',
         authentication_form=forms.LabsAuthenticationForm)
     if 'remember_me' in req.POST:
-        req.session.set_expiry(1209600)  # 2 weeks
+        req.session.set_expiry(settings.REMEMBER_ME_TTL)
         req.session.save()
     return resp
 
