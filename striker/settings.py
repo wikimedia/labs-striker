@@ -89,7 +89,7 @@ LOGGING = {
 # == Django settings ==
 SECRET_KEY = ini.get('secrets', 'SECRET_KEY')
 DEBUG = ini.getboolean('debug', 'DEBUG')
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ini.get('hosts', 'ALLOWED_HOSTS').split()
 
 INSTALLED_APPS = (
     'bootstrap3',
