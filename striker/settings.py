@@ -64,6 +64,11 @@ LOGGING = {
          },
     },
     'loggers': {
+        'django': {
+            'handlers': ini.get('logging', 'HANDLERS').split(),
+            'level': ini.get('logging', 'LEVEL'),
+            'propagate': False,
+        },
         'django_auth_ldap': {
             'handlers': ini.get('logging', 'HANDLERS').split(),
             'level': ini.get('logging', 'LEVEL'),
