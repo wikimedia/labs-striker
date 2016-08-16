@@ -202,6 +202,7 @@ STATICFILES_STORAGE = \
 # Honor the 'X-Forwarded-Proto' header for request.is_secure()
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 SECURE_SSL_REDIRECT = ini.getboolean('https', 'REQUIRE_HTTPS')
+SECURE_SSL_HOST = ini.get('https', 'SSL_CANONICAL_HOST')
 
 # Should we be using X-Forwared-For headers?
 STRIKER_USE_XFF_HEADER = ini.get('xff', 'USE_XFF_HEADER')
