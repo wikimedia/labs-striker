@@ -169,6 +169,17 @@ DATABASES = {
 DATABASE_ROUTERS = [
     'ldapdb.router.Router',
 ]
+if DATABASES['default']['ENGINE'] == 'django.db.backends.mysql':
+    # Make Django and MySQL play nice
+    # https://blog.ionelmc.ro/2014/12/28/terrible-choices-mysql/
+    DATABASES['default']['OPTIONS'] = {
+        'sql_mode': 'TRADITIONAL',
+        'charset': 'utf8',
+        'init_command':
+            'SET character_set_connection=utf8,'
+            'collation_connection=utf8_bin,'
+            'SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED',
+    }
 
 CACHES = {
     'default': {
