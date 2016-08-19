@@ -172,12 +172,16 @@ DATABASE_ROUTERS = [
 if DATABASES['default']['ENGINE'] == 'django.db.backends.mysql':
     # Make Django and MySQL play nice
     # https://blog.ionelmc.ro/2014/12/28/terrible-choices-mysql/
+    # NOTE: use of utf8mb4 charset assumes innodb_large_prefix on the hosting
+    # MySQL server. If not enabled, you will receive errors mentioning
+    # "Specified key was too long; max key length is 767 bytes" for UNIQUE
+    # indices on varchar(255) fields.
     DATABASES['default']['OPTIONS'] = {
         'sql_mode': 'TRADITIONAL',
-        'charset': 'utf8',
+        'charset': 'utf8mb4',
         'init_command':
-            'SET character_set_connection=utf8,'
-            'collation_connection=utf8_bin,'
+            'SET character_set_connection=utf8mb4,'
+            'collation_connection=utf8mb4_bin,'
             'SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED',
     }
 
