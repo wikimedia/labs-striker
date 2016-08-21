@@ -15,6 +15,7 @@ pyasn1>=0.1.9  # BSD
 pycparser>=2.14  # BSD
 PyJWT>=1.4.0  # MIT
 pyldap>=2.4.25.1  # Python style
+python-logstash>=0.4.6  # MIT
 python-memcached>=1.58  # Python style
 requests>=2.10.0  # Apache 2.0
 requests-oauthlib>=0.6.1  # ISC

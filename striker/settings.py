@@ -62,9 +62,27 @@ LOGGING = {
             'formatter': 'line',
             'level': 'DEBUG',
          },
+        'logstash': {
+            'class': 'logstash.UDPLogstashHandler',
+            'host': ini.get('logging', 'LOGSTASH_HOST'),
+            'port': int(ini.get('logging', 'LOGSTASH_PORT')),
+            'version': 1,
+            'message_type': 'striker',
+            'fqdn': False,
+        },
     },
     'loggers': {
         'django': {
+            'handlers': ini.get('logging', 'HANDLERS').split(),
+            'level': ini.get('logging', 'LEVEL'),
+            'propagate': False,
+        },
+        'django.request': {
+            'handlers': ini.get('logging', 'HANDLERS').split(),
+            'level': ini.get('logging', 'LEVEL'),
+            'propagate': False,
+        },
+        'django.security': {
             'handlers': ini.get('logging', 'HANDLERS').split(),
             'level': ini.get('logging', 'LEVEL'),
             'propagate': False,
@@ -75,6 +93,11 @@ LOGGING = {
             'propagate': False,
         },
         'ldapdb': {
+            'handlers': ini.get('logging', 'HANDLERS').split(),
+            'level': ini.get('logging', 'LEVEL'),
+            'propagate': False,
+        },
+        'py.warnings': {
             'handlers': ini.get('logging', 'HANDLERS').split(),
             'level': ini.get('logging', 'LEVEL'),
             'propagate': False,
