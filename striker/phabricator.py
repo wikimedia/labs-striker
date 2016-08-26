@@ -76,7 +76,7 @@ class Client(object):
         return resp['result']
 
     def user_ldapquery(self, names):
-        """Lookup Phabricator user data associated with LDAP sn values."""
+        """Lookup Phabricator user data associated with LDAP cn values."""
         try:
             r = self.post('user.ldapquery', {
                 'ldapnames': names,

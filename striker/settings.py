@@ -303,7 +303,7 @@ AUTH_LDAP_USER_SEARCH = django_auth_ldap.config.LDAPSearch(
     ini.get('ldap', 'USER_SEARCH_FILTER')
 )
 AUTH_LDAP_USER_ATTR_MAP = {
-    'ldapname': 'sn',
+    'ldapname': 'cn',
     'ldapemail': 'mail',
     'shellname': 'uid',
 }
