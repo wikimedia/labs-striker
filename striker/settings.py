@@ -39,14 +39,20 @@ ini.read([
 ])
 
 # == Logging ==
-# FIXME: set LOGGING_CONFIG to None and supply our own Python logging config
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'incremental': False,
+    'filters': {
+        'request_id': {
+            '()': 'log_request_id.filters.RequestIDFilter'
+        }
+    },
     'formatters': {
         'line': {
-            'format': '%(asctime)s %(name)s %(levelname)s: %(message)s',
+            'format':
+                '%(asctime)s [%(request_id)s] %(name)s %(levelname)s: '
+                '%(message)s',
             'datefmt': '%Y-%m-%dT%H:%M:%SZ',
         },
     },
@@ -59,6 +65,7 @@ LOGGING = {
         'file': {
             'class': 'logging.FileHandler',
             'filename': ini.get('logging', 'FILE_FILENAME'),
+            'filters': ['request_id'],
             'formatter': 'line',
             'level': 'DEBUG',
          },
@@ -69,6 +76,8 @@ LOGGING = {
             'version': 1,
             'message_type': 'striker',
             'fqdn': False,
+            'filters': ['request_id'],
+            'level': 'DEBUG',
         },
     },
     'loggers': {
@@ -134,6 +143,7 @@ INSTALLED_APPS = (
 )
 
 MIDDLEWARE_CLASSES = (
+    'log_request_id.middleware.RequestIDMiddleware',
     'striker.middleware.XForwaredForMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',

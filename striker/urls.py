@@ -27,10 +27,19 @@ import striker.labsauth.urls
 import striker.profile.urls
 import striker.tools.urls
 
+# Install custom error handler callbacks.
+# https://docs.djangoproject.com/en/1.8/topics/http/views/#customizing-error-views
+handler400 = 'striker.views.bad_request'  # noqa
+handler403 = 'striker.views.permission_denied'  # noqa
+handler404 = 'striker.views.page_not_found'  # noqa
+handler500 = 'striker.views.server_error'  # noqa
 
 urlpatterns = [
     urls.url(r'^$', 'striker.views.index', name='index'),
     urls.url(r'^csp-report', 'striker.views.csp_report', name='csp_report'),
+    urls.url(r'^e400', 'striker.views.force_400', name='force_400'),
+    urls.url(r'^e403', 'striker.views.force_403', name='force_403'),
+    urls.url(r'^e500', 'striker.views.force_500', name='force_500'),
 
     urls.url(
         r'^auth/', urls.include(striker.labsauth.urls, namespace='labsauth')),

@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Bad Request" %}{% endblock %}
+{% block content %}
+<div class="container-fluid">
+  <blockquote>
+      <p>A <a href="https://en.wikipedia.org/wiki/Web_server">web server</a> may or may not return a <strong>403 Forbidden</strong> HTTP status code in response to a request from a client for a web page or resource to indicate that the server can be reached and understood the request, but refuses to take any further action. Status code 403 responses are the result of the web server being configured to deny access, for some reason, to the requested resource by the client.</p>
+    <footer>
+      <a href="https://en.wikipedia.org/w/index.php?title=HTTP_403&oldid=735681980">&quot;HTTP 403.&quot;</a>
+      <cite title="Wikipedia: The Free Encyclopedia">Wikipedia: The Free Encyclopedia.</cite>
+      Wikimedia Foundation, Inc.
+      22 August 2016.
+      Web. 27 August 2016.
+    </footer>
+  </blockquote>
+
+  <p>You are not currently authorized to view the URI <code>{{ request_path }}</code>.</p>
+  <p>You may be able to get further information in the <a href="irc://chat.freenode.net/wikimedia-labs">#wikimedia-labs</a> channel on the <a href="//www.freenode.net">Freenode IRC network</a>.</p>
+
+  <div class="well well-sm">
+    <p>If you report this error, please include the details below.</p>
+    <dl class="dl-horizontal">
+      <dt>Request ID</dt>
+      <dd>{{ request_id }}</dd>
+    </dl>
+  </div>
+
+</div>
+{% endblock %}
+{# vim:sw=2:ts=2:sts=2:et:ft=htmldjango: #}

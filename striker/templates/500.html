@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Internal Server Error" %}{% endblock %}
+{% block content %}
+<div class="container-fluid">
+  <blockquote>
+    <p><strong>500 Internal Server Error</strong></p>
+    <p>A generic error message, given when an unexpected condition was encountered and no more specific message is suitable.</p>
+    <footer>
+      <a href="https://en.wikipedia.org/w/index.php?title=List_of_HTTP_status_codes&oldid=736266399">&quot;List of HTTP status codes.&quot;</a>
+      <cite title="Wikipedia: The Free Encyclopedia">Wikipedia: The Free Encyclopedia.</cite>
+      Wikimedia Foundation, Inc.
+      26 August 2016.
+      Web. 27 August 2016.
+    </footer>
+  </blockquote>
+
+  <p>An unexpected technical problem has occured while handing the requested URI <code>{{ request_path }}</code>. This is probably temporary and should be fixed soon. Please try again later.</p>
+  <p>You may be able to get further information in the <a href="irc://chat.freenode.net/wikimedia-labs">#wikimedia-labs</a> channel on the <a href="//www.freenode.net">Freenode IRC network</a>.</p>
+
+  <div class="well well-sm">
+    <p>If you report this error, please include the details below.</p>
+    <dl class="dl-horizontal">
+      <dt>Request ID</dt>
+      <dd>{{ request_id }}</dd>
+    </dl>
+  </div>
+
+</div>
+{% endblock %}
+{# vim:sw=2:ts=2:sts=2:et:ft=htmldjango: #}

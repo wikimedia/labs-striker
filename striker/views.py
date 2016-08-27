@@ -21,10 +21,15 @@
 import logging
 import json
 
+from django import http
 from django import shortcuts
 from django.core.cache import cache
-from django.http import HttpResponse
+from django.core.exceptions import PermissionDenied
+from django.core.exceptions import SuspiciousOperation
+from django.template import loader
+from django.template import RequestContext
 from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.csrf import requires_csrf_token
 from django.views.decorators.http import require_POST
 
 from striker.tools import models
@@ -55,7 +60,7 @@ def index(req):
 @csrf_exempt
 def csp_report(req):
     # Adapted from https://github.com/adamalton/django-csp-reports/
-    resp = HttpResponse('')
+    resp = http.HttpResponse('')
     raw_report = req.body
     if isinstance(raw_report, bytes):
         raw_report = raw_report.decode('utf-8')
@@ -79,3 +84,58 @@ def csp_report(req):
 
         logger.info('Content Security Policy violation: %s', raw_report)
     return resp
+
+
+@requires_csrf_token
+def page_not_found(request, template_name='404.html'):
+    ctx = {'request_path': request.path}
+    context = RequestContext(request, ctx)
+    t = loader.get_template(template_name)
+    return http.HttpResponseNotFound(t.render(context))
+
+
+@requires_csrf_token
+def server_error(request, template_name='500.html'):
+    ctx = {
+        'request_path': request.path,
+        'request_id': request.id,
+    }
+    context = RequestContext(request, ctx)
+    t = loader.get_template(template_name)
+    return http.HttpResponseServerError(t.render(context))
+
+
+@requires_csrf_token
+def bad_request(request, template_name='400.html'):
+    ctx = {
+        'request_path': request.path,
+        'request_id': request.id,
+    }
+    context = RequestContext(request, ctx)
+    t = loader.get_template(template_name)
+    return http.HttpResponseBadRequest(t.render(context))
+
+
+@requires_csrf_token
+def permission_denied(request, template_name='403.html'):
+    ctx = {
+        'request_path': request.path,
+        'request_id': request.id,
+    }
+    context = RequestContext(request, ctx)
+    t = loader.get_template(template_name)
+    return http.HttpResponseBadRequest(t.render(context))
+
+
+def force_400(request):
+    raise SuspiciousOperation(
+        'This is just a test of raising SuspiciousOperation')
+
+
+def force_403(request):
+    raise PermissionDenied(
+        'This is just a test of raising PermissionDenied')
+
+
+def force_500(request):
+    raise Exception('This is just a test of raising an unhandled error.')
