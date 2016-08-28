@@ -128,6 +128,7 @@ def repo_create(req, tool):
                     req, 'No Phabricator accounts found for tool maintainers.')
             else:
                 # Create repo
+                # FIXME: error handling!
                 repo = phab.create_repository(name, phab_maintainers)
                 # Save a local association between the repo and the tool.
                 repo_model = DiffusionRepo(

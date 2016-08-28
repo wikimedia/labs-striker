@@ -170,6 +170,20 @@ class Client(object):
                     return repo
         raise KeyError('Repository {0} not found'.format(name))
 
+    def get_repository_by_phid(self, phid):
+        """Lookup information on a diffusion repository by phid."""
+        r = self.post('diffusion.repository.search', {
+            'constraints': {
+                'phids': [phid],
+            },
+            'attachments': {
+                'uris': True,
+            },
+        })
+        if 'data' in r and len(r['data']) == 1:
+            return r['data'][0]
+        raise KeyError('Repository {0} not found'.format(phid))
+
     def create_repository(self, name, owners):
         """Create a new diffusion repository."""
         # Create policy allowing the phids given in owners plus repo-admins
@@ -189,7 +203,35 @@ class Client(object):
                 {'type': 'edit', 'value': custom_policy},
             ],
         })
-        return r['object']
+        obj = r['object']
+        repo = self.get_repository_by_phid(obj['phid'])
+        self._repository_hide_http_url(repo)
+        return repo
+
+    def _repository_hide_http_url(self, repo):
+        """Hide http URI if we also have an https URI."""
+        https = self._repository_get_uri_with_scheme(repo, 'https://id')
+        http = self._repository_get_uri_with_scheme(repo, 'http://id')
+        if https is not None and http is not None:
+            try:
+                self.post('diffusion.uri.edit', {
+                    'transactions': [
+                        {'type': 'display', 'value': 'never'},
+                    ],
+                    'objectIdentifier': http['phid'],
+                })
+                return True
+            except APIError:
+                logger.exception(
+                    'Failed to hide http uri for repo %s', repo['phid'])
+                return False
+        return False
+
+    def _repository_get_uri_with_scheme(self, repo, scheme):
+        for uri in repo['attachments']['uris']['uris']:
+            if uri['fields']['uri']['raw'] == scheme:
+                return uri
+        return None
 
     def create_repo_policy(self, owners):
         """Create an edit policy for a diffusion repository."""
