@@ -25,7 +25,9 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import views as auth_views
 from django.core import urlresolvers
+from django.db.utils import DatabaseError
 from django.utils.translation import ugettext_lazy as _
+
 from ratelimitbackend import views as ratelimit_views
 import mwoauth
 
@@ -106,8 +108,15 @@ def oauth_callback(req):
     req.user.sulname = sul_user['username']
     req.user.sulemail = sul_user['email']
     req.user.realname = sul_user['realname']
-    req.user.save()
+    try:
+        req.user.save()
+        messages.info(
+            req, _("Authenticated as OAuth user {user}".format(
+                user=sul_user['username'])))
+    except DatabaseError:
+        logger.exception('user.save failed')
+        messages.error(
+            req, _("Error updating database. [req id: {id}]").format(
+                id=req.id))
 
-    messages.info(req, _("Authenticated as OAuth user {user}".format(
-            user=sul_user['username'])))
     return shortcuts.redirect(req.session.get(NEXT_PAGE, '/'))

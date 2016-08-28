@@ -25,6 +25,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core import urlresolvers
+from django.db.utils import DatabaseError
 from django.utils.translation import ugettext_lazy as _
 
 from striker import phabricator
@@ -58,8 +59,15 @@ def phab_attach(req):
         req.user.phabrealname = r['realName']
         req.user.phaburl = r['uri']
         req.user.phabimage = r['image']
-        req.user.save()
-        messages.info(req, _("Attached Phabricator account."))
+        try:
+            req.user.save()
+            messages.info(req, _("Attached Phabricator account."))
+        except DatabaseError:
+            logger.exception('user.save failed')
+            messages.error(
+                req, _("Error updating database. [req id: {id}]").format(
+                    id=req.id))
+
     next_page = req.GET.get(
         'next', urlresolvers.reverse('profile:phabricator'))
     return shortcuts.redirect(next_page)

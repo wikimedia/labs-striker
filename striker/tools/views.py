@@ -27,6 +27,7 @@ from django.contrib.auth.decorators import login_required
 from django.core import paginator
 from django.core import urlresolvers
 from django.core.exceptions import ObjectDoesNotExist
+from django.db.utils import DatabaseError
 from django.utils.translation import ugettext_lazy as _
 
 from striker import phabricator
@@ -132,13 +133,20 @@ def repo_create(req, tool):
                 repo_model = DiffusionRepo(
                     tool=tool.name, name=name, phid=repo['phid'],
                     created_by=req.user)
-                repo_model.save()
-                # Redirect to repo view
-                return shortcuts.redirect(
-                    urlresolvers.reverse('tools:repo_view', kwargs={
-                        'tool': tool.name,
-                        'repo': name,
-                    }))
+                try:
+                    repo_model.save()
+                    # Redirect to repo view
+                    return shortcuts.redirect(
+                        urlresolvers.reverse('tools:repo_view', kwargs={
+                            'tool': tool.name,
+                            'repo': name,
+                        }))
+                except DatabaseError:
+                    logger.exception('repo_model.save failed')
+                    messages.error(
+                        req,
+                        _("Error updating database. [req id: {id}]").format(
+                            id=req.id))
 
     return shortcuts.render(req, 'tools/repo/create.html', {
         'tool': tool, 'form': form})
