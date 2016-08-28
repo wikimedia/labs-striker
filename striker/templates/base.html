@@ -66,12 +66,22 @@
       {% block content %}<p>{{ request.path }}: Your message here.</p>{% endblock content %}
       {% block post_content %}{% endblock post_content %}
     </div>
-    <footer class="footer" role="contentinfo">
-      <p class="pull-left"></p>
-      <div class="container-fluid pull-right">
+    <footer class="footer text-muted text-right" role="contentinfo">
+      <div class="container">
+        <div class="row">
+          <hr>
+        </div>
+        <div class="row">
         <ul class="list-inline">
-          <li><a href="https://wikitech.wikimedia.org/wiki/Nova_Resource:Tools/Privacy">{% trans "Privacy policy" %}</a></li>
+          <li><a href="https://wikimediafoundation.org/wiki/Privacy_policy">{% trans "Privacy policy" %}</a></li>
+          <li><a href="https://phabricator.wikimedia.org/diffusion/LSTR/">{% trans "Source" %}</a></li>
+          <li><a href="https://phabricator.wikimedia.org/tag/striker/">{% trans "Issues" %}</a></li>
+          <li><a href="https://wikitech.wikimedia.org/wiki/Toolsadmin.wikimedia.org">{% trans "Docs" %}</a></li>
         </ul>
+      </div>
+      <div class="row">
+        <p>Code licensed <a href="https://phabricator.wikimedia.org/diffusion/LSTR/browse/master/LICENSE" rel="license">GPLv3+</a>, docs <a href="https://creativecommons.org/licenses/by-sa/3.0/" rel="license">CC BY-SA 3.0</a>.
+        </div>
       </div>
     </footer>
     {% block js %}
