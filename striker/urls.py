@@ -21,12 +21,16 @@
 from django.conf import settings
 from django.conf import urls
 from django.conf.urls.static import static
+
 import ratelimitbackend.admin
 
 import striker.labsauth.urls
 import striker.profile.urls
 import striker.tools.urls
 
+
+# ratelimitbackend does not autoregister admin modules
+ratelimitbackend.admin.autodiscover()
 
 urlpatterns = [
     urls.url(r'^$', 'striker.views.index', name='index'),
