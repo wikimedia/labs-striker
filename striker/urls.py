@@ -21,6 +21,7 @@
 from django.conf import settings
 from django.conf import urls
 from django.conf.urls.static import static
+
 import ratelimitbackend.admin
 
 import striker.labsauth.urls
@@ -33,6 +34,9 @@ handler400 = 'striker.views.bad_request'  # noqa
 handler403 = 'striker.views.permission_denied'  # noqa
 handler404 = 'striker.views.page_not_found'  # noqa
 handler500 = 'striker.views.server_error'  # noqa
+
+# ratelimitbackend does not autoregister admin modules
+ratelimitbackend.admin.autodiscover()
 
 urlpatterns = [
     urls.url(r'^$', 'striker.views.index', name='index'),
