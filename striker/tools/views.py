@@ -167,6 +167,7 @@ def repo_view(req, tool, repo):
         ctx['urls'] = [
             u['fields']['uri']['display'] for u in
             repository['attachments']['uris']['uris']
+            if u['fields']['display']['effective'] == 'always'
         ]
 
         # Lookup policy details
