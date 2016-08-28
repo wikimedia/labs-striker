@@ -162,12 +162,13 @@ class Client(object):
             'attachments': {
                 'uris': True,
             },
-            'limit': 1,
+            'order': 'name',
         })
-        if 'data' in r and len(r['data']) == 1:
-            return r['data'][0]
-        else:
-            raise KeyError('Repository {0} not found'.format(name))
+        if 'data' in r:
+            for repo in r['data']:
+                if repo['fields']['name'] == name:
+                    return repo
+        raise KeyError('Repository {0} not found'.format(name))
 
     def create_repository(self, name, owners):
         """Create a new diffusion repository."""
