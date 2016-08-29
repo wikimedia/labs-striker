@@ -23,14 +23,18 @@
       <dl class="dl-horizontal">
         <dt>{% trans "Name" %}</dt>
         <dd>{{ repo }}</dd>
+        <dt>{% trans "Clone" %}</dt>
+        <dd><form>
+            {% for u in urls %}
+            <div class="form-group">
+              <input value="{{ u }}" type="text" class="form-control input-sm" readonly>
+            </div>
+            {% endfor %}
+        </form></dd>
         <dt>{% trans "Status" %}</dt>
         <dd>{{ status }}</dd>
-        <dt>{% trans "URLs" %}</dt>
-        <dd><ul class="list-unstyled">
-            {% for u in urls %}
-            <li>{{ u }}</li>
-            {% endfor %}
-        </ul></dd>
+        <dt>{% trans "View" %}</dt>
+        <dd><a href="{{ phab_url }}/diffusion/{{ repo_id }}/">{% trans "browse repository on Phabricator" %}</a></dd>
       </dl>
     </div>
   </div>

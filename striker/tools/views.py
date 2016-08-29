@@ -22,6 +22,7 @@ import functools
 import logging
 
 from django import shortcuts
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core import paginator
@@ -158,12 +159,15 @@ def repo_view(req, tool, repo):
     ctx = {
         'tool': tool,
         'repo': repo,
+        'repo_id': None,
         'status': 'unknown',
         'urls': [],
         'policy': {'view': None, 'edit': None, 'push': None},
+        'phab_url': settings.PHABRICATOR_URL,
     }
     try:
         repository = phab.get_repository(repo)
+        ctx['repo_id'] = repository['id']
         ctx['status'] = repository['fields']['status']
         ctx['urls'] = [
             u['fields']['uri']['display'] for u in
