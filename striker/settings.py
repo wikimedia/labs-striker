@@ -341,6 +341,7 @@ LOGIN_URL = 'labsauth:login'
 LOGIN_REDIRECT_URL = '/'
 
 LABSAUTH_USER_BASE = ini.get('ldap', 'USER_SEARCH_BASE')
+LABSAUTH_GROUP_BASE = ini.get('ldap', 'BASE_DN')
 
 # == OAuth settings ==
 OAUTH_CONSUMER_KEY = ini.get('oauth', 'CONSUMER_KEY')

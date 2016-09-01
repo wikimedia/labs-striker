@@ -23,6 +23,7 @@ import json
 
 from django import http
 from django import shortcuts
+from django.conf import settings
 from django.core.cache import cache
 from django.core.exceptions import PermissionDenied
 from django.core.exceptions import SuspiciousOperation
@@ -32,7 +33,8 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.csrf import requires_csrf_token
 from django.views.decorators.http import require_POST
 
-from striker.tools import models
+import striker.labsauth.models
+import striker.tools.models
 
 
 logger = logging.getLogger(__name__)
@@ -41,12 +43,14 @@ logger = logging.getLogger(__name__)
 def index(req):
     tools_count = cache.get('tools_count')
     if tools_count is None:
-        tools_count = models.Tool.objects.count()
+        tools_count = striker.tools.models.Tool.objects.count()
         cache.set('tools_count', tools_count, 900)
 
     maintainers_count = cache.get('maintainers_count')
     if maintainers_count is None:
-        maintainers_count = models.Maintainer.objects.count()
+        maintainers_count = len(
+            striker.labsauth.models.PosixGroup.objects.get(
+                name=settings.TOOLS_TOOL_LABS_GROUP_NAME).users)
         cache.set('maintainers_count', maintainers_count, 900)
 
     ctx = {

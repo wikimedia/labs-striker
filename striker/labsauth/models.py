@@ -28,6 +28,9 @@ from django.contrib.auth.models import PermissionsMixin
 from django.db import models
 from django.utils.crypto import salted_hmac
 from django.utils.translation import ugettext_lazy as _
+
+from ldapdb.models import fields as ldap_fields
+import ldapdb.models
 import mwoauth
 
 
@@ -135,3 +138,13 @@ class LabsUser(AbstractBaseUser, PermissionsMixin):
     def ldap_dn(self):
         return 'uid={0},{1}'.format(
             self.shellname, settings.LABSAUTH_USER_BASE)
+
+
+class PosixGroup(ldapdb.models.Model):
+    base_dn = settings.LABSAUTH_GROUP_BASE
+    object_classes = ['posixGroup']
+
+    gid = ldap_fields.IntegerField(db_column='gidNumber', unique=True)
+    name = ldap_fields.CharField(
+        db_column='cn', max_length=200, primary_key=True)
+    users = ldap_fields.ListField(db_column='member')
