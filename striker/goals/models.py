@@ -24,6 +24,7 @@ import logging
 from django.conf import settings
 from django.db import IntegrityError
 from django.db import models
+from django.db import transaction
 from django.utils import timezone
 
 from striker.goals import GOALS
@@ -44,7 +45,12 @@ class MilestoneManager(models.Manager):
                 raise TypeError(
                     'user required unless called from RelatedManager')
         try:
-            self.model(goal=goal, user=user).save(force_insert=True)
+            # Wrap in transaction.atomic() to avoid breaking outer
+            # transactions that may be running when this is called via
+            # a post_save hook
+            # http://stackoverflow.com/a/23326971/8171
+            with transaction.atomic():
+                self.model(goal=goal, user=user).save(force_insert=True)
         except IntegrityError:
             # this just means that the user already reached this milestone
             pass
