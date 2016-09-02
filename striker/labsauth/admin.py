@@ -26,6 +26,7 @@ import striker.labsauth.forms
 import striker.labsauth.models
 
 
+@django.contrib.admin.register(striker.labsauth.models.LabsUser)
 class LabsUserAdmin(django.contrib.auth.admin.UserAdmin):
     fieldsets = (
         (None, {'fields': ('ldapname',)}),
@@ -53,5 +54,20 @@ class LabsUserAdmin(django.contrib.auth.admin.UserAdmin):
     filter_horizontal = ('groups',)
 
 
-django.contrib.admin.site.register(
-    striker.labsauth.models.LabsUser, LabsUserAdmin)
+@django.contrib.admin.register(django.contrib.admin.models.LogEntry)
+class LogEntryAdmin(django.contrib.admin.ModelAdmin):
+    # From http://stackoverflow.com/a/5516987/8171
+    list_display = (
+        'action_time', 'user', 'content_type', 'change_message',
+        'is_addition', 'is_change', 'is_deletion')
+    list_filter = ['action_time', 'user', 'content_type']
+    ordering = ('-action_time',)
+    readonly_fields = [
+        'user', 'content_type', 'object_id', 'object_repr',
+        'action_flag', 'change_message']
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
