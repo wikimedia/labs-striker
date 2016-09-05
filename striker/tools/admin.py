@@ -23,6 +23,8 @@ import django.contrib.admin
 from striker.tools import models
 
 
-django.contrib.admin.site.register(models.DiffusionRepo)
-django.contrib.admin.site.register(models.Maintainer)
-django.contrib.admin.site.register(models.Tool)
+@django.contrib.admin.register(models.DiffusionRepo)
+class DiffusionRepoAdmin(django.contrib.admin.ModelAdmin):
+    list_display = ('name', 'tool', 'phid')
+    list_filter = ('tool',)
+    ordering = ('name',)
