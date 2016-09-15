@@ -26,6 +26,7 @@ import ratelimitbackend.admin
 
 import striker.labsauth.urls
 import striker.profile.urls
+import striker.register.urls
 import striker.tools.urls
 
 # Install custom error handler callbacks.
@@ -49,6 +50,9 @@ urlpatterns = [
         r'^auth/', urls.include(striker.labsauth.urls, namespace='labsauth')),
     urls.url(
         r'^profile/', urls.include(striker.profile.urls, namespace='profile')),
+    urls.url(
+        r'^register/',
+        urls.include(striker.register.urls, namespace='register')),
     urls.url(
         r'^tools/', urls.include(striker.tools.urls, namespace='tools')),
 
