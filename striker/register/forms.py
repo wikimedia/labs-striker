@@ -25,6 +25,8 @@ from django.core import validators
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 
+from striker.register import utils
+
 
 logger = logging.getLogger(__name__)
 
@@ -71,9 +73,11 @@ class LDAPUsername(forms.Form):
     )
 
     def clean_username(self):
-        # TODO: check that is unused globally
+        username = self.cleaned_data['username']
+        if not utils.username_available(username):
+            raise forms.ValidationError(_('Username is already in use.'))
         # TODO: check that it isn't banned by some abusefilter type rule
-        pass
+        return username
 
 
 class ShellUsername(forms.Form):
@@ -97,9 +101,11 @@ class ShellUsername(forms.Form):
     )
 
     def clean_shellname(self):
-        # TODO: check that is unused globally
+        shellname = self.cleaned_data['shellname']
+        if not utils.shellname_available(shellname):
+            raise forms.ValidationError(_('Shell account is already in use.'))
         # TODO: check that it isn't banned by some abusefilter type rule
-        pass
+        return shellname
 
 
 class Email(forms.Form):
@@ -125,7 +131,7 @@ class Password(forms.Form):
     )
     confirm = forms.CharField(
         label=_('Confirm password'),
-        min_length=10,
+        required=True,
         widget=forms.PasswordInput
     )
 
