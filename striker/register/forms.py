@@ -35,7 +35,10 @@ class LDAPUsername(forms.Form):
     username = forms.CharField(
         label=_('Username'),
         widget=forms.TextInput(
-            attrs={'placeholder': _('Enter your desired username')}
+            attrs={
+                'placeholder': _('Enter your desired username'),
+                'autofocus': 'autofocus',
+            }
         ),
         max_length=255,
         required=True,
@@ -82,12 +85,14 @@ class LDAPUsername(forms.Form):
 
 class ShellUsername(forms.Form):
     shellname = forms.CharField(
-        label=_('Shell account'),
+        label=_('Shell username'),
         widget=forms.TextInput(
-            attrs={'placeholder': _('Enter your desired shell account name')}
+            attrs={
+                'placeholder': _('Enter your desired shell account username'),
+                'autofocus': 'autofocus',
+            }
         ),
         max_length=32,
-        required=True,
         validators=[
             validators.RegexValidator(
                 # Unix username regex suggested by useradd(8).
@@ -114,11 +119,11 @@ class Email(forms.Form):
         widget=forms.TextInput(
             attrs={
                 'placeholder': _('Enter a valid email address'),
-                'type': 'email'
+                'type': 'email',
+                'autofocus': 'autofocus',
             }
         ),
-        max_length=255,
-        required=True
+        max_length=255
     )
 
 
@@ -126,12 +131,15 @@ class Password(forms.Form):
     passwd = forms.CharField(
         label=_('Password'),
         min_length=10,
-        required=True,
-        widget=forms.PasswordInput(render_value=True)
+        widget=forms.PasswordInput(
+            render_value=True,
+            attrs={
+                'autofocus': 'autofocus',
+            }
+        )
     )
     confirm = forms.CharField(
         label=_('Confirm password'),
-        required=True,
         widget=forms.PasswordInput
     )
 
@@ -146,3 +154,8 @@ class Password(forms.Form):
         if passwd != confirm:
             self.add_error(
                 'confirm', ValidationError(_('Passwords do not match.')))
+
+
+class Confirm(forms.Form):
+    agree = forms.BooleanField(
+        label=_('I agree to comply with the Terms of Use'))
