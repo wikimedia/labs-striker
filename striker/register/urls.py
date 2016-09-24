@@ -20,14 +20,22 @@
 
 from django.conf import urls
 
-from striker.register import views
 
-
-wizard = views.AccountWizard.as_view(url_name='register:wizard')
-
-
-urlpatterns = [
-    urls.url(r'^$', 'striker.register.views.index', name='index'),
-    urls.url(r'^oauth$', 'striker.register.views.oauth', name='oauth'),
-    urls.url(r'^(?P<step>.+)$', wizard, name='wizard'),
-]
+urlpatterns = urls.patterns(
+    'striker.register.views',
+    urls.url(r'^$', 'index', name='index'),
+    urls.url(r'^api/', urls.include(
+        urls.patterns(
+            'striker.register.views',
+            urls.url(
+                r'^username/(?P<name>.+)$',
+                'username_available', name='username'),
+            urls.url(
+                r'^shellname/(?P<name>.+)$',
+                'shellname_available', name='shellname'),
+        ),
+        namespace='api'
+    )),
+    urls.url(r'^oauth$', 'oauth', name='oauth'),
+    urls.url(r'^(?P<step>.+)$', 'account_wizard', name='wizard'),
+)
