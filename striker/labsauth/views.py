@@ -31,15 +31,10 @@ from django.utils.translation import ugettext_lazy as _
 from ratelimitbackend import views as ratelimit_views
 import mwoauth
 
+from striker.labsauth import constants
 from striker.labsauth import forms
 from striker.labsauth import utils
 
-NEXT_PAGE = 'striker.oauth.next_page'
-REQUEST_TOKEN_KEY = 'striker.oauth.request_token'
-ACCESS_TOKEN_KEY = 'striker.oauth.access_token'
-OAUTH_USERNAME_KEY = 'striker.oauth.username'
-OAUTH_EMAIL_KEY = 'striker.oauth.email'
-OAUTH_REALNAME_KEY = 'striker.oauth.realname'
 
 logger = logging.getLogger(__name__)
 
@@ -64,7 +59,7 @@ def oauth_initiate(req):
     """Initiate an OAuth login."""
     next_page = req.GET.get('next', None)
     if next_page is not None:
-        req.session[NEXT_PAGE] = next_page
+        req.session[constants.NEXT_PAGE] = next_page
     consumer_token = mwoauth.ConsumerToken(
         settings.OAUTH_CONSUMER_KEY, settings.OAUTH_CONSUMER_SECRET)
     try:
@@ -80,13 +75,14 @@ def oauth_initiate(req):
         return shortcuts.redirect(next_page or '/')
     else:
         # Convert to unicode for session storage
-        req.session[REQUEST_TOKEN_KEY] = utils.tuple_to_unicode(request_token)
+        req.session[constants.REQUEST_TOKEN_KEY] = utils.tuple_to_unicode(
+            request_token)
         return shortcuts.redirect(redirect)
 
 
 def oauth_callback(req):
     """OAuth handshake callback."""
-    serialized_token = req.session.get(REQUEST_TOKEN_KEY, None)
+    serialized_token = req.session.get(constants.REQUEST_TOKEN_KEY, None)
     if serialized_token is None:
         messages.error(req, _("Session invalid."))
         return shortcuts.redirect(
@@ -103,9 +99,13 @@ def oauth_callback(req):
         request_token,
         req.META['QUERY_STRING'])
     # Convert to unicode for session storage
-    req.session[ACCESS_TOKEN_KEY] = utils.tuple_to_unicode(access_token)
+    req.session[constants.ACCESS_TOKEN_KEY] = utils.tuple_to_unicode(
+        access_token)
     sul_user = mwoauth.identify(
         settings.OAUTH_MWURL, consumer_token, access_token)
+    req.session[constants.OAUTH_USERNAME_KEY] = sul_user['username']
+    req.session[constants.OAUTH_EMAIL_KEY] = sul_user['email']
+    req.session[constants.OAUTH_REALNAME_KEY] = sul_user['realname']
 
     if req.user.is_authenticated():
         req.user.set_accesstoken(access_token)
@@ -124,11 +124,8 @@ def oauth_callback(req):
                 _("Error saving OAuth credentials. [req id: {id}]").format(
                     id=req.id))
     else:
-        req.session[OAUTH_USERNAME_KEY] = sul_user['username']
-        req.session[OAUTH_EMAIL_KEY] = sul_user['email']
-        req.session[OAUTH_REALNAME_KEY] = sul_user['realname']
         messages.info(
             req, _("Authenticated as OAuth user {user}".format(
                 user=sul_user['username'])))
 
-    return shortcuts.redirect(req.session.get(NEXT_PAGE, '/'))
+    return shortcuts.redirect(req.session.get(constants.NEXT_PAGE, '/'))

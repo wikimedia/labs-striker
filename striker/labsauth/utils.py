@@ -18,13 +18,13 @@
 # You should have received a copy of the GNU General Public License
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
 
+import ldap
 import logging
 import operator
 
 from django.conf import settings
 
-import ldap
-
+from striker.labsauth import constants
 from striker.labsauth import models
 
 
@@ -39,6 +39,21 @@ def tuple_to_unicode(t):
 def tuple_to_bytes(t):
     """Encode a tuple of utf8 strings as a tuple of bytes."""
     return tuple([i.encode('utf-8') for i in t])
+
+
+def oauth_from_session(session):
+    """Get OAuth data from a user's session.
+
+    :return: dict of username, email, realname, token, and secret
+    """
+    token = session.get(constants.ACCESS_TOKEN_KEY, (None, None))
+    return {
+        'username': session.get(constants.OAUTH_USERNAME_KEY, None),
+        'email': session.get(constants.OAUTH_EMAIL_KEY, None),
+        'realname': session.get(constants.OAUTH_REALNAME_KEY, None),
+        'token': token[0],
+        'secret': token[1],
+    }
 
 
 def get_next_id_number(clazz, attr, low_val, high_val):

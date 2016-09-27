@@ -34,10 +34,7 @@ from formtools.wizard.views import NamedUrlSessionWizardView
 
 from striker.labsauth.models import LabsUser
 from striker.labsauth.utils import add_ldap_user
-from striker.labsauth.views import ACCESS_TOKEN_KEY
-from striker.labsauth.views import OAUTH_EMAIL_KEY
-from striker.labsauth.views import OAUTH_REALNAME_KEY
-from striker.labsauth.views import OAUTH_USERNAME_KEY
+from striker.labsauth.utils import oauth_from_session
 from striker.register import forms
 from striker.register import utils
 
@@ -49,7 +46,8 @@ def oauth_required(f):
     @functools.wraps(f)
     def decorated(*args, **kwargs):
         req = args[0]
-        if req.session.get(OAUTH_USERNAME_KEY, None) is None:
+        oauth = oauth_from_session(req.session)
+        if oauth['username'] is None:
             messages.error(
                 req, _('Please login with your Wikimedia unified account'))
             return shortcuts.redirect(urlresolvers.reverse('register:index'))
@@ -68,7 +66,8 @@ def index(req):
 
 @oauth_required
 def oauth(req):
-    if not utils.sul_available(req.session[OAUTH_USERNAME_KEY]):
+    oauth = oauth_from_session(req.session)
+    if not utils.sul_available(oauth['username']):
         messages.error(
             req, _('Wikimedia unified account is already in use.'))
         return shortcuts.redirect(urlresolvers.reverse('register:index'))
@@ -122,21 +121,22 @@ class AccountWizard(NamedUrlSessionWizardView):
         return ['register/%s.html' % self.steps.current]
 
     def get_form_initial(self, step):
+        oauth = oauth_from_session(self.request.session)
         if step == 'ldap':
             # Suggest SUL username as LDAP username
             return {
-                'username': self.request.session[OAUTH_USERNAME_KEY]
+                'username': oauth['username'],
             }
         elif step == 'shell':
             # Suggest a munged version of SUL username as shell username
-            uname = self.request.session[OAUTH_USERNAME_KEY]
+            uname = oauth['username']
             return {
                 'shellname': re.sub(r'[^a-z0-9-]', '', uname.lower())
             }
         elif step == 'email':
             # Suggest SUL email as LDAP email
             return {
-                'email': self.request.session[OAUTH_EMAIL_KEY]
+                'email': oauth['email'],
             }
         else:
             return {}
@@ -154,16 +154,18 @@ class AccountWizard(NamedUrlSessionWizardView):
     def get_context_data(self, form, **kwargs):
         context = super(AccountWizard, self).get_context_data(
             form=form, **kwargs)
+        oauth = oauth_from_session(self.request.session)
         if self.steps.current == 'confirm':
             context.update({
                 'forms': self._get_all_forms(),
                 'sul': {
-                    'username': self.request.session[OAUTH_USERNAME_KEY],
+                    'username': oauth['username'],
                 }
             })
         return context
 
     def done(self, form_list, form_dict, **kwargs):
+        oauth = oauth_from_session(self.request.session)
         ldap_user = add_ldap_user(
             form_dict['ldap'].cleaned_data['username'],
             form_dict['shell'].cleaned_data['shellname'],
@@ -171,14 +173,13 @@ class AccountWizard(NamedUrlSessionWizardView):
             form_dict['email'].cleaned_data['email']
         )
 
-        # FIXME: this OAuth session stuff needs a helper function
         LabsUser.objects.create_from_ldap_user(
             ldap_user,
-            sulname=self.request.session[OAUTH_USERNAME_KEY],
-            sulemail=self.request.session[OAUTH_EMAIL_KEY],
-            realname=self.request.session[OAUTH_REALNAME_KEY],
-            oauthtoken=self.request.session[ACCESS_TOKEN_KEY][0],
-            oauthsecret=self.request.session[ACCESS_TOKEN_KEY][1],
+            sulname=oauth['username'],
+            sulemail=oauth['email'],
+            realname=oauth['realname'],
+            oauthtoken=oauth['token'],
+            oauthsecret=oauth['secret'],
         )
         messages.success(
             self.request, _('Account created. Login to continue.'))
