@@ -147,6 +147,10 @@ class LabsUser(AbstractBaseUser, PermissionsMixin):
         return 'uid={0},{1}'.format(
             self.shellname, settings.LABSAUTH_USER_BASE)
 
+    @property
+    def ldapuser(self):
+        return LdapUser.objects.get(dn=self.ldap_dn)
+
 
 class PosixGroup(ldapdb.models.Model):
     base_dn = settings.LABSAUTH_GROUP_BASE

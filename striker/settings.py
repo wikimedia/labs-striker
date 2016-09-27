@@ -364,6 +364,9 @@ PHABRICATOR_TOKEN = ini.get('phabricator', 'TOKEN')
 # phid of group granted Diffusion admin rights (i.e. #Repository-Admins)
 PHABRICATOR_REPO_ADMIN_GROUP = ini.get('phabricator', 'REPO_ADMIN_GROUP')
 
+# == Wikitech settings ==
+WIKITECH_URL = ini.get('wikitech', 'SERVER_URL')
+
 # == Tools settings ==
 TOOLS_MAINTAINER_BASE_DN = ini.get('ldap', 'TOOLS_MAINTAINER_BASE_DN')
 TOOLS_TOOL_BASE_DN = ini.get('ldap', 'TOOLS_TOOL_BASE_DN')

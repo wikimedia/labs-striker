@@ -56,6 +56,8 @@ def index(req):
     ctx = {
         'tools_count': tools_count,
         'maintainers_count': maintainers_count,
+        'phab_url': settings.PHABRICATOR_URL,
+        'wikitech_url': settings.WIKITECH_URL,
     }
     return shortcuts.render(req, 'index.html', ctx)
 
