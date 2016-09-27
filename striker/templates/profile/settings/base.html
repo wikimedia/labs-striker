@@ -13,8 +13,8 @@
       <div class="panel panel-default">
         <div class="panel-heading">{% trans "Accounts" %}</div>
         <div class="list-group" role="navigation">
-            <a class="list-group-item {% if request.path == settings_ldap %}active{% endif %}" href="{{ settings_ldap }}" title="{% trans 'Wikitech/Labs/Gerrit account' %}" data-toggle="tooltip" data-placement="auto left" data-container="body">{% trans "Labs LDAP" %}</a>
-            <a class="list-group-item {% if request.path == settings_sul %}active{% endif %}" href="{{ settings_sul }}" title="{% trans 'Wikimedia unified account' %}" data-toggle="tooltip" data-placement="auto left" data-container="body">{% trans "Wikimedia SUL" %}</a>
+            <a class="list-group-item {% if request.path == settings_ldap %}active{% endif %}" href="{{ settings_ldap }}" title="{% trans 'Wikitech/Labs/Gerrit account' %}" data-toggle="tooltip" data-placement="auto left" data-container="body">{% trans "LDAP" %}</a>
+            <a class="list-group-item {% if request.path == settings_sul %}active{% endif %}" href="{{ settings_sul }}" title="{% trans 'Wikimedia unified account' %}" data-toggle="tooltip" data-placement="auto left" data-container="body">{% trans "Wikimedia" %}</a>
           <a class="list-group-item {% if request.path == settings_phabricator %}active{% endif %}" href="{{ settings_phabricator }}">{% trans "Phabricator" %}</a>
         </div>
       </div>
