@@ -202,7 +202,7 @@ DATABASES = {
     },
 }
 DATABASE_ROUTERS = [
-    'ldapdb.router.Router',
+    'striker.labsauth.router.CustomLdapRouter',
 ]
 if DATABASES['default']['ENGINE'] == 'django.db.backends.mysql':
     # Make Django and MySQL play nice
@@ -344,6 +344,13 @@ LOGIN_REDIRECT_URL = '/'
 
 LABSAUTH_USER_BASE = ini.get('ldap', 'USER_SEARCH_BASE')
 LABSAUTH_GROUP_BASE = ini.get('ldap', 'BASE_DN')
+
+LABSAUTH_DEFAULT_GID = ini.get('ldap', 'DEFAULT_GID')
+LABSAUTH_DEFAULT_SHELL = ini.get('ldap', 'DEFAULT_SHELL')
+LABSAUTH_MIN_GID = ini.get('ldap', 'MIN_GID')
+LABSAUTH_MAX_GID = ini.get('ldap', 'MAX_GID')
+LABSAUTH_MIN_UID = ini.get('ldap', 'MIN_UID')
+LABSAUTH_MIN_GID = ini.get('ldap', 'MIN_GID')
 
 # == OAuth settings ==
 OAUTH_CONSUMER_KEY = ini.get('oauth', 'CONSUMER_KEY')

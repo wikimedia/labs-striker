@@ -50,7 +50,7 @@ def index(req):
     if maintainers_count is None:
         maintainers_count = len(
             striker.labsauth.models.PosixGroup.objects.get(
-                name=settings.TOOLS_TOOL_LABS_GROUP_NAME).users)
+                cn=settings.TOOLS_TOOL_LABS_GROUP_NAME).members)
         cache.set('maintainers_count', maintainers_count, 900)
 
     ctx = {

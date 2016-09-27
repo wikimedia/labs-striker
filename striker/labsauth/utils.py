@@ -18,10 +18,80 @@
 # You should have received a copy of the GNU General Public License
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
 
+import logging
+import operator
+
+from django.conf import settings
+
+import ldap
+
+from striker.labsauth import models
+
+
+logger = logging.getLogger(__name__)
+
 
 def tuple_to_unicode(t):
+    """Decode a tuple of bytes to a tuple of utf8 strings."""
     return tuple([i.decode('utf-8') for i in t])
 
 
 def tuple_to_bytes(t):
+    """Encode a tuple of utf8 strings as a tuple of bytes."""
     return tuple([i.encode('utf-8') for i in t])
+
+
+def get_next_id_number(clazz, attr, low_val, high_val):
+    """Get the next id number for a given class and attribute.
+
+    :param clazz: Model to query (e.g. striker.labsauth.models.PosixAccount)
+    :param attr: Attribute to examine (e.g. 'uid_number')
+    """
+    entries = clazz.objects.all().values(attr)
+    next_id = max(
+        max(entries, key=operator.itemgetter(attr))[attr] + 1,
+        low_val)
+    if next_id > high_val:
+        # From OpenStackNovaUser::getNextIdNumber:
+        # Upper limit is only a warning, not a fatal error.
+        logger.warning(
+            'Id range limit exceded for %s. Soft limit %d; next %d',
+            attr, high_val, next_id)
+    return next_id
+
+
+def get_next_uid():
+    """Get the next available LDAP user uid."""
+    return get_next_id_number(
+        models.PosixAccount, 'uid_number',
+        settings.LABSAUTH_MIN_UID, settings.LABSAUTH_MAX_UID)
+
+
+def get_next_gid():
+    """Get the next available LDAP group gid."""
+    return get_next_id_number(
+        models.PosixGroup, 'gid_number',
+        settings.LABSAUTH_MIN_GID, settings.LABSAUTH_MAX_GID)
+
+
+def add_ldap_user(username, shellname, passwd, email):
+    """Add a new user to LDAP."""
+    u = models.LdapUser()
+    u.uid = shellname
+    u.cn = username
+    u.uid_number = get_next_uid()
+    u.gid_number = settings.LABSAUTH_DEFAULT_GID
+    u.home_dir = '/home/%s' % shellname
+    u.login_shell = settings.LABSAUTH_DEFAULT_SHELL
+    u.password = passwd
+    u.sn = username
+    u.mail = email
+    try:
+        u.save()
+    except ldap.CONSTRAINT_VIOLATION:
+        # LDAP uid collision. Probably a race, so try again.
+        # If it happens a second time just let it rip up the stack.
+        u.uid_number = get_next_uid()
+        u.save()
+
+    return u

@@ -38,12 +38,20 @@ class LabsUserManager(BaseUserManager):
     def create_user(self, username, **extra_fields):
         if not username:
             raise ValueError('Users must have a valid username.')
-        user = self.model(username, **extra_fields)
+        user = self.model(ldapname=username, **extra_fields)
         user.save()
         return user
 
     def create_superuser(self, username, **extra_fields):
         return self.create_user(username, is_superuser=True, **extra_fields)
+
+    def create_from_ldap_user(self, ldap_user, **extra_fields):
+        return self.create_user(
+            ldap_user.cn,
+            ldapemail=ldap_user.mail,
+            shellname=ldap_user.uid,
+            **extra_fields
+        )
 
 
 def make_authhash():
@@ -144,7 +152,64 @@ class PosixGroup(ldapdb.models.Model):
     base_dn = settings.LABSAUTH_GROUP_BASE
     object_classes = ['posixGroup']
 
-    gid = ldap_fields.IntegerField(db_column='gidNumber', unique=True)
-    name = ldap_fields.CharField(
-        db_column='cn', max_length=200, primary_key=True)
-    users = ldap_fields.ListField(db_column='member')
+    cn = ldap_fields.CharField(db_column='cn', primary_key=True)
+    gid_number = ldap_fields.IntegerField(db_column='gidNumber', unique=True)
+    members = ldap_fields.ListField(db_column='member')
+
+    class Meta:
+        managed = False
+
+    def __str__(self):
+        return 'cn=%s,%s' % (self.cn, self.base_dn)
+
+
+class PosixAccount(ldapdb.models.Model):
+    base_dn = settings.LABSAUTH_USER_BASE
+    object_classes = ['posixAccount']
+
+    uid = ldap_fields.CharField(db_column='uid', primary_key=True)
+    cn = ldap_fields.CharField(db_column='cn', unique=True)
+    uid_number = ldap_fields.IntegerField(db_column='uidNumber', unique=True)
+    gid_number = ldap_fields.IntegerField(db_column='gidNumber')
+    home_directory = ldap_fields.CharField(
+        db_column='homeDirectory', max_length=200)
+
+    class Meta:
+        managed = False
+
+    def __str__(self):
+        return 'uid=%s,%s' % (self.uid, self.base_dn)
+
+
+class LdapUser(ldapdb.models.Model):
+    """Equivalent of OpenStackNovaUser"""
+    base_dn = settings.LABSAUTH_USER_BASE
+    object_classes = [
+        'person',
+        'inetOrgPerson',
+        'organizationalPerson',
+        'ldapPublicKey',
+        'posixAccount',
+        'shadowAccount',
+    ]
+
+    # posixAccount
+    uid = ldap_fields.CharField(db_column='uid', primary_key=True)
+    cn = ldap_fields.CharField(db_column='cn', unique=True)
+    uid_number = ldap_fields.IntegerField(db_column='uidNumber', unique=True)
+    gid_number = ldap_fields.IntegerField(db_column='gidNumber')
+    home_dir = ldap_fields.CharField(db_column='homeDirectory')
+    login_shell = ldap_fields.CharField(db_column='loginShell')
+    password = ldap_fields.CharField(db_column='userPassword')
+    # person
+    sn = ldap_fields.CharField(db_column='sn', unique=True)
+    # inetOrgPerson
+    mail = ldap_fields.CharField(db_column='mail')
+    # ldapPublicKey
+    ssh_keys = ldap_fields.ListField(db_column='sshPublicKey')
+
+    class Meta:
+        managed = False
+
+    def __str__(self):
+        return 'uid=%s,%s' % (self.uid, self.base_dn)

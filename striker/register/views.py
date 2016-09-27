@@ -32,7 +32,11 @@ from django.utils.translation import ugettext_lazy as _
 
 from formtools.wizard.views import NamedUrlSessionWizardView
 
+from striker.labsauth.models import LabsUser
+from striker.labsauth.utils import add_ldap_user
+from striker.labsauth.views import ACCESS_TOKEN_KEY
 from striker.labsauth.views import OAUTH_EMAIL_KEY
+from striker.labsauth.views import OAUTH_REALNAME_KEY
 from striker.labsauth.views import OAUTH_USERNAME_KEY
 from striker.register import forms
 from striker.register import utils
@@ -159,8 +163,23 @@ class AccountWizard(NamedUrlSessionWizardView):
             })
         return context
 
-    def done(self, form_list, **kwargs):
-        # TODO: create account
+    def done(self, form_list, form_dict, **kwargs):
+        ldap_user = add_ldap_user(
+            form_dict['ldap'].cleaned_data['username'],
+            form_dict['shell'].cleaned_data['shellname'],
+            form_dict['password'].cleaned_data['passwd'],
+            form_dict['email'].cleaned_data['email']
+        )
+
+        # FIXME: this OAuth session stuff needs a helper function
+        LabsUser.objects.create_from_ldap_user(
+            ldap_user,
+            sulname=self.request.session[OAUTH_USERNAME_KEY],
+            sulemail=self.request.session[OAUTH_EMAIL_KEY],
+            realname=self.request.session[OAUTH_REALNAME_KEY],
+            oauthtoken=self.request.session[ACCESS_TOKEN_KEY][0],
+            oauthsecret=self.request.session[ACCESS_TOKEN_KEY][1],
+        )
         messages.success(
             self.request, _('Account created. Login to continue.'))
         return shortcuts.redirect(urlresolvers.reverse('labsauth:login'))

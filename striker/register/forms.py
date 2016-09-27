@@ -90,7 +90,12 @@ class LDAPUsername(forms.Form):
     )
 
     def clean_username(self):
-        username = self.cleaned_data['username']
+        """Validate that username is available."""
+        # Make sure that username is capitalized like MW's Title would do.
+        # TODO: Totally not as fancy as secureAndSplit() and friends. Do we
+        # need to figure out how to actually do all of that?
+        username = self.cleaned_data['username'].strip()
+        username = username[0].upper() + username[1:]
         if not utils.username_available(username):
             raise forms.ValidationError(self.IN_USE)
         # TODO: check that it isn't banned by some abusefilter type rule
@@ -132,6 +137,7 @@ class ShellUsername(forms.Form):
     )
 
     def clean_shellname(self):
+        """Validate that shellname is available."""
         shellname = self.cleaned_data['shellname']
         if not utils.shellname_available(shellname):
             raise forms.ValidationError(self.IN_USE)
@@ -152,6 +158,12 @@ class Email(forms.Form):
         ),
         max_length=255
     )
+
+    def clean_email(self):
+        """Normalize email domain to lowercase."""
+        email = self.cleaned_data['email']
+        email_name, domain_part = email.strip().rsplit('@', 1)
+        return '@'.join([email_name, domain_part.lower()])
 
 
 @parsleyfy
@@ -178,11 +190,8 @@ class Password(forms.Form):
         widget=forms.PasswordInput
     )
 
-    def clean_password(self):
-        # TODO: complexity checks?
-        pass
-
     def clean(self):
+        """Validate that both password entries match."""
         super(Password, self).clean()
         passwd = self.cleaned_data.get('passwd')
         confirm = self.cleaned_data.get('confirm')
