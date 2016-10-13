@@ -20,11 +20,16 @@
 
 import logging
 
-from striker.tools.models import Maintainer
+from django.utils import translation
+from django.utils.translation import ugettext_lazy as _
+
+from striker import mediawiki
 from striker.labsauth.models import LabsUser
+from striker.tools.models import Maintainer
 
 
 logger = logging.getLogger(__name__)
+mwapi = mediawiki.Client.default_client()
 
 
 def sul_available(name):
@@ -52,3 +57,40 @@ def shellname_available(name):
         return True
     else:
         return False
+
+
+def check_username_create(name):
+    """Check to see if a given name would be allowed as a username.
+
+    Returns True if the username would be allowed. Returns either False or a
+    reason specifier if the username is not allowed.
+    Returns a dict with these keys:
+    - ok : Can a new user be created with this name (True/False)
+    - name : Canonicalized version of the given name
+    - error : Error message if ok is False; None otherwise
+    """
+    user = mwapi.query_users_cancreate(name)[0]
+    # Example response:
+    # [{'missing': True, 'name': 'Puppet',
+    # 'cancreate': False, 'cancreateerror': [{'message':
+    # 'titleblacklist-forbidden-new-account', 'params': ['
+    # ^(User:)?puppet$ <newaccountonly>', 'Puppet'], 'type': 'error'}]}]
+    ret = {
+        'ok': False,
+        'name': user['name'],
+        'error': None,
+    }
+    if user['missing'] and user['cancreate']:
+        ret['ok'] = True
+    elif 'userid' in user:
+        ret['error'] = _('%(name)s is already in use.') % ret
+    elif 'cancreateerror' in user:
+        try:
+            ret['error'] = mwapi.get_message(
+                    user['cancreateerror'][0]['message'],
+                    *user['cancreateerror'][0]['params'],
+                    lang=translation.get_language().split('-')[0])
+        except Exception:
+            logger.exception('Failed to get expanded message for %s', user)
+            ret['error'] = user['cancreateerror'][0]['message']
+    return ret

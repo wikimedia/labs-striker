@@ -92,14 +92,20 @@ class LDAPUsername(forms.Form):
     def clean_username(self):
         """Validate that username is available."""
         # Make sure that username is capitalized like MW's Title would do.
-        # TODO: Totally not as fancy as secureAndSplit() and friends. Do we
-        # need to figure out how to actually do all of that?
+        # If we get to the check_username_create() call below we will fetch an
+        # actually sanitized username from MediaWiki.
         username = self.cleaned_data['username'].strip()
         username = username[0].upper() + username[1:]
         if not utils.username_available(username):
             raise forms.ValidationError(self.IN_USE)
-        # TODO: check that it isn't banned by some abusefilter type rule
-        return username
+
+        # Check that it isn't banned by some abusefilter type rule
+        user = utils.check_username_create(username)
+        if user['ok'] is False:
+            raise forms.ValidationError(user['error'])
+
+        # Return the canonicalized username from our MW api request
+        return user['name']
 
 
 @parsleyfy
@@ -141,7 +147,12 @@ class ShellUsername(forms.Form):
         shellname = self.cleaned_data['shellname']
         if not utils.shellname_available(shellname):
             raise forms.ValidationError(self.IN_USE)
-        # TODO: check that it isn't banned by some abusefilter type rule
+
+        # Check that it isn't banned by some abusefilter type rule
+        user = utils.check_username_create(shellname)
+        if user['ok'] is False:
+            raise forms.ValidationError(user['error'])
+
         return shellname
 
 

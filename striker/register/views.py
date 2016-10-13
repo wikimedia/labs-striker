@@ -29,6 +29,7 @@ from django.core import urlresolvers
 from django.http import JsonResponse
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy as _
+from django.views.decorators.cache import never_cache
 
 from formtools.wizard.views import NamedUrlSessionWizardView
 
@@ -75,28 +76,34 @@ def oauth(req):
         urlresolvers.reverse('register:wizard', kwargs={'step': 'ldap'}))
 
 
+@never_cache
 def username_available(req, name):
     """JSON callback for parsley validation of username.
 
     Kind of gross, but it returns a 406 status code when the name is not
-    available. This is to work with the limit choice of default response
+    available. This is to work with the limited choice of default response
     validators in parsley.
     """
     available = utils.username_available(name)
+    if available:
+        available = utils.check_username_create(name)['ok']
     status = 200 if available else 406
     return JsonResponse({
         'available': available,
     }, status=status)
 
 
+@never_cache
 def shellname_available(req, name):
     """JSON callback for parsley validation of shell username.
 
     Kind of gross, but it returns a 406 status code when the name is not
-    available. This is to work with the limit choice of default response
+    available. This is to work with the limited choice of default response
     validators in parsley.
     """
     available = utils.shellname_available(name)
+    if available:
+        available = utils.check_username_create(name)['ok']
     status = 200 if available else 406
     return JsonResponse({
         'available': available,

@@ -11,6 +11,7 @@ django-log-request-id>=1.3.1  # BSD
 django-parsley>=0.6  # BSD
 django-ratelimit-backend>=1.0  # BSD
 idna>=2.1  # BSD
+mwclient>=0.8.1  # MIT
 mwoauth>=0.2.7  # MIT
 mysqlclient>=1.3.7  # GPLv2
 oauthlib>=1.1.2  # BSD
