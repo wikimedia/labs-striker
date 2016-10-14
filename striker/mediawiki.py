@@ -82,7 +82,15 @@ class Client(object):
         result = self.site.api(
             'query', formatversion=2,
             meta='allmessages',
-            ammessages=message, amargs='|'.join(params), amlang=lang,
+            ammessages=message, amargs='|'.join(params), amlang=lang
         )
         # TODO: error handling
         return result['query']['allmessages'][0]['content']
+
+    def query_blocks_ip(self, ip):
+        result = self.site.api(
+            'query', formatversion=2,
+            list='blocks',
+            bkip=ip
+        )
+        return result['query']['blocks']

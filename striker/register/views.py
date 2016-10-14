@@ -44,6 +44,7 @@ logger = logging.getLogger(__name__)
 
 
 def oauth_required(f):
+    """Decorator to ensure that OAuth data is present in session."""
     @functools.wraps(f)
     def decorated(*args, **kwargs):
         req = args[0]
@@ -56,15 +57,46 @@ def oauth_required(f):
     return decorated
 
 
+def anon_required(f):
+    """Decorator to ensure that user is not logged in."""
+    @functools.wraps(f)
+    def decorated(*args, **kwargs):
+        req = args[0]
+        if not req.user.is_anonymous():
+            messages.error(
+                req, _('Logged in users can not create new accounts.'))
+            return shortcuts.redirect(urlresolvers.reverse('index'))
+        return f(*args, **kwargs)
+    return decorated
+
+
+def check_ip(f):
+    """Decorator to ensure that remote ip is not blocked."""
+    @functools.wraps(f)
+    def decorated(*args, **kwargs):
+        req = args[0]
+        block = utils.check_ip_blocked_from_create(req.META['REMOTE_ADDR'])
+        if block is not False:
+            messages.error(
+                req,
+                _(
+                    'Your IP address has been blocked from creating accounts. '
+                    'The reason given was: "%(reason)s"'
+                ) % {'reason': block})
+            return shortcuts.redirect(urlresolvers.reverse('index'))
+        return f(*args, **kwargs)
+    return decorated
+
+
+@anon_required
+@check_ip
 def index(req):
     ctx = {}
-    if not req.user.is_anonymous():
-        messages.error(
-            req, _('Logged in users can not create new accounts.'))
-        return shortcuts.redirect(urlresolvers.reverse('index'))
     return shortcuts.render(req, 'register/index.html', ctx)
 
 
+@anon_required
+@check_ip
 @oauth_required
 def oauth(req):
     oauth = oauth_from_session(req.session)
@@ -120,6 +152,8 @@ class AccountWizard(NamedUrlSessionWizardView):
         ('confirm', forms.Confirm),
     ]
 
+    @method_decorator(anon_required)
+    @method_decorator(check_ip)
     @method_decorator(oauth_required)
     def dispatch(self, *args, **kwargs):
         return super(AccountWizard, self).dispatch(*args, **kwargs)

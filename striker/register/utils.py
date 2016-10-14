@@ -94,3 +94,15 @@ def check_username_create(name):
             logger.exception('Failed to get expanded message for %s', user)
             ret['error'] = user['cancreateerror'][0]['message']
     return ret
+
+
+def check_ip_blocked_from_create(ip):
+    """Check to see if an ip address is banned from creating accounts.
+
+    Returns a block reason or False if not blocked.
+    """
+    res = mwapi.query_blocks_ip(ip)
+    for block in res:
+        if block['nocreate']:
+            return block['reason']
+    return False
