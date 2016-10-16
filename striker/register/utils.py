@@ -18,7 +18,9 @@
 # You should have received a copy of the GNU General Public License
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
 
+import functools
 import logging
+import re
 
 from django.utils import translation
 from django.utils.translation import ugettext_lazy as _
@@ -39,6 +41,44 @@ def sul_available(name):
         return True
     else:
         return False
+
+
+@functools.lru_cache(maxsize=1)
+def get_username_invalid_regex():
+    """Regular expression that matches invalid usernames.
+
+    The most definiative check is to actually pass a potential username to
+    a live MediaWiki instance, but this regular expression can be used to make
+    a quick check for obviously invalid names which contain illegal characters
+    and character sequences.
+
+    See also: MediaWikiTitleCodec::getTitleInvalidRegex()
+    """
+    return re.compile(
+        # Any char that is not in $wgLegalTitleChars
+        r'[^'
+        r''' %!"$&'()*,\-./0-9:;=?@A-Z\^_`a-z~'''
+        '\x80-\xFF'
+        r'+]'
+        # URL percent encoding sequences
+        r'|%[0-9A-Fa-f]{2}'
+        # XML/HTML entities
+        '|&([A-Za-z0-9\x80-\xff]+|#([0-9]+|x[0-9A-Fa-f]+));'
+    )
+
+
+def username_valid(name):
+    """Check a username to see if it is valid.
+
+    Valid usernames are not necessarily available or even creatable.
+    """
+    if re.search(r'^\s', name):
+        return False
+    if re.search(r'\s$', name):
+        return False
+    if get_username_invalid_regex().search(name):
+        return False
+    return True
 
 
 def username_available(name):

@@ -35,7 +35,6 @@ logger = logging.getLogger(__name__)
 
 @parsleyfy
 class LDAPUsername(forms.Form):
-    IN_USE = _('Username is already in use.')
     username = forms.CharField(
         label=_('Username'),
         widget=forms.TextInput(
@@ -51,7 +50,8 @@ class LDAPUsername(forms.Form):
                 'data-parsley-remote': mark_safe(
                     '/register/api/username/{value}'),
                 'data-parsley-trigger': 'focusin focusout input',
-                'data-parsley-remote-message': IN_USE,
+                'data-parsley-remote-message':  _(
+                    'Username is already in use or invalid.'),
             }
         ),
         max_length=255,
@@ -68,19 +68,8 @@ class LDAPUsername(forms.Form):
                 regex='\S$',
                 message=_('Must not end with whitespace')
             ),
-            # See MediaWikiTitleCodec::getTitleInvalidRegex()
             validators.RegexValidator(
-                regex=(
-                    # Any char that is not in $wgLegalTitleChars
-                    r'[^'
-                    r''' %!"$&'()*,\-./0-9:;=?@A-Z\^_`a-z~'''
-                    '\x80-\xFF'
-                    r'+]'
-                    # URL percent encoding sequences
-                    r'|%[0-9A-Fa-f]{2}'
-                    # XML/HTML entities
-                    '|&([A-Za-z0-9\x80-\xff]+|#([0-9]+|x[0-9A-Fa-f]+));'
-                ),
+                regex=utils.get_username_invalid_regex(),
                 inverse_match=True,
                 message=_(
                     'Value contains illegal characters or character sequences.'
@@ -97,7 +86,7 @@ class LDAPUsername(forms.Form):
         username = self.cleaned_data['username'].strip()
         username = username[0].upper() + username[1:]
         if not utils.username_available(username):
-            raise forms.ValidationError(self.IN_USE)
+            raise forms.ValidationError(_('Username is already in use.'))
 
         # Check that it isn't banned by some abusefilter type rule
         user = utils.check_username_create(username)
@@ -110,7 +99,14 @@ class LDAPUsername(forms.Form):
 
 @parsleyfy
 class ShellUsername(forms.Form):
-    IN_USE = _('Shell username is already in use.')
+    # Unix username regex suggested by useradd(8).
+    # We don't allow a leading '_' or trailing '$' however.
+    RE_NAME = r'^[a-z][a-z0-9_-]{0,31}$'
+    NAME_ERR_MSG = _(
+        'Must start with a-z, and can only contain '
+        'lowercase a-z, 0-9, _, and - characters.'
+    )
+
     shellname = forms.CharField(
         label=_('Shell username'),
         widget=forms.TextInput(
@@ -126,19 +122,15 @@ class ShellUsername(forms.Form):
                 'data-parsley-remote': mark_safe(
                     '/register/api/shellname/{value}'),
                 'data-parsley-trigger': 'focusin focusout input',
-                'data-parsley-remote-message': IN_USE,
+                'data-parsley-remote-message': _(
+                    'Shell username is already in use or invalid.'),
+                'data-parsley-pattern': RE_NAME,
+                'data-parsley-pattern-message': NAME_ERR_MSG,
             }
         ),
         max_length=32,
         validators=[
-            validators.RegexValidator(
-                # Unix username regex suggested by useradd(8).
-                # We don't allow a leading '_' or trailing '$' however.
-                regex=r'^[a-z][a-z0-9_-]{0,31}$',
-                message=_(
-                    'Must start with a-z, and can only contain '
-                    'lowercase a-z, 0-9, _, and - characters.')
-            )
+            validators.RegexValidator(regex=RE_NAME, message=NAME_ERR_MSG),
         ]
     )
 
@@ -146,7 +138,7 @@ class ShellUsername(forms.Form):
         """Validate that shellname is available."""
         shellname = self.cleaned_data['shellname']
         if not utils.shellname_available(shellname):
-            raise forms.ValidationError(self.IN_USE)
+            raise forms.ValidationError(_('Shell username is already in use.'))
 
         # Check that it isn't banned by some abusefilter type rule
         user = utils.check_username_create(shellname)

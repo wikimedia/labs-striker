@@ -116,7 +116,9 @@ def username_available(req, name):
     available. This is to work with the limited choice of default response
     validators in parsley.
     """
-    available = utils.username_available(name)
+    available = utils.username_valid(name)
+    if available:
+        available = utils.username_available(name)
     if available:
         available = utils.check_username_create(name)['ok']
     status = 200 if available else 406
