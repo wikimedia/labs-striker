@@ -22,7 +22,7 @@ from django.conf import urls
 
 
 TOOL = r'(?P<tool>[_a-z][-0-9_a-z]*)'
-REPO = r'(?P<repo>[_a-z][-0-9_a-z]*)'
+REPO = r'(?P<repo>[_a-zA-Z][-0-9_a-zA-Z]*)'
 
 urlpatterns = [
     urls.url(r'^$', 'striker.tools.views.index', name='index'),
