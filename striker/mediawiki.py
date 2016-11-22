@@ -32,27 +32,59 @@ logger = logging.getLogger(__name__)
 class Client(object):
     """MediaWiki client"""
     _default_instance = None
+    _anon_instance = None
 
     @classmethod
     def default_client(cls):
         """Get a MediaWiki client using the default credentials."""
         if cls._default_instance is None:
             logger.debug('Creating default instance')
-            cls._default_instance = cls(settings.WIKITECH_URL)
+            cls._default_instance = cls(
+                settings.WIKITECH_URL,
+                consumer_token=settings.WIKITECH_CONSUMER_TOKEN,
+                consumer_secret=settings.WIKITECH_CONSUMER_SECRET,
+                access_token=settings.WIKITECH_ACCESS_TOKEN,
+                access_secret=settings.WIKITECH_ACCESS_SECRET
+            )
         return cls._default_instance
 
-    def __init__(self, url):
+    @classmethod
+    def anon_client(cls):
+        """Get a MediaWiki client that is not authenticated."""
+        if cls._anon_instance is None:
+            logger.debug('Creating anon instance')
+            cls._anon_instance = cls(settings.WIKITECH_URL)
+        return cls._anon_instance
+
+    def __init__(
+        self, url,
+        consumer_token=None, consumer_secret=None,
+        access_token=None, access_secret=None
+    ):
         self.url = url
-        self.site = self._site_for_url(url)
-        self.site.force_login = False
+        self.site = self._site_for_url(
+            url, consumer_token, consumer_secret, access_token, access_secret)
 
     @classmethod
-    def _site_for_url(cls, url):
+    def _site_for_url(
+        cls, url,
+        consumer_token=None, consumer_secret=None,
+        access_token=None, access_secret=None
+    ):
         parts = urllib.parse.urlparse(url)
         host = parts.netloc
         if parts.scheme != 'https':
             host = (parts.scheme, parts.netloc)
-        return mwclient.Site(host, clients_useragent='Striker')
+        force_login = consumer_token is not None
+        return mwclient.Site(
+            host,
+            consumer_token=consumer_token,
+            consumer_secret=consumer_secret,
+            access_token=access_token,
+            access_secret=access_secret,
+            clients_useragent='Striker',
+            force_login=force_login
+        )
 
     def query_users_cancreate(self, *users):
         """Check to see if the given usernames could be created or not.
