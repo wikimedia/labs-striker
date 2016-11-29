@@ -37,6 +37,9 @@ from striker.labsauth import utils
 NEXT_PAGE = 'striker.oauth.next_page'
 REQUEST_TOKEN_KEY = 'striker.oauth.request_token'
 ACCESS_TOKEN_KEY = 'striker.oauth.access_token'
+OAUTH_USERNAME_KEY = 'striker.oauth.username'
+OAUTH_EMAIL_KEY = 'striker.oauth.email'
+OAUTH_REALNAME_KEY = 'striker.oauth.realname'
 
 logger = logging.getLogger(__name__)
 
@@ -101,22 +104,31 @@ def oauth_callback(req):
         req.META['QUERY_STRING'])
     # Convert to unicode for session storage
     req.session[ACCESS_TOKEN_KEY] = utils.tuple_to_unicode(access_token)
-    req.user.set_accesstoken(access_token)
-
     sul_user = mwoauth.identify(
         settings.OAUTH_MWURL, consumer_token, access_token)
-    req.user.sulname = sul_user['username']
-    req.user.sulemail = sul_user['email']
-    req.user.realname = sul_user['realname']
-    try:
-        req.user.save()
+
+    if req.user.is_authenticated():
+        req.user.set_accesstoken(access_token)
+        req.user.sulname = sul_user['username']
+        req.user.sulemail = sul_user['email']
+        req.user.realname = sul_user['realname']
+        try:
+            req.user.save()
+            messages.info(
+                req, _("Updated OAuth credentials for {user}".format(
+                    user=sul_user['username'])))
+        except DatabaseError:
+            logger.exception('user.save failed')
+            messages.error(
+                req,
+                _("Error saving OAuth credentials. [req id: {id}]").format(
+                    id=req.id))
+    else:
+        req.session[OAUTH_USERNAME_KEY] = sul_user['username']
+        req.session[OAUTH_EMAIL_KEY] = sul_user['email']
+        req.session[OAUTH_REALNAME_KEY] = sul_user['realname']
         messages.info(
             req, _("Authenticated as OAuth user {user}".format(
                 user=sul_user['username'])))
-    except DatabaseError:
-        logger.exception('user.save failed')
-        messages.error(
-            req, _("Error updating database. [req id: {id}]").format(
-                id=req.id))
 
     return shortcuts.redirect(req.session.get(NEXT_PAGE, '/'))
