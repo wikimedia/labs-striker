@@ -18,6 +18,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
 
+import collections
 import functools
 import logging
 import re
@@ -76,6 +77,7 @@ class AccountWizard(NamedUrlSessionWizardView):
         ('shell', forms.ShellUsername),
         ('email', forms.Email),
         ('password', forms.Password),
+        ('confirm', forms.Confirm),
     ]
 
     @method_decorator(oauth_required)
@@ -104,6 +106,28 @@ class AccountWizard(NamedUrlSessionWizardView):
             }
         else:
             return {}
+
+    def _get_all_forms(self):
+        forms = collections.OrderedDict()
+        for k in self.get_form_list():
+            forms[k] = self.get_form(
+                step=k,
+                data=self.storage.get_step_data(k)
+            )
+            forms[k].is_valid()
+        return forms
+
+    def get_context_data(self, form, **kwargs):
+        context = super(AccountWizard, self).get_context_data(
+            form=form, **kwargs)
+        if self.steps.current == 'confirm':
+            context.update({
+                'forms': self._get_all_forms(),
+                'sul': {
+                    'username': self.request.session[OAUTH_USERNAME_KEY],
+                }
+            })
+        return context
 
     def done(self, form_list, **kwargs):
         # TODO: create account
