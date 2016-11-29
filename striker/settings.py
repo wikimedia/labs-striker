@@ -136,10 +136,11 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.sessions',
     'django.contrib.staticfiles',
+    'striker.goals.apps.GoalsConfig',
     'striker.labsauth',
     'striker.profile',
+    'striker.register',
     'striker.tools',
-    'striker.goals.apps.GoalsConfig',
 )
 
 MIDDLEWARE_CLASSES = (

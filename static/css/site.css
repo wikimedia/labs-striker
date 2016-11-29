@@ -64,3 +64,7 @@ form.hidden-labels label.no-hide {
 .footer {
   margin-top:2em;
 }
+.panel-body-warning {
+  background-color:#fcf8e3;
+  color:#8a6d3b;
+}
