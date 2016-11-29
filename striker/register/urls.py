@@ -20,7 +20,14 @@
 
 from django.conf import urls
 
+from striker.register import views
+
+
+wizard = views.AccountWizard.as_view(url_name='register:wizard')
+
 
 urlpatterns = [
     urls.url(r'^$', 'striker.register.views.index', name='index'),
+    # urls.url(r'^done$', wizard, name='done'),
+    urls.url(r'^(?P<step>.+)$', wizard, name='wizard'),
 ]

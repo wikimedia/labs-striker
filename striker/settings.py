@@ -136,6 +136,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.sessions',
     'django.contrib.staticfiles',
+    'formtools',
     'striker.goals.apps.GoalsConfig',
     'striker.labsauth',
     'striker.profile',

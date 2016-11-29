@@ -19,11 +19,18 @@
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
 
 import logging
+import re
 
 from django import shortcuts
 from django.contrib import messages
 from django.core import urlresolvers
 from django.utils.translation import ugettext_lazy as _
+
+from formtools.wizard.views import NamedUrlSessionWizardView
+
+from striker.labsauth.views import OAUTH_EMAIL_KEY
+from striker.labsauth.views import OAUTH_USERNAME_KEY
+from striker.register import forms
 
 
 logger = logging.getLogger(__name__)
@@ -37,3 +44,41 @@ def index(req):
         return shortcuts.redirect(urlresolvers.reverse('index'))
 
     return shortcuts.render(req, 'register/index.html', ctx)
+
+
+class AccountWizard(NamedUrlSessionWizardView):
+    form_list = [
+        ('ldap', forms.LDAPUsername),
+        ('shell', forms.ShellUsername),
+        ('email', forms.Email),
+        ('password', forms.Password),
+    ]
+
+    def get_template_names(self):
+        return ['register/%s.html' % self.steps.current]
+
+    def get_form_initial(self, step):
+        if step == 'ldap':
+            # Suggest SUL username as LDAP username
+            return {
+                'username': self.request.session.get(OAUTH_USERNAME_KEY, '')
+            }
+        elif step == 'shell':
+            # Suggest a munged version of SUL username as shell username
+            uname = self.request.session.get(OAUTH_USERNAME_KEY, '')
+            return {
+                'shellname': re.sub(r'[^a-z0-9-]', '', uname.lower())
+            }
+        elif step == 'email':
+            # Suggest SUL email as LDAP email
+            return {
+                'email': self.request.session.get(OAUTH_EMAIL_KEY, '')
+            }
+        else:
+            return {}
+
+    def done(self, form_list, **kwargs):
+        # TODO: create account
+        messages.success(
+            self.request, _('Account created. Login to continue.'))
+        return shortcuts.redirect(urlresolvers.reverse('labsauth:login'))

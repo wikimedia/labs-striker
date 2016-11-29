@@ -1,0 +1,30 @@
+{% extends "register/base.html" %}
+{% load bootstrap3 %}
+{% load i18n %}
+
+{% block step-ldap %}
+<div class="panel panel-primary">
+  <div class="panel-heading">
+    <h3 class="panel-title">{% bootstrap_icon "user" %} {% trans "Choose your LDAP username" %}</h3>
+  </div>
+  <div class="panel-body">
+    <p>{% blocktrans %}LDAP usernames are commonly either the same as a user's Wikimedia unified account username or their real name (e.g. "Jimmy Wales").{% endblocktrans %}</p>
+    <form method="post" action="" class="form">
+      {% csrf_token %}
+      {{ wizard.management_form }}
+      {% bootstrap_form wizard.form %}
+      {% buttons %}
+      <div class="row">
+        <div class="col-sm-6 col-sm-push-6">
+          <button class="btn btn-primary pull-right" type="submit">{% trans "Next" %} {% bootstrap_icon "chevron-right" %}</button>
+        </div>
+        <div class="col-sm-6 col-sm-pull-6">
+          <a class="btn btn-default pull-left" href="{% url 'register:index' %}">{% bootstrap_icon "chevron-left" %} {% trans "Previous" %}</a>
+        </div>
+      </div>
+      {% endbuttons %}
+    </form>
+  </div>
+</div>
+{% endblock %}
+{# vim:sw=2:ts=2:sts=2:et:ft=htmldjango: #}
