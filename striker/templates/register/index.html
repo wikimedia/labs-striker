@@ -11,7 +11,7 @@
     <p>{% blocktrans %}Login with your Wikimedia unified account to get started creating a new LDAP account.{% endblocktrans %}</p>
     <div class="row">
       <div class="col-sm-6 col-sm-push-6">
-        <a href="{% url 'labsauth:oauth_initiate' %}?next={% url 'register:wizard' step='ldap' %}" class="btn btn-primary btn-block">
+        <a href="{% url 'labsauth:oauth_initiate' %}?next={% url 'register:oauth' %}" class="btn btn-primary btn-block">
           {% bootstrap_icon "log-in" %}
           {% trans 'Login using OAuth' %}
         </a>

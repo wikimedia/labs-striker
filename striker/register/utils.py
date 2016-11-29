@@ -18,16 +18,37 @@
 # You should have received a copy of the GNU General Public License
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.conf import urls
+import logging
 
-from striker.register import views
-
-
-wizard = views.AccountWizard.as_view(url_name='register:wizard')
+from striker.tools.models import Maintainer
+from striker.labsauth.models import LabsUser
 
 
-urlpatterns = [
-    urls.url(r'^$', 'striker.register.views.index', name='index'),
-    urls.url(r'^oauth$', 'striker.register.views.oauth', name='oauth'),
-    urls.url(r'^(?P<step>.+)$', wizard, name='wizard'),
-]
+logger = logging.getLogger(__name__)
+
+
+def sul_available(name):
+    try:
+        LabsUser.objects.get(sulname=name)
+    except LabsUser.DoesNotExist:
+        return True
+    else:
+        return False
+
+
+def username_available(name):
+    try:
+        Maintainer.objects.get(full_name=name)
+    except Maintainer.DoesNotExist:
+        return True
+    else:
+        return False
+
+
+def shellname_available(name):
+    try:
+        Maintainer.objects.get(username=name)
+    except Maintainer.DoesNotExist:
+        return True
+    else:
+        return False
