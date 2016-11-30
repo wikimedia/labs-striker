@@ -9,7 +9,7 @@
   </div>
   <div class="panel-body">
     <p>{% blocktrans %}LDAP usernames are commonly either the same as a user's Wikimedia unified account username or their real name (e.g. "Jimmy Wales").{% endblocktrans %}</p>
-    <form method="post" action="" class="form">
+    <form method="post" action="" class="form parsley">
       {% csrf_token %}
       {{ wizard.management_form }}
       {% bootstrap_form wizard.form %}

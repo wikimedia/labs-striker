@@ -23,7 +23,9 @@ import logging
 from django import forms
 from django.core import validators
 from django.core.exceptions import ValidationError
+from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
+from parsley.decorators import parsleyfy
 
 from striker.register import utils
 
@@ -31,13 +33,25 @@ from striker.register import utils
 logger = logging.getLogger(__name__)
 
 
+@parsleyfy
 class LDAPUsername(forms.Form):
+    IN_USE = _('Username is already in use.')
     username = forms.CharField(
         label=_('Username'),
         widget=forms.TextInput(
             attrs={
                 'placeholder': _('Enter your desired username'),
                 'autofocus': 'autofocus',
+                # Parsley gets confused if {value} is url encoded, so wrap in
+                # mark_safe().
+                # FIXME: I tried everything I could think of to use
+                # urlresolvers.reverse_lazy and I just couldn't get it to work
+                # with mark_safe(). I would get either the URL encoded
+                # property value or the __str__ of a wrapper object.
+                'data-parsley-remote': mark_safe(
+                    '/register/api/username/{value}'),
+                'data-parsley-trigger': 'focusin focusout input',
+                'data-parsley-remote-message': IN_USE,
             }
         ),
         max_length=255,
@@ -78,18 +92,30 @@ class LDAPUsername(forms.Form):
     def clean_username(self):
         username = self.cleaned_data['username']
         if not utils.username_available(username):
-            raise forms.ValidationError(_('Username is already in use.'))
+            raise forms.ValidationError(self.IN_USE)
         # TODO: check that it isn't banned by some abusefilter type rule
         return username
 
 
+@parsleyfy
 class ShellUsername(forms.Form):
+    IN_USE = _('Shell username is already in use.')
     shellname = forms.CharField(
         label=_('Shell username'),
         widget=forms.TextInput(
             attrs={
                 'placeholder': _('Enter your desired shell account username'),
                 'autofocus': 'autofocus',
+                # Parsley gets confused if {value} is url encoded, so wrap in
+                # mark_safe().
+                # FIXME: I tried everything I could think of to use
+                # urlresolvers.reverse_lazy and I just couldn't get it to work
+                # with mark_safe(). I would get either the URL encoded
+                # property value or the __str__ of a wrapper object.
+                'data-parsley-remote': mark_safe(
+                    '/register/api/shellname/{value}'),
+                'data-parsley-trigger': 'focusin focusout input',
+                'data-parsley-remote-message': IN_USE,
             }
         ),
         max_length=32,
@@ -108,11 +134,12 @@ class ShellUsername(forms.Form):
     def clean_shellname(self):
         shellname = self.cleaned_data['shellname']
         if not utils.shellname_available(shellname):
-            raise forms.ValidationError(_('Shell account is already in use.'))
+            raise forms.ValidationError(self.IN_USE)
         # TODO: check that it isn't banned by some abusefilter type rule
         return shellname
 
 
+@parsleyfy
 class Email(forms.Form):
     email = forms.EmailField(
         label=_('Email address'),
@@ -127,12 +154,20 @@ class Email(forms.Form):
     )
 
 
+@parsleyfy
 class Password(forms.Form):
+    class Meta:
+        parsley_extras = {
+            'confirm': {
+                'equalto': 'passwd',
+                'error-message': _('Passwords do not match.'),
+            }
+        }
+
     passwd = forms.CharField(
         label=_('Password'),
         min_length=10,
         widget=forms.PasswordInput(
-            render_value=True,
             attrs={
                 'autofocus': 'autofocus',
             }
@@ -156,6 +191,7 @@ class Password(forms.Form):
                 'confirm', ValidationError(_('Passwords do not match.')))
 
 
+@parsleyfy
 class Confirm(forms.Form):
     agree = forms.BooleanField(
         label=_('I agree to comply with the Terms of Use'))

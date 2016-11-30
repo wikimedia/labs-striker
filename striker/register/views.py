@@ -26,6 +26,7 @@ import re
 from django import shortcuts
 from django.contrib import messages
 from django.core import urlresolvers
+from django.http import JsonResponse
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy as _
 
@@ -71,7 +72,36 @@ def oauth(req):
         urlresolvers.reverse('register:wizard', kwargs={'step': 'ldap'}))
 
 
+def username_available(req, name):
+    """JSON callback for parsley validation of username.
+
+    Kind of gross, but it returns a 406 status code when the name is not
+    available. This is to work with the limit choice of default response
+    validators in parsley.
+    """
+    available = utils.username_available(name)
+    status = 200 if available else 406
+    return JsonResponse({
+        'available': available,
+    }, status=status)
+
+
+def shellname_available(req, name):
+    """JSON callback for parsley validation of shell username.
+
+    Kind of gross, but it returns a 406 status code when the name is not
+    available. This is to work with the limit choice of default response
+    validators in parsley.
+    """
+    available = utils.shellname_available(name)
+    status = 200 if available else 406
+    return JsonResponse({
+        'available': available,
+    }, status=status)
+
+
 class AccountWizard(NamedUrlSessionWizardView):
+    """Class based view that handles the forms for collecting account info."""
     form_list = [
         ('ldap', forms.LDAPUsername),
         ('shell', forms.ShellUsername),
@@ -134,3 +164,6 @@ class AccountWizard(NamedUrlSessionWizardView):
         messages.success(
             self.request, _('Account created. Login to continue.'))
         return shortcuts.redirect(urlresolvers.reverse('labsauth:login'))
+
+
+account_wizard = AccountWizard.as_view(url_name='register:wizard')
