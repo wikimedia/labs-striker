@@ -23,6 +23,7 @@ changetype: add
 objectClass: person
 objectClass: inetOrgPerson
 objectClass: organizationalPerson
+objectClass: ldapPublicKey
 objectClass: posixAccount
 objectClass: shadowAccount
 objectClass: top
