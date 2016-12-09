@@ -366,6 +366,11 @@ PHABRICATOR_REPO_ADMIN_GROUP = ini.get('phabricator', 'REPO_ADMIN_GROUP')
 
 # == Wikitech settings ==
 WIKITECH_URL = ini.get('wikitech', 'SERVER_URL')
+WIKITECH_USER = ini.get('wikitech', 'USER')
+WIKITECH_CONSUMER_TOKEN = ini.get('wikitech', 'CONSUMER_TOKEN')
+WIKITECH_CONSUMER_SECRET = ini.get('wikitech', 'CONSUMER_SECRET')
+WIKITECH_ACCESS_TOKEN = ini.get('wikitech', 'ACCESS_TOKEN')
+WIKITECH_ACCESS_SECRET = ini.get('wikitech', 'ACCESS_SECRET')
 
 # == Tools settings ==
 TOOLS_MAINTAINER_BASE_DN = ini.get('ldap', 'TOOLS_MAINTAINER_BASE_DN')

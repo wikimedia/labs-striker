@@ -31,7 +31,6 @@ from striker.tools.models import Maintainer
 
 
 logger = logging.getLogger(__name__)
-mwapi = mediawiki.Client.default_client()
 
 
 def sul_available(name):
@@ -109,6 +108,9 @@ def check_username_create(name):
     - name : Canonicalized version of the given name
     - error : Error message if ok is False; None otherwise
     """
+    # Make sure to use the anon client here because on-wiki rights can affect
+    # the result of the cancreate check.
+    mwapi = mediawiki.Client.anon_client()
     user = mwapi.query_users_cancreate(name)[0]
     # Example response:
     # [{'missing': True, 'name': 'Puppet',
@@ -141,6 +143,7 @@ def check_ip_blocked_from_create(ip):
 
     Returns a block reason or False if not blocked.
     """
+    mwapi = mediawiki.Client.default_client()
     res = mwapi.query_blocks_ip(ip)
     for block in res:
         if block['nocreate']:
