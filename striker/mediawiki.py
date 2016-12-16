@@ -126,3 +126,21 @@ class Client(object):
             bkip=ip
         )
         return result['query']['blocks']
+
+    def query_meta_oath(self, username):
+        result = self.site.api(
+            'query', formatversion=2,
+            meta='oath',
+            oathuser=username
+        )
+        return result['query']['oath']
+
+    def oathvalidate(self, username, totp):
+        token = self.site.get_token('csrf', force=True)
+        result = self.site.api(
+            'oathvalidate', formatversion=2,
+            user=username,
+            totp=totp,
+            token=token
+        )
+        return result['oathvalidate']

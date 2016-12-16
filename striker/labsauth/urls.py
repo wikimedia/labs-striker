@@ -25,6 +25,11 @@ urlpatterns = [
     urls.url(r'login/$', 'striker.labsauth.views.login', name='login'),
     urls.url(r'logout/$', 'striker.labsauth.views.logout', name='logout'),
     urls.url(
+        r'oath$',
+        'striker.labsauth.views.oath',
+        name='oath'
+    ),
+    urls.url(
         r'initiate$',
         'striker.labsauth.views.oauth_initiate',
         name='oauth_initiate'

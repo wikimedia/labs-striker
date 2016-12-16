@@ -23,10 +23,14 @@ import logging
 from django import shortcuts
 from django.conf import settings
 from django.contrib import messages
+from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.auth import views as auth_views
 from django.core import urlresolvers
 from django.db.utils import DatabaseError
+from django.utils.six.moves.urllib.parse import urlparse
 from django.utils.translation import ugettext_lazy as _
+from django.views.decorators.cache import never_cache
+from django.views.decorators.debug import sensitive_post_parameters
 
 from ratelimitbackend import views as ratelimit_views
 import mwoauth
@@ -39,15 +43,43 @@ from striker.labsauth import utils
 logger = logging.getLogger(__name__)
 
 
+@sensitive_post_parameters()
+@never_cache
 def login(req):
     resp = ratelimit_views.login(
         request=req,
         template_name='labsauth/login.html',
         authentication_form=forms.LabsAuthenticationForm)
+
     if 'remember_me' in req.POST:
         req.session.set_expiry(settings.REMEMBER_ME_TTL)
         req.session.save()
+
+    if req.user.is_authenticated():
+        # Flag the session with OATH status and expect that OathMiddleware is
+        # installed to force the user to provide validation if needed
+        req.session[constants.OATH_REQUIRED] = utils.oath_enabled(req.user)
+
     return resp
+
+
+@sensitive_post_parameters()
+@never_cache
+def oath(req):
+    redirect_to = req.POST.get(
+        REDIRECT_FIELD_NAME, req.GET.get(REDIRECT_FIELD_NAME, ''))
+    if req.method == 'POST':
+        form = forms.OathVerifyForm(data=req.POST, request=req)
+        if form.is_valid():
+            netloc = urlparse(redirect_to)[1]
+            if not redirect_to:
+                redirect_to = settings.LOGIN_REDIRECT_URL
+            elif netloc and netloc != req.get_host():
+                redirect_to = settings.LOGIN_REDIRECT_URL
+            return shortcuts.redirect(redirect_to)
+    else:
+        form = forms.OathVerifyForm()
+    return shortcuts.render(req, 'labsauth/oath.html', {'form': form})
 
 
 def logout(req):
@@ -55,6 +87,7 @@ def logout(req):
     return shortcuts.redirect(urlresolvers.reverse('index'))
 
 
+@never_cache
 def oauth_initiate(req):
     """Initiate an OAuth login."""
     next_page = req.GET.get('next', None)
@@ -80,6 +113,7 @@ def oauth_initiate(req):
         return shortcuts.redirect(redirect)
 
 
+@never_cache
 def oauth_callback(req):
     """OAuth handshake callback."""
     serialized_token = req.session.get(constants.REQUEST_TOKEN_KEY, None)

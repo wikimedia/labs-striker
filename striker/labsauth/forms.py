@@ -19,8 +19,12 @@
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
 
 from django import forms
-from ratelimitbackend.forms import AuthenticationForm
+from django.utils.translation import ugettext_lazy as _
 
+from ratelimitbackend.forms import AuthenticationForm
+import mwclient
+
+from striker.labsauth import utils
 import striker.labsauth.models
 
 
@@ -41,3 +45,48 @@ class LabsAuthenticationForm(AuthenticationForm):
         super(LabsAuthenticationForm, self).__init__(*args, **kwargs)
         self.fields['username'].widget = forms.TextInput(
             attrs={'autofocus': ''})
+
+
+class OathVerifyForm(forms.Form):
+    token = forms.CharField(
+        label=_('Two-factor authentication code'),
+        widget=forms.TextInput(
+            attrs={
+                'placeholder': _('Authentication code'),
+                'autofocus': 'autofocus',
+                'autocomplete': 'off',
+            }
+        ),
+        max_length=255,
+        required=True,
+    )
+
+    def __init__(self, request=None, *args, **kwargs):
+        self.request = request
+        super(OathVerifyForm, self).__init__(*args, **kwargs)
+
+    def clean(self):
+        token = self.cleaned_data.get('token')
+        user = self.request.user
+
+        if user.is_authenticated() and token:
+            try:
+                valid = utils.oath_validate_token(user, token)
+            except mwclient.APIError as ex:
+                if ex.code == 'ratelimited':
+                    raise forms.ValidationError(
+                        _('You have exceeded your rate limit. '
+                          'Please wait some time and try again.'),
+                        code='ratelimited'
+                    )
+                raise ex
+
+            if not valid:
+                raise forms.ValidationError(
+                    _('The two-factor authentication token '
+                      'provided was invalid.'),
+                    code='token_invalid'
+                )
+            else:
+                utils.oath_save_validation(user, self.request)
+        return self.cleaned_data

@@ -21,9 +21,11 @@
 import ldap
 import logging
 import operator
+import time
 
 from django.conf import settings
 
+from striker import mediawiki
 from striker.labsauth import constants
 from striker.labsauth import models
 
@@ -110,3 +112,28 @@ def add_ldap_user(username, shellname, passwd, email):
         u.save()
 
     return u
+
+
+def oath_enabled(user):
+    """Is oath enabled for the given user?"""
+    mwapi = mediawiki.Client.default_client()
+    res = mwapi.query_meta_oath(user.ldapname)
+    return res['enabled']
+
+
+def oath_validate_token(user, totp):
+    """Validate a TOTP OATH token."""
+    mwapi = mediawiki.Client.default_client()
+    res = mwapi.oathvalidate(user.ldapname, totp)
+    if not res['enabled']:
+        return True
+    else:
+        return res['valid']
+
+
+def oath_save_validation(user, request):
+    now = time.time()
+    request.session[constants.OATH_INFO] = {
+        'user': user.ldapname,
+        'time': now
+    }

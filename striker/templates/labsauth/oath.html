@@ -1,0 +1,19 @@
+{% extends "labsauth/base.html" %}
+{% load bootstrap3 %}
+{% load i18n %}
+
+{% block panelbody %}
+<div class="panel-body bg-info">
+  {% blocktrans %}Please enter a verification code from your authentication device{% endblocktrans %}
+</div>
+<div class="panel-body">
+  <form method="post" action="{% url 'labsauth:oath' %}" class="form">
+    {% csrf_token %}
+    <input type="hidden" name="next" value="{{ next }}" />
+    {% bootstrap_form form %}
+    {% buttons %}
+    <input class="btn btn-lg btn-success btn-block" type="submit" value="{% trans "Verify" %}" />
+    {% endbuttons %}
+  </form>
+</div>
+{% endblock %}
