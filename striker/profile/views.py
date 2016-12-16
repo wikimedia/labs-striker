@@ -35,11 +35,11 @@ logger = logging.getLogger(__name__)
 
 
 @login_required
-def phab(req):
+def accounts(req):
     ctx = {
         'phab_url': settings.PHABRICATOR_URL,
     }
-    return shortcuts.render(req, 'profile/settings/phabricator.html', ctx)
+    return shortcuts.render(req, 'profile/settings/accounts.html', ctx)
 
 
 @login_required
@@ -69,5 +69,5 @@ def phab_attach(req):
                     id=req.id))
 
     next_page = req.GET.get(
-        'next', urlresolvers.reverse('profile:phabricator'))
+        'next', urlresolvers.reverse('profile:accounts'))
     return shortcuts.redirect(next_page)

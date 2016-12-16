@@ -1,0 +1,10 @@
+{% extends "profile/settings/base.html" %}
+{% load bootstrap3 %}
+{% load i18n %}
+
+{% block title %}{% trans "Account settings" %}{% endblock %}
+{% block content %}
+{% include "profile/settings/accounts/ldap.html" %}
+{% include "profile/settings/accounts/sul.html" %}
+{% include "profile/settings/accounts/phabricator.html" %}
+{% endblock %}

@@ -31,23 +31,9 @@ urlpatterns = [
         name='nojs'
     ),
     urls.url(
-        r'^settings/ldap$',
-        login_required(
-            TemplateView.as_view(
-                template_name='profile/settings/ldap.html')),
-        name='ldap'
-    ),
-    urls.url(
-        r'^settings/sul$',
-        login_required(
-            TemplateView.as_view(
-                template_name='profile/settings/sul.html')),
-        name='sul'
-    ),
-    urls.url(
-        r'^settings/phabricator$',
-        'striker.profile.views.phab',
-        name='phabricator'
+        r'^settings/accounts$',
+        'striker.profile.views.accounts',
+        name='accounts'
     ),
     urls.url(
         r'^settings/phabricator/attach$',
