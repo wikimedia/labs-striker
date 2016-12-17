@@ -137,6 +137,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.staticfiles',
     'formtools',
+    'striker',
     'striker.goals.apps.GoalsConfig',
     'striker.labsauth',
     'striker.profile',
