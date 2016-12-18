@@ -4,7 +4,9 @@
 
 {% block title %}{% trans "Account settings" %}{% endblock %}
 {% block content %}
-{% include "profile/settings/accounts/ldap.html" %}
-{% include "profile/settings/accounts/sul.html" %}
-{% include "profile/settings/accounts/phabricator.html" %}
+<div class="panel-group">
+  {% include "profile/settings/accounts/ldap.html" %}
+  {% include "profile/settings/accounts/sul.html" %}
+  {% include "profile/settings/accounts/phabricator.html" %}
+</div>
 {% endblock %}

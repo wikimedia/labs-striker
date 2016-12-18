@@ -71,3 +71,19 @@ form.hidden-labels label.no-hide {
 .panel-success > .panel-heading > .text-muted {
   color:inherit;
 }
+.margin-zero {
+  margin:0;
+}
+/* From http://stackoverflow.com/a/31967401/8171 */
+[data-toggle="collapse"].collapsed .if-not-collapsed {
+  display: none;
+}
+[data-toggle="collapse"]:not(.collapsed) .if-collapsed {
+  display: none;
+}
+.pubkey-view {
+  font-family:monospace;
+  font-size:smaller;
+  white-space:pre-wrap;
+  word-break:break-all;
+}

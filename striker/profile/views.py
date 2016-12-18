@@ -29,6 +29,7 @@ from django.db.utils import DatabaseError
 from django.utils.translation import ugettext_lazy as _
 
 from striker import phabricator
+from striker.profile import utils
 
 
 logger = logging.getLogger(__name__)
@@ -71,3 +72,12 @@ def phab_attach(req):
     next_page = req.GET.get(
         'next', urlresolvers.reverse('profile:accounts'))
     return shortcuts.redirect(next_page)
+
+
+@login_required
+def ssh_keys(req):
+    ldapuser = req.user.ldapuser
+    ctx = {
+        'ssh_keys': [utils.parse_ssh_key(key) for key in ldapuser.ssh_keys],
+    }
+    return shortcuts.render(req, 'profile/settings/ssh-keys.html', ctx)

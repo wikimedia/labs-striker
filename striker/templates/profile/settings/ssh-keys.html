@@ -1,0 +1,38 @@
+{% extends "profile/settings/base.html" %}
+{% load fontawesome %}
+{% load i18n %}
+
+{% block title %}{% trans "SSH keys" %}{% endblock %}
+{% block content %}
+<div class="panel-group">
+  {% for key in ssh_keys %}
+  {% trans "Show" as show %}
+  {% trans "Hide" as hide %}
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title"><span class="fa-stack">{% fa_icon "square" "stack-2x" "fw" aria_hidden="true" %}{% fa_icon "key" "stack-1x" "fw" "inverse" aria_hidden="true" %}</span> {{ key.comment }} ({{ key.bits }} {{ key.type_name }})</h3>
+    </div>
+    <div class="panel-body">
+      <dl class="dl-horizontal margin-zero">
+        <dt>{% trans "Fingerprint" %}</dt>
+        <dd>{{ key.hash_md5 }}</dd>
+        <dd>{{ key.hash_sha256 }}</dd>
+        <dt>
+          <a class="btn btn-default btn-xs collapsed" role="button" data-toggle="collapse" href="#pubkey-{{ forloop.counter }}" aria-expanded="false" aria-controls="pubkey-{{ forloop.counter }}">
+            <span class="if-collapsed">{% fa_icon "plus-square-o" "fw" aria_label=show title=show %}</span>
+            <span class="if-not-collapsed">{% fa_icon "minus-square-o" "fw" aria_label=hide title=hide %}</span>
+            {% trans "Public key" %}
+          </a>
+        </dt>
+        <dd>
+          <div class="collapse" id="pubkey-{{ forloop.counter }}">
+            <div class="well well-sm margin-zero pubkey-view">{{ key.keydata }}</div>
+          </div>
+        </dd>
+      </dl>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}
+{# vim:sw=2:ts=2:sts=2:et: #}

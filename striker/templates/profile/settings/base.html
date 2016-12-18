@@ -1,9 +1,11 @@
 {% extends "base.html" %}
 {% load bootstrap3 %}
+{% load fontawesome %}
 {% load i18n %}
 
 {% block pre_content %}
 {% url 'profile:accounts' as settings_accounts %}
+{% url 'profile:ssh_keys' as settings_ssh_keys %}
 {{ block.super }}
 <div class="container-fluid">
   <div class="row">
@@ -14,6 +16,7 @@
         </div>
         <div class="list-group" role="navigation">
             <a class="list-group-item {% if request.path == settings_accounts %}active{% endif %}" href="{{ settings_accounts }}">{% bootstrap_icon "user" %} {% trans "Linked accounts" %}</a>
+            <a class="list-group-item {% if request.path == settings_ssh_keys %}active{% endif %}" href="{{ settings_ssh_keys }}">{% fa_icon "key" %} {% trans "SSH keys" %}</a>
         </div>
       </div>
     </div>

@@ -24,3 +24,4 @@ python-memcached>=1.58  # Python style
 requests>=2.10.0  # Apache 2.0
 requests-oauthlib>=0.6.1  # ISC
 six>=1.10.0  # MIT
+sshpubkeys>=2.2.0  # BSD

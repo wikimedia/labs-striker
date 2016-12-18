@@ -40,4 +40,9 @@ urlpatterns = [
         'striker.profile.views.phab_attach',
         name='phabricator_attach'
     ),
+    urls.url(
+        r'^settings/ssh-keys$',
+        'striker.profile.views.ssh_keys',
+        name='ssh_keys'
+    ),
 ]
