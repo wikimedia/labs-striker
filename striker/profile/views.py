@@ -81,6 +81,7 @@ def ssh_keys(req):
     ldapuser = req.user.ldapuser
     ctx = {
         'ssh_keys': [utils.parse_ssh_key(key) for key in ldapuser.ssh_keys],
+        'new_key': forms.SshKeyForm(),
     }
     for key in ctx['ssh_keys']:
         key.form = forms.SshKeyDeleteForm(
@@ -103,4 +104,23 @@ def ssh_key_delete(req):
                 _("Deleted SSH key {key_hash}").format(key_hash=key_hash))
         else:
             messages.error(req, _('Key not found.'))
+    return shortcuts.redirect(urlresolvers.reverse('profile:ssh_keys'))
+
+
+@login_required
+def ssh_key_add(req):
+    if req.method == 'POST':
+        form = forms.SshKeyForm(data=req.POST)
+        if form.is_valid():
+            ldapuser = req.user.ldapuser
+            keys = ldapuser.ssh_keys
+            keys.append(form.cleaned_data.get('public_key'))
+            ldapuser.ssh_keys = keys
+            ldapuser.save()
+            messages.info(
+                req,
+                _('Added SSH key {key_hash}').format(
+                    key_hash=form.key.hash_sha256()))
+        else:
+            messages.error(req, _('Invalid public key.'))
     return shortcuts.redirect(urlresolvers.reverse('profile:ssh_keys'))

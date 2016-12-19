@@ -47,3 +47,34 @@ class SshKeyDeleteForm(forms.Form):
             if hash != key_hash
         ]
         return key_hash
+
+
+class SshKeyForm(forms.Form):
+    public_key = forms.CharField(
+        label=_('Public key'),
+        widget=forms.Textarea(
+            attrs={
+                'placeholder': _(
+                    "Begins with 'ssh-rsa', 'ssh-dss', 'ssh-ed25519', "
+                    "'ecdsa-sha2-nistp256', 'ecdsa-sha2-nistp384', or "
+                    "'ecdsa-sha2-nistp521'"
+                ),
+            }
+        ),
+        required=True,
+    )
+
+    def clean_public_key(self):
+        pub_key = self.cleaned_data.get('public_key').strip()
+        key = utils.parse_ssh_key(pub_key)
+        if key is None:
+            # TODO: Try to cleanup the data and parse it again?
+            # OpenStackManager checks for PuTTY's weird key format and tries
+            # to extract the public key from that. I don't think that code in
+            # OSM actually works though. OSM also passes the key data through
+            # `ssh-keygen -i` for validation. This would have the side effect
+            # of extracting the public key from an unencrypted private key.
+            raise forms.ValidationError(
+                _('Invalid public key.'), code='key_invalid')
+        self.key = key
+        return pub_key
