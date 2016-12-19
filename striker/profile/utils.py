@@ -52,3 +52,10 @@ def parse_ssh_key(pubkey):
         logger.exception('Failed to parse "%s"', err)
         key = None
     return key
+
+
+def ssh_keys_by_hash(user):
+    return {
+        parse_ssh_key(key).hash_sha256(): key
+        for key in user.ldapuser.ssh_keys
+    }

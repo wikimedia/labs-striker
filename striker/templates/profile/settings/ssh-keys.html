@@ -1,4 +1,5 @@
 {% extends "profile/settings/base.html" %}
+{% load bootstrap3 %}
 {% load fontawesome %}
 {% load i18n %}
 
@@ -10,7 +11,19 @@
   {% trans "Hide" as hide %}
   <div class="panel panel-default">
     <div class="panel-heading">
-      <h3 class="panel-title"><span class="fa-stack">{% fa_icon "square" "stack-2x" "fw" aria_hidden="true" %}{% fa_icon "key" "stack-1x" "fw" "inverse" aria_hidden="true" %}</span> {{ key.comment }} ({{ key.bits }} {{ key.type_name }})</h3>
+      <div class="row">
+        <div class="col-sm-11">
+          <h3 class="panel-title"><span class="fa-stack">{% fa_icon "square" "stack-2x" "fw" aria_hidden="true" %}{% fa_icon "key" "stack-1x" "fw" "inverse" aria_hidden="true" %}</span> {{ key.comment }} ({{ key.bits }} {{ key.type_name }})</h3>
+        </div>
+        <div class="col-sm-1">
+          <form method="post" action="{% url 'profile:ssh_key_delete' %}" class="form form-inline">
+            {% csrf_token %}
+            {% bootstrap_form key.form %}
+            {% trans "Delete" as delete_title %}
+            <button class="btn btn-danger pull-right" type="submit" title="{{ delete_title }}" aria-label="{{ delete_title }}" >{% bootstrap_icon "trash" %}</button>
+          </form>
+        </div>
+      </div>
     </div>
     <div class="panel-body">
       <dl class="dl-horizontal margin-zero">

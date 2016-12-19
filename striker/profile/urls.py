@@ -45,4 +45,9 @@ urlpatterns = [
         'striker.profile.views.ssh_keys',
         name='ssh_keys'
     ),
+    urls.url(
+        r'^settings/ssh-keys/delete$',
+        'striker.profile.views.ssh_key_delete',
+        name='ssh_key_delete'
+    ),
 ]

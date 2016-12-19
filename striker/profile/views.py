@@ -28,7 +28,9 @@ from django.core import urlresolvers
 from django.db.utils import DatabaseError
 from django.utils.translation import ugettext_lazy as _
 
+from striker import decorators
 from striker import phabricator
+from striker.profile import forms
 from striker.profile import utils
 
 
@@ -80,4 +82,25 @@ def ssh_keys(req):
     ctx = {
         'ssh_keys': [utils.parse_ssh_key(key) for key in ldapuser.ssh_keys],
     }
+    for key in ctx['ssh_keys']:
+        key.form = forms.SshKeyDeleteForm(
+            initial={'key_hash': key.hash_sha256()})
     return shortcuts.render(req, 'profile/settings/ssh-keys.html', ctx)
+
+
+@login_required
+@decorators.confirm_required('profile/settings/ssh-keys/delete-confirm.html')
+def ssh_key_delete(req):
+    if req.method == 'POST':
+        form = forms.SshKeyDeleteForm(data=req.POST, request=req)
+        if form.is_valid():
+            key_hash = form.cleaned_data.get('key_hash')
+            ldapuser = req.user.ldapuser
+            ldapuser.ssh_keys = form.cleaned_keys
+            ldapuser.save()
+            messages.info(
+                req,
+                _("Deleted SSH key {key_hash}").format(key_hash=key_hash))
+        else:
+            messages.error(req, _('Key not found.'))
+    return shortcuts.redirect(urlresolvers.reverse('profile:ssh_keys'))
