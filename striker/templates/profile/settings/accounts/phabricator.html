@@ -8,14 +8,14 @@
       <h3 class="panel-title"><span class="fa-stack">{% fa_icon "circle" "stack-2x" "fw" aria_hidden="true" %}{% fa_icon "cog" "stack-1x" "fw" "inverse" aria_hidden="true" %}</span> {% trans "Phabricator account" %}</h3>
   </div>
   <div class="panel-body">
-    <dl class="dl-horizontal">
+    <dl class="dl-horizontal margin-zero">
       <dt>{% trans "Username" %}</dt><dd>{{ user.phabname }}</dd>
       <dt>{% trans "Real name" %}</dt><dd>{{ user.phabrealname }}</dd>
       <dt>{% trans "Profile" %}</dt><dd><a href="{{ user.phaburl }}">{{ user.phaburl }}</a></dd>
     </dl>
   </div>
   <div class="panel-footer">
-    <p><a class="btn btn-default" href="{% url 'profile:phabricator_attach' %}">{% trans "Refresh Phabricator data" %}</a></p>
+    <a class="btn btn-default" href="{% url 'profile:phabricator_attach' %}">{% trans "Refresh Phabricator data" %}</a>
   </div>
 </div>
 {% else %}
