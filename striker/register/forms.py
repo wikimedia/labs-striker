@@ -22,9 +22,9 @@ import logging
 
 from django import forms
 from django.core import validators
-from django.core.exceptions import ValidationError
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
+
 from parsley.decorators import parsleyfy
 
 from striker.register import utils
@@ -193,14 +193,13 @@ class Password(forms.Form):
         widget=forms.PasswordInput
     )
 
-    def clean(self):
+    def clean_confirm(self):
         """Validate that both password entries match."""
-        super(Password, self).clean()
         passwd = self.cleaned_data.get('passwd')
         confirm = self.cleaned_data.get('confirm')
         if passwd != confirm:
-            self.add_error(
-                'confirm', ValidationError(_('Passwords do not match.')))
+            raise forms.ValidationError(_('Passwords do not match.'))
+        return confirm
 
 
 @parsleyfy
