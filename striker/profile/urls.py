@@ -55,4 +55,9 @@ urlpatterns = [
         'striker.profile.views.ssh_key_add',
         name='ssh_key_add'
     ),
+    urls.url(
+        r'^settings/change_password$',
+        'striker.profile.views.change_password',
+        name='change_password'
+    ),
 ]

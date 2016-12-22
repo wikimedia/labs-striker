@@ -26,6 +26,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core import urlresolvers
 from django.db.utils import DatabaseError
+from django.views.decorators.debug import sensitive_post_parameters
 from django.utils.translation import ugettext_lazy as _
 
 from striker import decorators
@@ -124,3 +125,25 @@ def ssh_key_add(req):
         else:
             messages.error(req, _('Invalid public key.'))
     return shortcuts.redirect(urlresolvers.reverse('profile:ssh_keys'))
+
+
+@sensitive_post_parameters()
+@login_required
+def change_password(req):
+    if req.method == 'POST':
+        form = forms.PasswordChangeForm(data=req.POST, user=req.user)
+        if form.is_valid():
+            form.save()
+            messages.info(req, _('Password changed'))
+            # We do not need to mess with update_session_auth_hash because
+            # LDAP passwords are detached from the normal Django session
+            # management methods.
+            return shortcuts.redirect(
+                urlresolvers.reverse('profile:change_password'))
+    else:
+        form = forms.PasswordChangeForm(user=req.user)
+    ctx = {
+        'change_password_form': form,
+    }
+    return shortcuts.render(
+        req, 'profile/settings/change-password.html', ctx)

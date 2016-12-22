@@ -6,6 +6,7 @@
 {% block pre_content %}
 {% url 'profile:accounts' as settings_accounts %}
 {% url 'profile:ssh_keys' as settings_ssh_keys %}
+{% url 'profile:change_password' as settings_change_password %}
 {{ block.super }}
 <div class="container-fluid">
   <div class="row">
@@ -17,6 +18,7 @@
         <div class="list-group" role="navigation">
             <a class="list-group-item {% if request.path == settings_accounts %}active{% endif %}" href="{{ settings_accounts }}">{% bootstrap_icon "user" %} {% trans "Linked accounts" %}</a>
             <a class="list-group-item {% if request.path == settings_ssh_keys %}active{% endif %}" href="{{ settings_ssh_keys }}">{% fa_icon "key" %} {% trans "SSH keys" %}</a>
+            <a class="list-group-item {% if request.path == settings_change_password %}active{% endif %}" href="{{ settings_change_password }}">{% bootstrap_icon "lock" %} {% trans "Change password" %}</a>
         </div>
       </div>
     </div>

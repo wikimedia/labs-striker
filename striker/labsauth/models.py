@@ -30,6 +30,7 @@ from django.utils.crypto import salted_hmac
 from django.utils.translation import ugettext_lazy as _
 
 from ldapdb.models import fields as ldap_fields
+import ldap
 import ldapdb.models
 import mwoauth
 
@@ -109,12 +110,28 @@ class LabsUser(AbstractBaseUser, PermissionsMixin):
         verbose_name_plural = _('users')
 
     def set_password(self, raw_password):
-        """Can't change password."""
-        return
+        # Set password by directly manipulating the associated LDAP record.
+        # The ldap-auth backend we use does not support password
+        # checks/changes.
+        ldapuser = self.ldapuser
+        ldapuser.password = raw_password
+        ldapuser.save()
 
     def check_password(self, raw_password):
-        """Can't be used directly for authn."""
-        return False
+        """Return a boolean of whether the raw_password was correct."""
+        # Validate the current password by doing an authbind as the user.
+        # The ldap-auth backend we use does not support password
+        # checks/changes.
+        try:
+            con = ldap.initialize(settings.AUTH_LDAP_SERVER_URI)
+            if settings.AUTH_LDAP_START_TLS:
+                con.start_tls_s()
+            con.simple_bind_s(self.ldap_dn, raw_password)
+        except ldap.INVALID_CREDENTIALS:
+            return False
+        else:
+            con.unbind()
+            return True
 
     def set_unusable_password(self):
         return

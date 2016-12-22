@@ -21,6 +21,8 @@
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 
+from parsley.decorators import parsleyfy
+
 from striker.profile import utils
 
 
@@ -78,3 +80,57 @@ class SshKeyForm(forms.Form):
                 _('Invalid public key.'), code='key_invalid')
         self.key = key
         return pub_key
+
+
+@parsleyfy
+class PasswordChangeForm(forms.Form):
+    class Meta:
+        parsley_extras = {
+            'confirm': {
+                'equalto': 'passwd',
+                'error-message': _('Passwords do not match.'),
+            }
+        }
+
+    old_password = forms.CharField(
+        label=_('Old password'),
+        widget=forms.PasswordInput(
+            attrs={
+                'autofocus': 'autofocus',
+            }
+        )
+    )
+    passwd = forms.CharField(
+        label=_('New password'),
+        min_length=10,
+        widget=forms.PasswordInput
+    )
+    confirm = forms.CharField(
+        label=_('Confirm new password'),
+        widget=forms.PasswordInput
+    )
+
+    def __init__(self, user=None, *args, **kwargs):
+        self.user = user
+        super(PasswordChangeForm, self).__init__(*args, **kwargs)
+
+    def clean_old_password(self):
+        old_password = self.cleaned_data.get('old_password')
+        if not self.user.check_password(old_password):
+            raise forms.ValidationError(
+                _('Your old password was entered incorrectly. '
+                  'Please enter it again.'),
+                code='password_incorrect')
+        return old_password
+
+    def clean_confirm(self):
+        """Validate that both password entries match."""
+        passwd = self.cleaned_data.get('passwd')
+        confirm = self.cleaned_data.get('confirm')
+        if passwd != confirm:
+            raise forms.ValidationError(_('Passwords do not match.'))
+        return confirm
+
+    def save(self):
+        self.user.set_password(self.cleaned_data['passwd'])
+        return self.user

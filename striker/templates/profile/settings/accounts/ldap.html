@@ -12,4 +12,7 @@
       <dt>{% trans "Email" %}</dt><dd>{{ user.ldapemail }}</dd>
     </dl>
   </div>
+  <div class="panel-footer">
+    <a class="btn btn-default" href="{% url 'profile:change_password' %}">{% trans "Change password" %}</a>
+  </div>
 </div>
