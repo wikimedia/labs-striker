@@ -5,6 +5,7 @@
 
 {% block title %}{% trans "SSH keys" %}{% endblock %}
 {% block content %}
+{% if ssh_keys %}
 <div class="panel-group">
   {% for key in ssh_keys %}
   {% trans "Show" as show %}
@@ -47,6 +48,7 @@
   </div>
   {% endfor %}
 </div>
+{% endif %}
 <div class="panel panel-info">
   <div class="panel-heading">
     <h3 class="panel-title"><span class="fa-stack">{% fa_icon "square-o" "stack-2x" "fw" aria_hidden="true" %}{% fa_icon "key" "stack-1x" "fw" aria_hidden="true" %}</span> {% trans "New SSH key" %}</h3>
