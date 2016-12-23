@@ -87,3 +87,37 @@ form.hidden-labels label.no-hide {
   white-space:pre-wrap;
   word-break:break-all;
 }
+#password-strength-meter {
+  font-size:smaller;
+  margin-bottom:15px;
+  margin-top:-10px;
+  overflow:hidden;
+  width:100%;
+}
+.password-strength-cell {
+  background-color:#eee;
+  color:#fff;
+  border:1px solid #ccc;
+  display:inline-block;
+  margin-left:1px;
+  text-align:center;
+}
+.hide {
+  display:none;
+}
+.zxcvbn-1 {
+  background-color:#d9534f;
+  border-color:#d43f3a;
+}
+.zxcvbn-2 {
+  background-color:#f0ad4e;
+  border-color:#eea236;
+}
+.zxcvbn-3 {
+  background-color:#5bc0de;
+  border-color:#46b8da;
+}
+.zxcvbn-4 {
+  background-color:#5cb85c;
+  border-color:#4cae4c;
+}

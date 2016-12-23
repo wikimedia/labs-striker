@@ -185,6 +185,7 @@ class Password(forms.Form):
         widget=forms.PasswordInput(
             attrs={
                 'autofocus': 'autofocus',
+                'class': 'check-password-strength-input',
             }
         )
     )

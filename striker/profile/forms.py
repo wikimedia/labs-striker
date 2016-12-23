@@ -103,7 +103,11 @@ class PasswordChangeForm(forms.Form):
     passwd = forms.CharField(
         label=_('New password'),
         min_length=10,
-        widget=forms.PasswordInput
+        widget=forms.PasswordInput(
+            attrs={
+                'class': 'check-password-strength-input',
+            }
+        )
     )
     confirm = forms.CharField(
         label=_('Confirm new password'),

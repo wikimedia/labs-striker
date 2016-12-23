@@ -198,7 +198,7 @@ class AccountWizard(NamedUrlSessionWizardView):
         context = super(AccountWizard, self).get_context_data(
             form=form, **kwargs)
         oauth = oauth_from_session(self.request.session)
-        if self.steps.current == 'confirm':
+        if self.steps.current in ['password', 'confirm']:
             context.update({
                 'forms': self._get_all_forms(),
                 'sul': {
