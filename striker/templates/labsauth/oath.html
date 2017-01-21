@@ -4,7 +4,7 @@
 
 {% block panelbody %}
 <div class="panel-body bg-info">
-  {% blocktrans %}Please enter a verification code from your authentication device{% endblocktrans %}
+  {% blocktrans with oath_url='https://wikitech.wikimedia.org/wiki/Help:Two-factor_authentication' %}Please enter a verification code from your <a href="{{ oath_url }}">authentication device</a>{% endblocktrans %}
 </div>
 <div class="panel-body">
   <form method="post" action="{% url 'labsauth:oath' %}" class="form">
