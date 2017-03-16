@@ -48,8 +48,7 @@ def inject_tool(f):
         if 'tool' in kwargs:
             name = kwargs['tool']
             try:
-                kwargs['tool'] = Tool.objects.get(
-                    group_name='tools.{0}'.format(name))
+                kwargs['tool'] = Tool.objects.get(cn='tools.{0}'.format(name))
             except ObjectDoesNotExist:
                 req = args[0]
                 messages.error(
@@ -63,7 +62,7 @@ def inject_tool(f):
 def tool_member(tool, user):
     if user.is_anonymous():
         return False
-    return user.ldap_dn in tool.maintainer_ids
+    return user.ldap_dn in tool.members
 
 
 def index(req):
@@ -74,14 +73,14 @@ def index(req):
     if not req.user.is_anonymous():
         # TODO: do we need to paginate the user's tools too? Magnus has 60!
         ctx['my_tools'] = Tool.objects.filter(
-            maintainer_ids__contains=req.user.ldap_dn).order_by('group_name')
+            members__contains=req.user.ldap_dn).order_by('cn')
 
     page = req.GET.get('p')
     if ctx['query'] == '':
         tool_list = Tool.objects.all()
     else:
-        tool_list = Tool.objects.filter(group_name__icontains=ctx['query'])
-    tool_list = tool_list.order_by('group_name')
+        tool_list = Tool.objects.filter(cn__icontains=ctx['query'])
+    tool_list = tool_list.order_by('cn')
     pager = paginator.Paginator(tool_list, 10)
     try:
         tools = pager.page(page)

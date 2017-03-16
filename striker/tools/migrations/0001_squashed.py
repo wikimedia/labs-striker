@@ -10,7 +10,10 @@ import ldapdb.models.fields
 
 class Migration(migrations.Migration):
 
-    replaces = [('tools', '0001_initial'), ('tools', '0002_auto_20160531_1653')]
+    replaces = [
+        ('tools', '0001_initial'),
+        ('tools', '0002_auto_20160531_1653')
+    ]
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
@@ -43,9 +46,9 @@ class Migration(migrations.Migration):
             name='Tool',
             fields=[
                 ('dn', models.CharField(max_length=200)),
-                ('group_name', ldapdb.models.fields.CharField(max_length=200, serialize=False, primary_key=True, db_column='cn')),
-                ('gid', ldapdb.models.fields.IntegerField(unique=True, db_column='gidNumber')),
-                ('maintainer_ids', ldapdb.models.fields.ListField(db_column='member')),
+                ('cn', ldapdb.models.fields.CharField(max_length=200, serialize=False, primary_key=True, db_column='cn')),
+                ('gid_number', ldapdb.models.fields.IntegerField(unique=True, db_column='gidNumber')),
+                ('members', ldapdb.models.fields.ListField(db_column='member')),
             ],
             options={
                 'abstract': False,

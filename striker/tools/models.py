@@ -41,7 +41,7 @@ class Maintainer(ldapdb.models.Model):
 class ToolManager(models.Manager):
     def get_queryset(self):
         return super(ToolManager, self).get_queryset().filter(
-            group_name__startswith='tools.')
+            cn__startswith='tools.')
 
 
 class Tool(ldapdb.models.Model):
@@ -51,24 +51,24 @@ class Tool(ldapdb.models.Model):
 
     objects = ToolManager()
 
-    group_name = fields.CharField(
+    cn = fields.CharField(
         db_column='cn', max_length=200, primary_key=True)
-    gid = fields.IntegerField(db_column='gidNumber', unique=True)
-    maintainer_ids = fields.ListField(db_column='member')
+    gid_number = fields.IntegerField(db_column='gidNumber', unique=True)
+    members = fields.ListField(db_column='member')
 
     @property
     def name(self):
-        return self.group_name[6:]
+        return self.cn[6:]
 
     @name.setter
     def name(self, value):
-        self.group_name = 'tools.{0!s}'.format(value)
+        self.cn = 'tools.{0!s}'.format(value)
 
     def maintainers(self):
         # OMG, this is horrible. You can't search LDAP by dn.
         return Maintainer.objects.filter(
             username__in=(
-                dn.split(',')[0].split('=')[1] for dn in self.maintainer_ids))
+                dn.split(',')[0].split('=')[1] for dn in self.members))
 
     def __str__(self):
         return self.name
