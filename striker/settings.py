@@ -381,3 +381,11 @@ TOOLS_TOOL_LABS_GROUP_NAME = ini.get('ldap', 'TOOLS_TOOL_LABS_GROUP_NAME')
 
 # == OATH settings ==
 OATHMIDDLEWARE_REDIRECT = 'labsauth:oath'
+
+# == OpenStack settings ==
+OPENSTACK_URL = ini.get('openstack', 'URL')
+OPENSTACK_USER = ini.get('openstack', 'USER')
+OPENSTACK_PASSWORD = ini.get('openstack', 'PASSWORD')
+OPENSTACK_PROJECT = ini.get('openstack', 'PROJECT')
+OPENSTACK_USER_ROLE = ini.get('openstack', 'USER_ROLE')
+OPENSTACK_ADMIN_ROLE = ini.get('openstack', 'ADMIN_ROLE')

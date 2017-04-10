@@ -5,5 +5,5 @@
 
 {% block body %}
 <p>{% blocktrans %}Request membership in the Tool Labs project so you can create your own tool and help maintain existing tools.{% endblocktrans %}</p>
-<p><a href="https://wikitech.wikimedia.org/wiki/Special:FormEdit/Tools_Access_Request" class="btn btn-default">{% trans "Join now" %}</a></p>
+<p><a href="{% url 'tools:membership_apply' %}" class="btn btn-default">{% trans "Join now" %}</a></p>
 {% endblock %}

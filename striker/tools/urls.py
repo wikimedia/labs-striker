@@ -41,4 +41,19 @@ urlpatterns = [
         'striker.tools.views.repo_view',
         name='repo_view'
     ),
+    urls.url(
+        r'^membership/$',
+        'striker.tools.views.membership',
+        name='membership'
+    ),
+    urls.url(
+        r'^membership/apply$',
+        'striker.tools.views.membership_apply',
+        name='membership_apply'
+    ),
+    urls.url(
+        r'^membership/status/(?P<app_id>\d+)$',
+        'striker.tools.views.membership_status',
+        name='membership_status'
+    ),
 ]

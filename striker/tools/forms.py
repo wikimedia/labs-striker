@@ -24,6 +24,7 @@ from django import forms
 from django.utils.translation import ugettext_lazy as _
 
 from striker import phabricator
+from striker.tools.models import AccessRequest
 
 
 phab = phabricator.Client.default_client()
@@ -54,3 +55,33 @@ class RepoCreateForm(forms.Form):
                 code='duplicate')
         except KeyError:
             return name
+
+
+class AccessRequestForm(forms.ModelForm):
+    class Meta:
+        model = AccessRequest
+        fields = ('reason',)
+        widgets = {
+            'reason': forms.Textarea(
+                attrs={
+                    'placeholder': _(
+                        'Briefly explain how you will use Tool '
+                        'Labs to benefit the Wikimedia movement.'
+                    ),
+                    'rows': 5,
+                },
+            ),
+        }
+
+
+class AccessRequestAdminForm(forms.ModelForm):
+    class Meta:
+        model = AccessRequest
+        fields = ('admin_notes', 'status')
+        widgets = {
+            'admin_notes': forms.Textarea(
+                attrs={
+                    'rows': 5,
+                },
+            ),
+        }

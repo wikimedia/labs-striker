@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% load bootstrap3 %}
+{% load i18n %}
+
+{% block title %}{% trans "Tool Labs membership requests" %}{% endblock %}
+
+{% block pre_content %}
+<ol class="breadcrumb">
+  <li><a href="{% url 'tools:index' %}">{% trans "Tools" %}</a></li>
+  <li class="active">{% trans "Membership requests" %}</li>
+</ol>
+{{ block.super }}
+{% endblock %}
+
+{% block content %}
+<div class="panel panel-default panel-pager">
+  <div class="panel-heading">
+    <h3 class="panel-title">{% bootstrap_icon "th-list" %} {% trans "Membership requests" %}</h3>
+  </div>
+  <div class="table-responsive">
+    <table class="table table-striped table-hover table-condensed table-bordered">
+      <thead>
+        <tr>
+          {% for col in cols %}
+          {% with asc=col.field desc='-'|add:col.field %}
+          <th><a class="sortable {% if o == asc %}sorted-asc{% elif o == desc %}sorted-desc{% endif %}" href="{% url 'tools:membership' %}?o={% if o == desc %}{{ asc }}{% else %}{{ desc }}{% endif %}">{% trans col.label %}</a></th>
+          {% endwith %}
+          {% endfor %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in access_requests %}
+        <tr>
+          <td><a href="{% url 'tools:membership_status' app_id=r.id %}">{{ r.created_date|date:"Y-m-d" }}</a></td>
+          <td>{{ r.user }}</td>
+          <td>{{ r.get_status_display }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <div class="panel-footer">
+    {% with "o="|add:o as sort  %}
+    {% bootstrap_pagination access_requests size="small" parameter_name="p" extra=sort %}
+    {% endwith %}
+  </div>
+</div>
+{% endblock %}

@@ -144,3 +144,14 @@ class Client(object):
             token=token
         )
         return result['oathvalidate']
+
+    def get_page(self, title, follow_redirects=True):
+        """Get a Page object."""
+        page = self.site.Pages[title]
+        while follow_redirects and page.redirect:
+            page = next(page.links())
+        return page
+
+    def user_talk_page(self, username):
+        """Get a user's talk page."""
+        return self.get_page('User_talk:{}'.format(username))

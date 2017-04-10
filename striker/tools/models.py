@@ -21,6 +21,7 @@
 from django.conf import settings
 from django.db import models
 from django.utils import timezone
+from django.utils.translation import ugettext_lazy as _
 
 from ldapdb.models import fields
 import ldapdb.models
@@ -85,3 +86,32 @@ class DiffusionRepo(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class AccessRequest(models.Model):
+    """Request to join Tools project."""
+    PENDING = 'p'
+    APPROVED = 'a'
+    DECLINED = 'd'
+    STATUS_CHOICES = (
+        (PENDING, _('Pending')),
+        (APPROVED, _('Approved')),
+        (DECLINED, _('Declined')),
+    )
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, related_name='requestor+', db_index=True)
+    reason = models.TextField()
+    created_date = models.DateTimeField(
+        default=timezone.now, blank=True, editable=False, db_index=True)
+    admin_notes = models.TextField(blank=True, null=True)
+    status = models.CharField(
+        max_length=1, choices=STATUS_CHOICES, default=PENDING, db_index=True)
+    resolved_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, related_name='resolver+',
+        blank=True, null=True)
+    resolved_date = models.DateTimeField(blank=True, null=True)
+
+    def __str__(self):
+        return '{} - {}'.format(
+            self.user.get_short_name(), self.get_status_display())

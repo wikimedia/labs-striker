@@ -14,7 +14,14 @@
           {% for tool in my_tools %}
           <a href="{% url 'tools:tool' tool=tool %}" class="list-group-item">{{ tool.name }}</a>
           {% empty %}
+          {% if member %}
           <div class="list-group-item">{% blocktrans with url='https://tools.wmflabs.org/' %}Your account is not associated with any tools. Visit <a href="{{ url }}">tools.wmflabs.org</a> to find a existing tool to join or create a new tool.{% endblocktrans %}</div>
+          {% else %}
+          <div class="list-group-item">
+            <p>{% blocktrans %}Request membership in the Tool Labs project so you can create your own tool and help maintain existing tools.{% endblocktrans %}</p>
+            <p><a href="{% url 'tools:membership_apply' %}" class="btn btn-default">{% trans "Join now" %}</a></p>
+          </div>
+          {% endif %}
           {% endfor %}
         </div>
         {% else %}

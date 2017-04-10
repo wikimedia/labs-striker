@@ -121,3 +121,26 @@ form.hidden-labels label.no-hide {
   background-color:#5cb85c;
   border-color:#4cae4c;
 }
+.sortable {
+  color:inherit;
+  display:block;
+  position:relative;
+  padding-right:10px;
+}
+.sorted-asc:after,
+.sorted-desc:after {
+  content:' ';
+  position:absolute;
+  width:10px;
+  height:10px;
+  right:0;
+  border:8px solid transparent;
+}
+.sorted-asc:after {
+  border-bottom-color:#333;
+  bottom:25%;
+}
+.sorted-desc:after {
+  border-top-color:#333;
+  top:25%;
+}

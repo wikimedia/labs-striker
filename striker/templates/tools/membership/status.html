@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% load bootstrap3 %}
+{% load i18n %}
+
+{% block title %}{% trans "Tool Labs membership request" %}{% endblock %}
+
+{% block pre_content %}
+<ol class="breadcrumb">
+  <li><a href="{% url 'tools:index' %}">{% trans "Tools" %}</a></li>
+  <li><a href="{% url 'tools:membership' %}">{% trans "Membership requests" %}</a></li>
+  <li class="active">{{ app.id }}</a>
+</ol>
+{{ block.super }}
+{% endblock %}
+
+{% block content %}
+<div class="panel-group">
+  <div class="panel panel-default">
+    <div class="panel-body">
+      <dl class="dl-horizontal">
+        <dt>{% trans "User" %}</dt>
+        <dd>{{ app.user }}</dd>
+        <dt>{% trans "Status" %}</dt>
+        <dd>{{ app.get_status_display }}</dd>
+        <dt>{% trans "Reason" %}</dt>
+          <dd><pre>{{ app.reason }}</pre></dd>
+        {% if app.admin_notes %}
+        <dt>{% trans "Notes" %}</dt>
+          <dd><pre>{{ app.admin_notes }}</pre></dd>
+        {% endif %}
+        <dt>{% trans "Created" %}</dt>
+        <dd>{{ app.created_date|date:"Y-m-d H:i" }}</dd>
+        {% if app.resolved_date %}
+        <dt>{% trans "Resolved" %}</dt>
+        <dd>{{ app.resolved_date|date:"Y-m-d H:i" }} {{ app.resolved_by }}</dd>
+        {% endif %}
+      </dl>
+    </div>
+  </div>
+  {% if form %}
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title">{% trans "Update request" %}</h3>
+    </div>
+    <div class="panel-body">
+      <form method="post" action="{% url 'tools:membership_status' app_id=app.id %}" class="form">
+        {% csrf_token %}
+        {% bootstrap_form form %}
+        {% buttons %}
+        <input class="btn btn-success" type="submit" value="{% trans "Update request" %}" />
+        {% endbuttons %}
+      </form>
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

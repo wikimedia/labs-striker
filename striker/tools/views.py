@@ -29,16 +29,37 @@ from django.core import paginator
 from django.core import urlresolvers
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.utils import DatabaseError
+from django.http import HttpResponseRedirect
+from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 
+from striker import mediawiki
+from striker import openstack
 from striker import phabricator
+from striker.tools.forms import AccessRequestForm
+from striker.tools.forms import AccessRequestAdminForm
 from striker.tools.forms import RepoCreateForm
+from striker.tools.models import AccessRequest
 from striker.tools.models import DiffusionRepo
 from striker.tools.models import Tool
 
 
+WELCOME_MSG = "== Welcome to Tool Labs! ==\n{{subst:ToolsGranted}}"
+WELCOME_SUMMARY = 'Welcome to Tool Labs!'
+
 logger = logging.getLogger(__name__)
 phab = phabricator.Client.default_client()
+openstack = openstack.Client.default_client()
+
+
+class HttpResponseSeeOther(HttpResponseRedirect):
+    """HTTP redirect response with 303 status code"""
+    status_code = 303
+
+
+def see_other(to, *args, **kwargs):
+    """Redirect to another page with 303 status code."""
+    return HttpResponseSeeOther(shortcuts.resolve_url(to, *args, **kwargs))
 
 
 def inject_tool(f):
@@ -65,15 +86,22 @@ def tool_member(tool, user):
     return user.ldap_dn in tool.members
 
 
+def project_member(user):
+    groups = user.groups.values_list('name', flat=True)
+    return settings.TOOLS_TOOL_LABS_GROUP_NAME in groups
+
+
 def index(req):
     ctx = {
         'my_tools': [],
         'query': req.GET.get('q', ''),
+        'member': False,
     }
     if not req.user.is_anonymous():
         # TODO: do we need to paginate the user's tools too? Magnus has 60!
         ctx['my_tools'] = Tool.objects.filter(
             members__contains=req.user.ldap_dn).order_by('cn')
+        ctx['member'] = project_member(req.user)
 
     page = req.GET.get('p')
     if ctx['query'] == '':
@@ -149,8 +177,11 @@ def repo_create(req, tool):
                         _("Error updating database. [req id: {id}]").format(
                             id=req.id))
 
-    return shortcuts.render(req, 'tools/repo/create.html', {
-        'tool': tool, 'form': form})
+    ctx = {
+        'tool': tool,
+        'form': form,
+    }
+    return shortcuts.render(req, 'tools/repo/create.html', ctx)
 
 
 @inject_tool
@@ -194,3 +225,120 @@ def repo_view(req, tool, repo):
         logger.error(e)
 
     return shortcuts.render(req, 'tools/repo.html', ctx)
+
+
+def membership(req):
+    """Show access requests."""
+    ctx = {
+        'o': req.GET.get('o', '-created_date'),
+        'cols': [
+            {'field': 'created_date', 'label': 'Created'},
+            {'field': 'user', 'label': 'User'},
+            {'field': 'status', 'label': 'Status'},
+        ],
+    }
+    all_requests = AccessRequest.objects.all()
+    all_requests = all_requests.order_by(ctx['o'])
+    pager = paginator.Paginator(all_requests, 25)
+    page = req.GET.get('p', 1)
+    try:
+        access_requests = pager.page(page)
+    except paginator.PageNotAnInteger:
+        access_requests = pager.page(1)
+    except paginator.EmptyPage:
+        access_requests = pager.page(pager.num_pages)
+    ctx['access_requests'] = access_requests
+    return shortcuts.render(req, 'tools/membership.html', ctx)
+
+
+@login_required
+def membership_apply(req):
+    """Request membership in the Tools project."""
+    if project_member(req.user):
+        messages.error(
+            req, _('You are already a member of Tool Labs'))
+        return see_other(urlresolvers.reverse('tools:index'))
+
+    pending = AccessRequest.objects.filter(
+            user=req.user, status=AccessRequest.PENDING)
+    if pending:
+        return see_other(
+            urlresolvers.reverse(
+                'tools:membership_status', args=[pending[0].id]))
+
+    form = AccessRequestForm(req.POST or None, req.FILES or None)
+    if req.method == 'POST':
+        if form.is_valid():
+            try:
+                request = form.save(commit=False)
+                request.user = req.user
+                request.save()
+                # TODO notify admins that there is a new request
+                messages.info(
+                    req, _("Tool Labs membership request submitted"))
+                return shortcuts.redirect(urlresolvers.reverse('tools:index'))
+            except DatabaseError:
+                logger.exception('AccessRequest.save failed')
+                messages.error(
+                    req,
+                    _("Error updating database. [req id: {id}]").format(
+                        id=req.id))
+    return shortcuts.render(req, 'tools/membership/apply.html', {'form': form})
+
+
+def membership_status(req, app_id):
+    """Show access request status and allow editing if authorized."""
+    request = shortcuts.get_object_or_404(AccessRequest, pk=app_id)
+    form = None
+    as_admin = False
+    if req.user == request.user and request.status == AccessRequest.PENDING:
+        # An applicant can amend their own request while it is pending
+        form = AccessRequestForm(
+                req.POST or None, req.FILES or None, instance=request)
+    elif req.user.is_staff:
+        # TODO: guard condition will need changing if/when striker handles
+        # more than tools
+        as_admin = True
+        form = AccessRequestAdminForm(
+                req.POST or None, req.FILES or None, instance=request)
+
+    if form is not None and req.method == 'POST':
+        if form.is_valid() and form.has_changed():
+            try:
+                request = form.save(commit=False)
+                if as_admin:
+                    if request.status == AccessRequest.APPROVED:
+                        openstack.grant_role(
+                            settings.OPENSTACK_USER_ROLE,
+                            request.user.shellname,
+                        )
+                        mwapi = mediawiki.Client.default_client()
+                        talk = mwapi.user_talk_page(request.user.ldapname)
+                        msg = '{}\n{}'.format(
+                            talk.text(), WELCOME_MSG).strip()
+                        talk.save(msg, summary=WELCOME_SUMMARY, bot=False)
+
+                    if request.status != AccessRequest.PENDING:
+                        request.resolved_by = req.user
+                        request.resolved_date = timezone.now()
+                    else:
+                        request.resolved_by = None
+                        request.resolved_date = None
+
+                request.save()
+                messages.info(
+                    req, _("Tool Labs membership request updated"))
+                return shortcuts.redirect(
+                    urlresolvers.reverse(
+                        'tools:membership_status', args=[request.id]))
+            except DatabaseError:
+                logger.exception('AccessRequest.save failed')
+                messages.error(
+                    req,
+                    _("Error updating database. [req id: {id}]").format(
+                        id=req.id))
+    ctx = {
+        'app': request,
+        'form': form,
+    }
+    return shortcuts.render(req, 'tools/membership/status.html', ctx)

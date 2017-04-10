@@ -28,3 +28,10 @@ class DiffusionRepoAdmin(django.contrib.admin.ModelAdmin):
     list_display = ('name', 'tool', 'phid')
     list_filter = ('tool',)
     ordering = ('name',)
+
+
+@django.contrib.admin.register(models.AccessRequest)
+class AccessRequestAdmin(django.contrib.admin.ModelAdmin):
+    list_display = ('user', 'created_date', 'status')
+    list_filter = ('status',)
+    ordering = ('-created_date',)
