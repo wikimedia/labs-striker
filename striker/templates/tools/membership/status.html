@@ -19,7 +19,16 @@
     <div class="panel-body">
       <dl class="dl-horizontal">
         <dt>{% trans "User" %}</dt>
-        <dd>{{ app.user }}</dd>
+        <dd>{{ app.user }} ({{ app.user.shellname }})</dd>
+        <dd>
+          <a href="{{ wikitech }}/wiki/User:{{ app.user.ldapname|urlencode }}">{% trans "wikitech" %}</a>
+          {% if app.user.sulname %}
+          | <a href="{{ meta }}?title={{ 'Special:CentralAuth'|urlencode }}&target={{ app.user.sulname|urlencode }}">{% trans "SUL" %}</a>
+          {% endif %}
+          {% if app.user.phaburl %}
+          | <a href="{{ app.user.phaburl }}">{% trans "phab" %}</a>
+          {% endif %}
+        </dd>
         <dt>{% trans "Status" %}</dt>
         <dd>{{ app.get_status_display }}</dd>
         <dt>{% trans "Reason" %}</dt>
