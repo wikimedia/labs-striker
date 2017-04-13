@@ -111,6 +111,7 @@ class AccessRequest(models.Model):
         settings.AUTH_USER_MODEL, related_name='resolver+',
         blank=True, null=True)
     resolved_date = models.DateTimeField(blank=True, null=True)
+    suppressed = models.BooleanField(blank=True, default=False, db_index=True)
 
     def __str__(self):
         return '{} - {}'.format(

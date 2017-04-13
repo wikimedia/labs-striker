@@ -77,7 +77,7 @@ class AccessRequestForm(forms.ModelForm):
 class AccessRequestAdminForm(forms.ModelForm):
     class Meta:
         model = AccessRequest
-        fields = ('admin_notes', 'status')
+        fields = ('admin_notes', 'status', 'suppressed')
         widgets = {
             'admin_notes': forms.Textarea(
                 attrs={

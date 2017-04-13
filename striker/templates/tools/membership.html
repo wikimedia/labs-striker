@@ -30,7 +30,7 @@
       </thead>
       <tbody>
         {% for r in access_requests %}
-        <tr>
+        <tr class="{% if r.suppressed %}danger{% endif %}">
           <td><a href="{% url 'tools:membership_status' app_id=r.id %}">{{ r.created_date|date:"Y-m-d" }}</a></td>
           <td>{{ r.user }}</td>
           <td>{{ r.get_status_display }}</td>

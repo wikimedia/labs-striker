@@ -237,7 +237,10 @@ def membership(req):
             {'field': 'status', 'label': 'Status'},
         ],
     }
-    all_requests = AccessRequest.objects.all()
+    if req.user.is_staff:
+        all_requests = AccessRequest.objects.all()
+    else:
+        all_requests = AccessRequest.objects.filter(suppressed=False)
     all_requests = all_requests.order_by(ctx['o'])
     pager = paginator.Paginator(all_requests, 25)
     page = req.GET.get('p', 1)
