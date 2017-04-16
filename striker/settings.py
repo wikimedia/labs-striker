@@ -137,6 +137,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.staticfiles',
     'formtools',
+    'notifications',
     'striker',
     'striker.goals.apps.GoalsConfig',
     'striker.labsauth',
@@ -389,3 +390,7 @@ OPENSTACK_PASSWORD = ini.get('openstack', 'PASSWORD')
 OPENSTACK_PROJECT = ini.get('openstack', 'PROJECT')
 OPENSTACK_USER_ROLE = ini.get('openstack', 'USER_ROLE')
 OPENSTACK_ADMIN_ROLE = ini.get('openstack', 'ADMIN_ROLE')
+
+# == Notifications ==
+NOTIFICATIONS_SOFT_DELETE = True
+NOTIFICATIONS_USE_JSONFIELD = True

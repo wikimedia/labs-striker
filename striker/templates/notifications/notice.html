@@ -1,0 +1,46 @@
+{% load bootstrap3 %}
+{% load i18n %}
+{% url view_url as return_to %}
+<li class="list-group-item list-group-item-{% if notice.unread %}{{ notice.level }}{% else %}default{% endif %} notice-item">
+  {% if notice.unread %}
+  <a class="close" title="{% trans 'Mark as read' %}" href="{% url 'notifications:mark_as_read' notice.slug %}?next={{ return_to }}">{% bootstrap_icon "star" %}</a>
+  {% else %}
+  <a class="close" title="{% trans 'Mark as unread' %}" href="{% url 'notifications:mark_as_unread' notice.slug %}?next={{ return_to }}">{% bootstrap_icon "star-empty" %}</a>
+  {% endif %}
+  <h4 class="list-group-item-heading">
+    {% bootstrap_icon "envelope" %}
+    <span class="notice-actor">{{ notice.actor }}</span>
+    <span class="notice-verb">{{ notice.verb }}</span>
+    <span class="notice-action">{{ notice.action }}</span>
+    {% if notice.target %}
+    {% if notice.action %} {% trans "on" %}{% endif %}
+    <span class="notice-target">
+      {% if notice.target.get_absolute_url %}<a href="{{ notice.target.get_absolute_url }}">{% endif %}{{ notice.target }}{% if notice.target.get_absolute_url %}</a>{% endif %}
+    </span>
+    {% endif %}
+  </h4>
+  <div class="list-group-item-text">
+    <blockquote>{{ notice.description|linebreaksbr }}</blockquote>
+    <div class="notice-footer clearfix">
+      <div class="notice-timesince pull-right">{{ notice.timesince }} ago</div>
+      <div class="btn-group">
+        <button class="btn btn-default btn-sm dropdown-toggle" type="button" id="ddm-{{ notice.slug }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Actions <span class="caret"></span></button>
+        <ul class="dropdown-menu" aria-labelledby="ddm-{{ notice.slug }}">
+          {% for action in notice.data.actions %}
+          <li><a href="{{ action.href }}">{{ action.title }}</a></li>
+          {% if forloop.last %}
+          <li role="separator" class="divider"></li>
+          {% endif %}
+          {% endfor %}
+          {% if notice.unread %}
+          <li><a href="{% url 'notifications:mark_as_read' notice.slug %}?next={{ return_to }}">{% trans "Mark as read" %}</a></li>
+          {% else %}
+          <li><a href="{% url 'notifications:mark_as_unread' notice.slug %}?next={{ return_to }}">{% trans "Mark as unread" %}</a></li>
+          {% endif %}
+          <li><a href="{% url 'notifications:delete' notice.slug %}?next={{ return_to }}">{% trans "Delete" %}</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</li>
+{# vim:sw=2:ts=2:sts=2:et:ft=htmldjango: #}

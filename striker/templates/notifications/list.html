@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% load bootstrap3 %}
+{% load i18n %}
+
+{% block title %}{% trans "Alerts" %}{% endblock %}
+{% block content %}
+
+<div class="container-fluid">
+  <div class="panel panel-default panel-pager">
+    <div class="panel-heading">
+      <h3 class="panel-title">{% bootstrap_icon "bell" %} {% trans "Alerts" %}</h3>
+    </div>
+    {% with pg=request.resolver_match.url_name %}
+    <div class="panel-body">
+      <ul class="nav nav-tabs">
+        <li role=presentation" class="{% if pg == 'unread' %}active{% endif %}"><a href="{% url 'notifications:unread' %}">{% trans "Unread" %}</a></li>
+        <li role=presentation" class="{% if pg == 'all' %}active{% endif %}"><a href="{% url 'notifications:all' %}">{% trans "All" %}</a></li>
+      </ul>
+    </div>
+    <ul class="list-group">
+      {% with view_url="notifications:"|add:request.resolver_match.url_name %}
+      {% for notice in notifications %}
+      {% include 'notifications/notice.html' %}
+      {% empty %}
+      <li class="list-group-item">
+        {% if pg == 'unread' %}
+        {% trans "No unread alerts found" %}
+        {% else %}
+        {% trans "No alerts found" %}
+        {% endif %}
+      </li>
+      {% endfor %}
+      {% endwith %}
+    </ul>
+    {% endwith %}
+  </div>
+</div>
+{% endblock %}
+{# vim:sw=2:ts=2:sts=2:et:ft=htmldjango: #}

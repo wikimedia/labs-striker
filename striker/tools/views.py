@@ -25,6 +25,7 @@ from django import shortcuts
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import Group
 from django.core import paginator
 from django.core import urlresolvers
 from django.core.exceptions import ObjectDoesNotExist
@@ -32,6 +33,8 @@ from django.db.utils import DatabaseError
 from django.http import HttpResponseRedirect
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
+
+from notifications.signals import notify
 
 from striker import mediawiki
 from striker import openstack
@@ -276,7 +279,21 @@ def membership_apply(req):
                 request = form.save(commit=False)
                 request.user = req.user
                 request.save()
-                # TODO notify admins that there is a new request
+                notify.send(
+                    recipient=Group.objects.get(name='tools.admin'),
+                    sender=req.user,
+                    verb=_('created'),
+                    target=request,
+                    public=False,
+                    description=request.reason,
+                    level='info',
+                    actions=[
+                        {
+                            'title': _('View request'),
+                            'href': request.get_absolute_url(),
+                        },
+                    ],
+                )
                 messages.info(
                     req, _("Tool Labs membership request submitted"))
                 return shortcuts.redirect(urlresolvers.reverse('tools:index'))
@@ -327,8 +344,41 @@ def membership_status(req, app_id):
                     else:
                         request.resolved_by = None
                         request.resolved_date = None
-
                 request.save()
+
+                if as_admin:
+                    recipient = request.user
+                    verb = _('commented on')
+                    description = request.admin_notes
+                    level = 'info'
+                    if request.status != AccessRequest.PENDING:
+                        verb = request.get_status_display().lower()
+                        if request.status == AccessRequest.APPROVED:
+                            level = 'success'
+                        else:
+                            level = 'warning'
+                else:
+                    recipient = Group.objects.get(name='tools.admin')
+                    verb = _('updated')
+                    description = request.reason
+                    level = 'info'
+
+                notify.send(
+                    recipient=recipient,
+                    sender=req.user,
+                    verb=verb,
+                    target=request,
+                    public=False,
+                    description=description,
+                    level=level,
+                    actions=[
+                        {
+                            'title': _('View request'),
+                            'href': request.get_absolute_url(),
+                        },
+                    ],
+                )
+
                 messages.info(
                     req, _("Tool Labs membership request updated"))
                 return shortcuts.redirect(

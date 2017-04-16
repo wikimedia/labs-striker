@@ -32,10 +32,10 @@
         <dt>{% trans "Status" %}</dt>
         <dd>{{ app.get_status_display }}</dd>
         <dt>{% trans "Reason" %}</dt>
-          <dd><pre>{{ app.reason }}</pre></dd>
+          <dd>{{ app.reason|linebreaksbr }}</dd>
         {% if app.admin_notes %}
         <dt>{% trans "Notes" %}</dt>
-          <dd><pre>{{ app.admin_notes }}</pre></dd>
+          <dd>{{ app.admin_notes|linebreaksbr }}</dd>
         {% endif %}
         <dt>{% trans "Created" %}</dt>
         <dd>{{ app.created_date|date:"Y-m-d H:i" }}</dd>

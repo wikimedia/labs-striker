@@ -22,6 +22,7 @@ from django.conf import settings
 from django.conf import urls
 from django.conf.urls.static import static
 
+import notifications.urls
 import ratelimitbackend.admin
 
 import striker.labsauth.urls
@@ -46,6 +47,9 @@ urlpatterns = [
     urls.url(r'^e403', 'striker.views.force_403', name='force_403'),
     urls.url(r'^e500', 'striker.views.force_500', name='force_500'),
 
+    urls.url(
+        r'^alerts/',
+        urls.include(notifications.urls, namespace='notifications')),
     urls.url(
         r'^auth/', urls.include(striker.labsauth.urls, namespace='labsauth')),
     urls.url(

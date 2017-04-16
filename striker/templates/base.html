@@ -1,5 +1,6 @@
 {% load bootstrap3 %}
 {% load i18n %}
+{% load notifications_tags %}
 {% load staticfiles %}
 <!DOCTYPE html>
 <html>
@@ -43,6 +44,9 @@
           </ul>
           <ul class="nav navbar-nav navbar-right">
             {% if user.is_authenticated %}
+            {% with unread=user.notifications.unread.count %}
+            <li class="{% if '/alerts/' in request.path %}active{% endif %}"><a href="{% url 'notifications:unread' %}">{% bootstrap_icon "bell" %} {% trans "Alerts" %} {% if unread != 0 %}<span id="live_notify_badge" class="badge">{{ unread }}</span>{% endif %}</a></li>
+            {% endwith %}
             <li class="dropdown {% if '/profile/' in request.path %}active{% endif %}">
               <a class="dropdown-toggle" aria-expanded="false" aria-haspopup="true" role="button" data-toggle="dropdown" href="{% url 'profile:nojs' %}">{{ user }} <span class="caret"></span></a>
               <ul class="dropdown-menu">
@@ -88,6 +92,7 @@
     {% block js %}
     <script lang="javascript" src="{% static "js/jquery.min.js" %}"></script>
     <script lang="javascript" src="{% static "js/bootstrap.min.js" %}"></script>
+    <script lang="javascript" src="{% static 'notifications/notify.js' %}"></script>
     <script lang="javascript" src="{% static "js/site.js" %}"></script>
     {% endblock js %}
   </body>

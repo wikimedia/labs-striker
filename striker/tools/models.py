@@ -19,6 +19,7 @@
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.conf import settings
+from django.core import urlresolvers
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
@@ -114,5 +115,8 @@ class AccessRequest(models.Model):
     suppressed = models.BooleanField(blank=True, default=False, db_index=True)
 
     def __str__(self):
-        return '{} - {}'.format(
-            self.user.get_short_name(), self.get_status_display())
+        return _('Access request {id}').format(id=self.id)
+
+    def get_absolute_url(self):
+        return urlresolvers.reverse(
+            'tools:membership_status', args=[str(self.id)])
