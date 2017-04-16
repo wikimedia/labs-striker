@@ -167,6 +167,20 @@ def repo_create(req, tool):
                     created_by=req.user)
                 try:
                     repo_model.save()
+                    notify.send(
+                        recipient=Group.objects.get(name=tool.cn),
+                        sender=req.user,
+                        verb=_('created'),
+                        target=repo_model,
+                        public=True,
+                        level='info',
+                        actions=[
+                            {
+                                'title': _('View repository'),
+                                'href': repo_model.get_absolute_url(),
+                            },
+                        ],
+                    )
                     # Redirect to repo view
                     return shortcuts.redirect(
                         urlresolvers.reverse('tools:repo_view', kwargs={

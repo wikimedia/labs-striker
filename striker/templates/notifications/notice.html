@@ -20,7 +20,9 @@
     {% endif %}
   </h4>
   <div class="list-group-item-text">
+    {% if notice.description %}
     <blockquote>{{ notice.description|linebreaksbr }}</blockquote>
+    {% endif %}
     <div class="notice-footer clearfix">
       <div class="notice-timesince pull-right">{{ notice.timesince }} ago</div>
       <div class="btn-group">

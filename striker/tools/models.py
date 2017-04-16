@@ -88,6 +88,10 @@ class DiffusionRepo(models.Model):
     def __str__(self):
         return self.name
 
+    def get_absolute_url(self):
+        return urlresolvers.reverse(
+            'tools:repo_view', args=[self.tool, self.name])
+
 
 class AccessRequest(models.Model):
     """Request to join Tools project."""
