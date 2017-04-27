@@ -23,8 +23,12 @@ import re
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 
+from parsley.decorators import parsleyfy
+
 from striker import phabricator
 from striker.tools.models import AccessRequest
+from striker.tools.models import SoftwareLicense
+from striker.tools.models import ToolInfo
 
 
 phab = phabricator.Client.default_client()
@@ -85,3 +89,103 @@ class AccessRequestAdminForm(forms.ModelForm):
                 },
             ),
         }
+
+
+@parsleyfy
+class ToolInfoForm(forms.ModelForm):
+    comment = forms.CharField(
+        label=_('Edit summary'),
+        widget=forms.TextInput(
+            attrs={
+                'placeholder': _(
+                    'Description of the changes you are making to '
+                    'this toolinfo record.'
+                ),
+            },
+        ),
+        help_text=_(
+            'By saving changes, you agree to the '
+            '<a href="{terms_of_use}">Terms of Use</a>, '
+            '<a href="{code_of_conduct}">Code of Conduct</a>, '
+            'and you irrevocably agree to release your contribution under '
+            'the <a href="{cc_by_sa}">Creative Commons Attribution-ShareAlike '
+            '3.0 Unported License</a>. You agree that a hyperlink or URL is '
+            'sufficient attribution under the Creative Commons license.'
+        ).format(
+            terms_of_use='https://wikimediafoundation.org/wiki/Terms_of_Use',
+            code_of_conduct='https://www.mediawiki.org/wiki/Code_of_Conduct',
+            cc_by_sa='https://creativecommons.org/licenses/by-sa/3.0/',
+        ),
+    )
+
+    def __init__(self, *args, **kwargs):
+        super(ToolInfoForm, self).__init__(*args, **kwargs)
+        if 'license' in self.fields:
+            license = self.fields['license']
+            license.empty_label = _(
+                '-- Choose your software license --')
+            license.queryset = SoftwareLicense.objects.filter(
+                osi_approved=True).order_by('-recommended', 'slug')
+
+    class Meta:
+        model = ToolInfo
+        exclude = ('tool',)
+        labels = {
+            'name': _('Unique tool name'),
+            'title': _('Title'),
+            'description': _('Description of tool'),
+            'license': _('Default software license'),
+            'authors': _('Authors'),
+            'repository': _('Source code repository'),
+            'issues': _('Issue tracker'),
+            'docs': _('Documentation'),
+            'is_webservice': _('This is a webservice'),
+            'suburl': _('Path to tool below main webservice'),
+        }
+        widgets = {
+            'name': forms.TextInput(
+                attrs={
+                    'placeholder': _('A globally unique name for your tool'),
+                },
+            ),
+            'title': forms.TextInput(
+                attrs={
+                    'placeholder': _('A descriptive title for your tool'),
+                },
+            ),
+            'description': forms.Textarea(
+                attrs={
+                    'placeholder': _(
+                        'A short summary of what your tool does'
+                    ),
+                    'rows': 5,
+                },
+            ),
+            'repository': forms.TextInput(
+                attrs={
+                    'placeholder': _("URL to your tool's source code"),
+                },
+            ),
+            'issues': forms.TextInput(
+                attrs={
+                    'placeholder': _("URL to your tool's issue tracker"),
+                },
+            ),
+            'docs': forms.TextInput(
+                attrs={
+                    'placeholder': _("URL to your tool's documentation"),
+                },
+            ),
+        }
+        help_texts = {
+            'license': _(
+                'Need help choosing a license? '
+                'Try <a href="{choose_a_license}">choosealicense.com</a>.'
+            ).format(choose_a_license='https://choosealicense.com/'),
+        }
+
+
+@parsleyfy
+class ToolInfoPublicForm(ToolInfoForm):
+    class Meta(ToolInfoForm.Meta):
+        exclude = ('name', 'tool', 'license', 'authors', 'is_webservice')

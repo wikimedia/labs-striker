@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% load bootstrap3 %}
+{% load i18n %}
+
+{% block title %}{% blocktrans with name=tool.name %}Tool: {{ name }}{% endblocktrans %}{% endblock %}
+
+{% block pre_content %}
+<ol class="breadcrumb">
+  <li><a href="{% url 'tools:index' %}">{% trans "Tools" %}</a></li>
+  <li><a href="{% url 'tools:tool' tool=tool.name %}">{{ tool.name }}</a></li>
+  <li>{% trans "toolinfo" %}</li>
+  <li class="active">{{ toolinfo.title }}</li>
+</ol>
+{{ block.super }}
+{% endblock %}
+
+{% block content %}
+<div class="panel-group" role="tablist">
+  <div class="panel panel-info panel-pager">
+    {% include "tools/info/revision/header.html" %}
+    {% include "tools/info/revision/body.html" %}
+  </div>
+</div>
+{% endblock %}

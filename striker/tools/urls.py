@@ -20,9 +20,13 @@
 
 from django.conf import urls
 
+import striker.tools.views
+
 
 TOOL = r'(?P<tool>[_a-z][-0-9_a-z]*)'
 REPO = r'(?P<repo>[_a-zA-Z][-0-9_a-zA-Z]*)'
+INFO_ID = r'(?P<info_id>\d+)'
+VERSION_ID = r'(?P<version_id>\d+)'
 
 urlpatterns = [
     urls.url(r'^$', 'striker.tools.views.index', name='index'),
@@ -30,6 +34,53 @@ urlpatterns = [
         r'^id/{tool}$'.format(tool=TOOL),
         'striker.tools.views.tool',
         name='tool'
+    ),
+    urls.url(
+        r'^id/{tool}/info/create$'.format(tool=TOOL),
+        'striker.tools.views.info_create',
+        name='info_create'
+    ),
+    urls.url(
+        r'^id/{tool}/info/id/{info_id}$'.format(
+            tool=TOOL,
+            info_id=INFO_ID,
+        ),
+        'striker.tools.views.info_read',
+        name='info_read'
+    ),
+    urls.url(
+        r'^id/{tool}/info/id/{info_id}/edit$'.format(
+            tool=TOOL,
+            info_id=INFO_ID,
+        ),
+        'striker.tools.views.info_edit',
+        name='info_edit'
+    ),
+    urls.url(
+        r'^id/{tool}/info/id/{info_id}/history$'.format(
+            tool=TOOL,
+            info_id=INFO_ID,
+        ),
+        striker.tools.views.ToolInfoHistoryView.as_view(),
+        name='info_history'
+    ),
+    urls.url(
+        r'^id/{tool}/info/id/{info_id}/history/rev/{version_id}$'.format(
+            tool=TOOL,
+            info_id=INFO_ID,
+            version_id=VERSION_ID,
+        ),
+        'striker.tools.views.info_revision',
+        name='info_revision'
+    ),
+    urls.url(
+        r'^id/{tool}/info/id/{info_id}/history/admin/{version_id}$'.format(
+            tool=TOOL,
+            info_id=INFO_ID,
+            version_id=VERSION_ID,
+        ),
+        'striker.tools.views.info_revision',
+        name='info_admin'
     ),
     urls.url(
         r'^id/{tool}/repos/create$'.format(tool=TOOL),

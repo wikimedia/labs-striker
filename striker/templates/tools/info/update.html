@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% load bootstrap3 %}
+{% load i18n %}
+{% load staticfiles %}
+
+{% block title %}{% blocktrans with name=tool.name %}Tool: {{ name }}{% endblocktrans %}{% endblock %}
+
+{% block pre_content %}
+<ol class="breadcrumb">
+  <li><a href="{% url 'tools:index' %}">{% trans "Tools" %}</a></li>
+  <li><a href="{% url 'tools:tool' tool=tool.name %}">{{ tool.name }}</a></li>
+  <li>{% trans "toolinfo" %}</li>
+  <li><a href="{% url 'tools:info_read' tool=tool.name info_id=toolinfo.pk %}">{{ toolinfo.title }}</a></li>
+  <li class="active">{% trans "edit" %}</li>
+</ol>
+{{ block.super }}
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+  <div class="row">
+    <div class="panel panel-info">
+      <div class="panel-heading">
+        <div class="row">
+          <div class="col-sm-9">
+            <h3 class="panel-title">
+              {% bootstrap_icon "info-sign" %}
+              {{ toolinfo.title }}
+            </h3>
+          </div>
+          <div class="col-sm-3">
+            <div class="btn-toolbar pull-right" role="toolbar">
+              <div class="btn-group" role="group">
+                <a href="{% url 'tools:info_history' tool=tool.name info_id=toolinfo.pk %}" class="btn btn-default btn-sm">{% bootstrap_icon "time" %} {% trans "history" %}</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="panel-body">
+        <form method="post" action="{% url 'tools:info_edit' tool=tool.name info_id=toolinfo.pk %}" class="form">
+          {% csrf_token %}
+          {% bootstrap_form form %}
+          {% buttons %}
+          <input class="btn btn-primary" type="submit" value="{% trans "Save" %}" />
+          {% endbuttons %}
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block js %}
+{{ block.super }}
+<script lang="javascript" src="{% static 'js/parsley.min.js' %}"></script>
+<script lang="javascript" src="{% static 'js/parsley-bootstrap.js' %}"></script>
+{% endblock %}

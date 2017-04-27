@@ -1,0 +1,22 @@
+{% load i18n %}
+<div class="panel-body toolinfo-body">
+  <div class="toolinfo-desc">{{ toolinfo.description|striptags }}</div>
+  <div class="toolinfo-details">
+    <dl class="dl-horizontal">
+      <dt>{% trans "License" %}</dt>
+      <dd><a href="{{ toolinfo.license.url }}">{{ toolinfo.license.name }}</a></dd>
+      {% if toolinfo.repository %}
+      <dt>{% trans "Source code" %}</dt>
+      <dd><a href="{{ toolinfo.repository }}">{{ toolinfo.repository }}</a></dd>
+      {% endif %}
+      {% if toolinfo.issues %}
+      <dt>{% trans "Issues" %}</dt>
+      <dd><a href="{{ toolinfo.issues }}">{{ toolinfo.issues }}</a></dd>
+      {% endif %}
+      {% if toolinfo.docs %}
+      <dt>{% trans "Docs" %}</dt>
+      <dd><a href="{{ toolinfo.docs }}">{{ toolinfo.docs }}</a></dd>
+      {% endif %}
+    </dl>
+  </div>
+</div>

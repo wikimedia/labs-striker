@@ -26,6 +26,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from ldapdb.models import fields
 import ldapdb.models
+import reversion
 
 
 class Maintainer(ldapdb.models.Model):
@@ -70,6 +71,16 @@ class Tool(ldapdb.models.Model):
         return Maintainer.objects.filter(
             username__in=(
                 dn.split(',')[0].split('=')[1] for dn in self.members))
+
+    def toolinfo(self):
+        try:
+            return ToolInfo.objects.filter(tool=self.name)
+        except ToolInfo.DoesNotExist:
+            return None
+
+    def get_absolute_url(self):
+        return urlresolvers.reverse(
+            'tools:tool', args=[str(self.name)])
 
     def __str__(self):
         return self.name
@@ -123,3 +134,43 @@ class AccessRequest(models.Model):
     def get_absolute_url(self):
         return urlresolvers.reverse(
             'tools:membership_status', args=[str(self.id)])
+
+
+class SoftwareLicense(models.Model):
+    """Describe a software license."""
+    slug = models.CharField(max_length=32, unique=True)
+    name = models.CharField(max_length=255)
+    url = models.CharField(max_length=2047)
+    family = models.CharField(max_length=32, db_index=True)
+    osi_approved = models.BooleanField()
+    recommended = models.BooleanField()
+
+    def __str__(self):
+        return "{} - {}".format(self.slug, self.name)
+
+
+@reversion.register()
+class ToolInfo(models.Model):
+    """Metadata about a Tool hosted on Tool Labs.
+
+    A single Tool may have 1-to-N metadata records.
+    """
+    name = models.CharField(max_length=255, unique=True)
+    tool = models.CharField(max_length=64, db_index=True)
+    title = models.CharField(max_length=255)
+    description = models.TextField()
+    license = models.ForeignKey(SoftwareLicense)
+    authors = models.ManyToManyField(
+        settings.AUTH_USER_MODEL, related_name='+')
+    repository = models.CharField(max_length=2047, blank=True, null=True)
+    issues = models.CharField(max_length=2047, blank=True, null=True)
+    docs = models.CharField(max_length=2047, blank=True, null=True)
+    is_webservice = models.BooleanField()
+    suburl = models.CharField(max_length=2047, blank=True, null=True)
+
+    class Meta:
+        verbose_name = 'Toolinfo'
+        verbose_name_plural = 'Toolinfo'
+
+    def __str__(self):
+        return self.name

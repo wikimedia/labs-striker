@@ -144,3 +144,29 @@ form.hidden-labels label.no-hide {
   border-top-color:#333;
   top:25%;
 }
+.toolinfo-body {
+  padding-bottom:0;
+  padding-top:0;
+}
+.toolinfo-details {
+  margin-top:.5em;
+}
+.diff del,
+.diff ins {
+  color:#333;
+  text-decoration:none;
+}
+.diff del {
+  background-color:#ffe6e6;
+}
+.diff ins {
+  background-color: #e6ffe6;
+}
+.diff sup.follow {
+  display:none;
+}
+.history-deleted {
+  text-decoration:line-through;
+  color:#888;
+  font-style:italic;
+}

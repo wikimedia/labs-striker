@@ -138,6 +138,8 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'formtools',
     'notifications',
+    'reversion',
+    'reversion_compare',
     'striker',
     'striker.goals.apps.GoalsConfig',
     'striker.labsauth',

@@ -20,6 +20,8 @@
 
 import django.contrib.admin
 
+import reversion_compare.admin
+
 from striker.tools import models
 
 
@@ -35,3 +37,16 @@ class AccessRequestAdmin(django.contrib.admin.ModelAdmin):
     list_display = ('user', 'created_date', 'status')
     list_filter = ('status',)
     ordering = ('-created_date',)
+
+
+@django.contrib.admin.register(models.SoftwareLicense)
+class SoftwareLicenseAdmin(django.contrib.admin.ModelAdmin):
+    list_display = ('slug', 'family', 'osi_approved', 'recommended')
+    list_filter = ('osi_approved', 'recommended')
+    ordering = ('slug',)
+
+
+@django.contrib.admin.register(models.ToolInfo)
+class ToolInfoAdmin(reversion_compare.admin.CompareVersionAdmin):
+    list_display = ('name', 'tool')
+    ordering = ('name',)

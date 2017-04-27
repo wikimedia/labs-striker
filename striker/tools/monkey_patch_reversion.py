@@ -18,4 +18,17 @@
 # You should have received a copy of the GNU General Public License
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
 
-import striker.tools.monkey_patch_reversion  # NOQA (imported for side effects)
+from django.db import models
+
+from reversion.models import Version
+
+
+# Inspiration from https://stackoverflow.com/a/24668215/8171
+#
+# Add a 'suppressed' field to the reversion Version model.
+# This this will be used to allow suppression of malicious changes by an
+# admin.
+Version.add_to_class(
+    'suppressed',
+    models.BooleanField(blank=True, default=False, db_index=True)
+)

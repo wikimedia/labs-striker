@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% load bootstrap3 %}
+{% load i18n %}
+
+{% block title %}{% blocktrans with name=tool.name %}Tool: {{ name }}{% endblocktrans %}{% endblock %}
+
+{% block pre_content %}
+<ol class="breadcrumb">
+  <li><a href="{% url 'tools:index' %}">{% trans "Tools" %}</a></li>
+  <li><a href="{% url 'tools:tool' tool=tool.name %}">{{ tool.name }}</a></li>
+  <li>{% trans "toolinfo" %}</li>
+  <li><a href="{% url 'tools:info_read' tool=tool.name info_id=toolinfo.pk %}">{{ toolinfo.title }}</a></li>
+  <li class="active">{% trans "history" %}</li>
+</ol>
+{{ block.super }}
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+  <div class="row">
+    <div class="panel-group">
+      <div class="panel panel-info">
+        <div class="panel-heading">
+          <h3 class="panel-title">
+            {% bootstrap_icon "info-sign" %}
+            {{ toolinfo.title }}
+          </h3>
+        </div>
+        <form method="GET" action="{{ request.path }}">
+          <table id="change-history" class="table table-responsive">
+            <thead>
+              <tr>
+                <th scope="col">
+                  {% if comparable %}
+                  <input type="submit" class="btn btn-default btn-sm" value="{% trans 'compare' %}">
+                  {% endif %}
+                </th>
+                <th scope="col">{% trans "Date" %}</th>
+                <th scope="col">{% trans "User" %}</th>
+                <th scope="col">{% trans "Comment" %}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for action in action_list %}
+              {% if not action.version.suppressed %}
+              <tr>
+                <td scope="row">
+                  {% if comparable %}
+                  <input type="radio" name="version_id1" value="{{ action.version.pk }}" {% if action.first %}disabled="disabled"{% endif %} {% if version1.pk == action.version.pk or action.second %}checked="checked"{% endif%}/>
+                  <input type="radio" name="version_id2" value="{{ action.version.pk }}" {% if forloop.last %}disabled="disabled"{% endif %} {% if version2.pk == action.version.pk or action.first == 1 %}checked="checked"{% endif%}/>
+                  {% endif %}
+                </td>
+                <th scope="row">
+                  {% if action.url %}<a href="{{ action.url }}">{% endif %}
+                  {{ action.revision.date_created|date:"c" }}
+                  {% if action.url %}</a>{% endif %}
+                </th>
+                <td>{{ action.revision.user }}</td>
+                <td>{{ action.revision.comment|default:"" }}</td>
+              </tr>
+              {% else %}{# revision is suppressed #}
+              <tr>
+                <td scope="row">
+                  <input type="radio" name="version_id1" value="" disabled="disabled" />
+                  <input type="radio" name="version_id2" value="" disabled="disabled" />
+                </td>
+                <th scope="row" class="history-deleted">
+                  {% if action.url and show_suppressed %}<a href="{{ action.url }}">{% endif %}
+                    {{ action.revision.date_created|date:"c" }}
+                    {% if action.url and show_suppressed %}</a>{% endif %}
+                </th>
+                <td class="history-deleted">{% trans "(username removed)" %}</td>
+                <td class="history-deleted">{% trans "(comment removed)" %}
+                </td>
+              </tr>
+              {% endif %}
+              {% endfor %}
+            </tbody>
+          </table>
+        </form>
+      </div>
+      {% if request.GET.version_id1 %}
+      <div class="panel panel-default panel-pager">
+        <div class="panel-heading">
+          {% url 'tools:info_revision' tool=tool.name info_id=toolinfo.pk version_id=version1.pk as v1_url %}
+          {% url 'tools:info_revision' tool=tool.name info_id=toolinfo.pk version_id=version2.pk as v2_url %}
+          {% blocktrans with v1=version1.revision.date_created|date:"c" v1c=version1.revision.comment|default:"no comment provided" v1u=v1_url v2=version2.revision.date_created|date:"c" v2c=version2.revision.comment|default:"no comment provided" v2u=v2_url %}Compare <strong><a href="{{ v1u }}">{{ v1 }}</a></strong> ({{ v1c }}) with <strong><a href="{{ v2u }}">{{ v2 }}</a></strong> ({{ v2c }}).{% endblocktrans %}
+        </div>
+        <div class="panel-body">
+          <dl>
+            {% for field_diff in compare_data %}
+            <dt>{% firstof field_diff.field.verbose_name field_diff.field.related_name %}</dt>
+            <dd class="diff">{{ field_diff.diff }}</dd>
+            {% empty %}
+            <dt>{% trans "(No difference)" %}</dt>
+            {% endfor %}
+          </dl>
+        </div>
+        <div class="panel-footer">
+          <div class="row">
+            <div class="col-6-xs">
+              {% if prev_url %}<a class="btn btn-default btn-sm pull-left" href="{{ prev_url }}">&lsaquo; {% trans "previous" %}</a>{% endif %}
+            </div>
+            <div class="col-6-xs">
+              {% if next_url %}<a class="btn btn-default btn-sm pull-right" href="{{ next_url }}">{% trans "next" %} &rsaquo;</a>{% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+  {% endblock %}
