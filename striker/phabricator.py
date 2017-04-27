@@ -86,7 +86,7 @@ class Client(object):
         except APIError as e:
             if e.code == 'ERR-INVALID-PARAMETER' and \
                     'Unknown or missing ldap names' in e.message:
-                logger.warn(e.message)
+                logger.warning(e.message)
                 if e.result is None:
                     raise KeyError(
                         'Users not found for {0}'.format(', '.join(names)))
@@ -109,7 +109,7 @@ class Client(object):
         except APIError as e:
             if e.code == 'ERR-INVALID-PARAMETER' and \
                     'Unknown or missing mediawiki names' in e.message:
-                logger.warn(e.message)
+                logger.warning(e.message)
                 if e.result is None:
                     raise KeyError(
                         'Users not found for {0}'.format(', '.join(names)))
@@ -264,7 +264,7 @@ class Client(object):
         except APIError as e:
             if e.code == 'ERR-INVALID-PARAMETER' and \
                     'Unknown policies' in e.message:
-                logger.warn(e.message)
+                logger.warning(e.message)
                 if e.result is None:
                     raise KeyError(
                         'Policies not found for {0}'.format(', '.join(phids)))
