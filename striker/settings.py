@@ -70,7 +70,7 @@ LOGGING = {
             'level': 'DEBUG',
          },
         'logstash': {
-            'class': 'logstash.UDPLogstashHandler',
+            'class': 'logstash.TCPLogstashHandler',
             'host': ini.get('logging', 'LOGSTASH_HOST'),
             'port': int(ini.get('logging', 'LOGSTASH_PORT')),
             'version': 1,
