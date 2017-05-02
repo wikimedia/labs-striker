@@ -8,6 +8,6 @@ $(function () {
 
     notify_badge_id='live_notify_badge';
     notify_refresh_period=60000;
-    notify_api_url='/notifications/api/unread_count/';
+    notify_api_url='/alerts/api/unread_count/';
     register_notifier(fill_notification_badge);
 })
