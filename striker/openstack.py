@@ -62,20 +62,24 @@ class Client(object):
             auth_url=self.url,
             password=self.password,
             username=self.username,
-            project_id=project,
+            project_name=project,
             user_domain_name='Default',
             project_domain_name='Default',
         )
         return keystone_session.Session(auth=auth)
 
     @functools.lru_cache(maxsize=None)
-    def _client(self, project=None):
+    def _client(self, project=None, interface='public'):
         project = project or self.project
         return client.Client(
             session=self._session(project),
-            interface='public',
+            interface=interface,
             timeoute=2,
         )
+
+    def _admin_client(self):
+        """Convenience method for getting a client with super user rights."""
+        return self._client(project='admin', interface='admin')
 
     def role(self, name):
         if self.roles is None:
@@ -85,10 +89,12 @@ class Client(object):
 
     def grant_role(self, role, user, project=None):
         project = project or self.project
-        keystone = self._client(project)
-        keystone.roles.grant(self.role(role), user, project=project)
+        # We need global admin rights to change role assignments
+        keystone = self._admin_client()
+        keystone.roles.grant(self.role(role), user=user, project=project)
 
     def revoke_role(self, role, user, project=None):
         project = project or self.project
-        keystone = self._client(project)
-        keystone.roles.revoke(role, user, project=project)
+        # We need global admin rights to change role assignments
+        keystone = self._admin_client()
+        keystone.roles.revoke(role, user=user, project=project)
