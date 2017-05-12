@@ -33,7 +33,7 @@ class Maintainer(ldapdb.models.Model):
     base_dn = settings.TOOLS_MAINTAINER_BASE_DN
     object_classes = ['posixAccount']
 
-    username = fields.CharField(db_column='uid', primary_key=True)
+    username = fields.CharField(db_column='uid', unique=True)
     full_name = fields.CharField(db_column='cn')
 
     def __str__(self):
@@ -53,8 +53,7 @@ class Tool(ldapdb.models.Model):
 
     objects = ToolManager()
 
-    cn = fields.CharField(
-        db_column='cn', max_length=200, primary_key=True)
+    cn = fields.CharField(db_column='cn', max_length=200, unique=True)
     gid_number = fields.IntegerField(db_column='gidNumber', unique=True)
     members = fields.ListField(db_column='member')
 

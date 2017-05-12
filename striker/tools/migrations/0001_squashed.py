@@ -34,8 +34,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Maintainer',
             fields=[
-                ('dn', models.CharField(max_length=200)),
-                ('username', ldapdb.models.fields.CharField(max_length=200, serialize=False, primary_key=True, db_column='uid')),
+                ('dn', models.CharField(primary_key=True, serialize=False, max_length=200)),
+                ('username', ldapdb.models.fields.CharField(max_length=200, unique=True, db_column='uid')),
                 ('full_name', ldapdb.models.fields.CharField(max_length=200, db_column='cn')),
             ],
             options={
@@ -45,8 +45,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Tool',
             fields=[
-                ('dn', models.CharField(max_length=200)),
-                ('cn', ldapdb.models.fields.CharField(max_length=200, serialize=False, primary_key=True, db_column='cn')),
+                ('dn', models.CharField(primary_key=True, serialize=False, max_length=200)),
+                ('cn', ldapdb.models.fields.CharField(max_length=200, unique=True, db_column='cn')),
                 ('gid_number', ldapdb.models.fields.IntegerField(unique=True, db_column='gidNumber')),
                 ('members', ldapdb.models.fields.ListField(db_column='member')),
             ],
