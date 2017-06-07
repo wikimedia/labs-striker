@@ -206,4 +206,7 @@ class Password(forms.Form):
 @parsleyfy
 class Confirm(forms.Form):
     agree = forms.BooleanField(
-        label=_('I agree to comply with the Terms of Use'))
+        label=_(
+            'I agree to comply with the Terms of Use and Code of Conduct'
+        )
+    )
