@@ -112,4 +112,9 @@ urlpatterns = [
         striker.tools.views.ToolInfoTagAutocomplete.as_view(),
         name='tags_autocomplete'
     ),
+    urls.url(
+        r'toolinfo/v1/toolinfo.json$',
+        'striker.tools.views.toolinfo',
+        name='toolinfo'
+    ),
 ]

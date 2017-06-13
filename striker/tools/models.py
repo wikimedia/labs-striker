@@ -18,6 +18,8 @@
 # You should have received a copy of the GNU General Public License
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
 
+import collections
+
 from django.conf import settings
 from django.core import urlresolvers
 from django.db import models
@@ -186,3 +188,23 @@ class ToolInfo(models.Model):
 
     def __str__(self):
         return self.name
+
+    def toolinfo(self):
+        if self.is_webservice:
+            url = 'https://tools.wmflabs.org/{}/{}'.format(
+                self.tool,
+                self.suburl
+            )
+        else:
+            url = self.docs
+
+        return collections.OrderedDict([
+            ('name', self.name),
+            ('title', self.title),
+            ('description', self.description),
+            ('url', url),
+            ('keywords', ", ".join(tag.name for tag in self.tags.all())),
+            ('author', ", ".join(
+                a.get_full_name() for a in self.authors.all())),
+            ('repository', self.repository),
+        ])

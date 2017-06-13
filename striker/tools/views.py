@@ -29,9 +29,11 @@ from django.contrib.auth.models import Group
 from django.core import paginator
 from django.core import urlresolvers
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.serializers.json import DjangoJSONEncoder
 from django.db import transaction
 from django.db.utils import DatabaseError
 from django.http import HttpResponseRedirect
+from django.http import JsonResponse
 from django.utils import timezone
 from django.utils.text import slugify
 from django.utils.translation import ugettext_lazy as _
@@ -687,3 +689,20 @@ class ToolInfoTagAutocomplete(autocomplete.Select2QuerySetView):
 
     def create_object(self, text):
         return ToolInfoTag.objects.create(name=text, slug=slugify(text))
+
+
+def toolinfo(req):
+    class PrettyPrintJSONEncoder(DjangoJSONEncoder):
+        def __init__(self, *args, **kwargs):
+            kwargs['indent'] = 2
+            kwargs['separators'] = (',', ':')
+            super(PrettyPrintJSONEncoder, self).__init__(*args, **kwargs)
+
+    return JsonResponse(
+        [
+            info.toolinfo()
+            for info in ToolInfo.objects.all().order_by('name')
+        ],
+        encoder=PrettyPrintJSONEncoder,
+        safe=False,
+    )
