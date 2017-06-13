@@ -23,6 +23,7 @@ import re
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 
+from dal import autocomplete
 from parsley.decorators import parsleyfy
 
 from striker import phabricator
@@ -134,6 +135,7 @@ class ToolInfoForm(forms.ModelForm):
             'name': _('Unique tool name'),
             'title': _('Title'),
             'description': _('Description of tool'),
+            'tags': _('Tags'),
             'license': _('Default software license'),
             'authors': _('Authors'),
             'repository': _('Source code repository'),
@@ -160,6 +162,9 @@ class ToolInfoForm(forms.ModelForm):
                     ),
                     'rows': 5,
                 },
+            ),
+            'tags': autocomplete.ModelSelect2Multiple(
+                url='tools:tags_autocomplete',
             ),
             'repository': forms.TextInput(
                 attrs={

@@ -33,8 +33,10 @@ from django.db import transaction
 from django.db.utils import DatabaseError
 from django.http import HttpResponseRedirect
 from django.utils import timezone
+from django.utils.text import slugify
 from django.utils.translation import ugettext_lazy as _
 
+from dal import autocomplete
 from notifications.signals import notify
 import reversion
 import reversion.models
@@ -52,6 +54,7 @@ from striker.tools.models import AccessRequest
 from striker.tools.models import DiffusionRepo
 from striker.tools.models import Tool
 from striker.tools.models import ToolInfo
+from striker.tools.models import ToolInfoTag
 
 
 WELCOME_MSG = "== Welcome to Tool Labs! ==\n{{subst:ToolsGranted}}"
@@ -665,3 +668,22 @@ def membership_status(req, app_id):
         'meta': settings.OAUTH_MWURL,
     }
     return shortcuts.render(req, 'tools/membership/status.html', ctx)
+
+
+class ToolInfoTagAutocomplete(autocomplete.Select2QuerySetView):
+    create_field = 'name'
+
+    def get_queryset(self):
+        if not self.request.user.is_authenticated():
+            return ToolInfoTag.objects.none()
+        qs = ToolInfoTag.objects.all()
+        if self.q:
+            qs = qs.filter(name__icontains=self.q)
+        qs.order_by('name')
+        return qs
+
+    def has_add_permission(self, request):
+        return request.user.is_authenticated()
+
+    def create_object(self, text):
+        return ToolInfoTag.objects.create(name=text, slug=slugify(text))

@@ -1,3 +1,4 @@
+{% load bootstrap3 %}
 {% load i18n %}
 <div class="panel-body toolinfo-body">
   <div class="toolinfo-desc">{{ toolinfo.description|striptags }}</div>
@@ -19,4 +20,9 @@
       {% endif %}
     </dl>
   </div>
+  <p class="toolinfo-tags">
+    {% for tag in toolinfo.tags.all %}
+    <span class="label label-default">{% bootstrap_icon "tag" %} {{ tag.name }}</span>
+    {% endfor %}
+  </p>
 </div>

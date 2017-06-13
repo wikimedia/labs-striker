@@ -107,4 +107,9 @@ urlpatterns = [
         'striker.tools.views.membership_status',
         name='membership_status'
     ),
+    urls.url(
+        r'tags/autocomplete/$',
+        striker.tools.views.ToolInfoTagAutocomplete.as_view(),
+        name='tags_autocomplete'
+    ),
 ]

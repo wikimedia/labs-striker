@@ -10,4 +10,11 @@ $(function () {
     notify_refresh_period=60000;
     notify_api_url='/alerts/api/unread_count/';
     register_notifier(fill_notification_badge);
+
+    // Work around for
+    // https://github.com/yourlabs/django-autocomplete-light/issues/772
+    var $csrf = $('form :input[name="csrfmiddlewaretoken"]');
+    if ($csrf.length > 0) {
+        document.csrftoken = $csrf[0].value;
+    }
 })

@@ -151,6 +151,12 @@ form.hidden-labels label.no-hide {
 .toolinfo-details {
   margin-top:.5em;
 }
+.toolinfo-tags .label-default {
+  background-color:#fdf3da;
+  border-radius:3px;
+  border:1px solid #e9dbcd;
+  color:#726f56;
+}
 .diff del,
 .diff ins {
   color:#333;

@@ -130,6 +130,8 @@ ALLOWED_HOSTS = ini.get('hosts', 'ALLOWED_HOSTS').split()
 
 INSTALLED_APPS = (
     'bootstrap3',
+    'dal',
+    'dal_select2',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

@@ -149,6 +149,17 @@ class SoftwareLicense(models.Model):
         return "{} - {}".format(self.slug, self.name)
 
 
+class ToolInfoTag(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    slug = models.CharField(max_length=100, unique=True)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        ordering = ('name',)
+
+
 @reversion.register()
 class ToolInfo(models.Model):
     """Metadata about a Tool hosted on Tool Labs.
@@ -162,6 +173,7 @@ class ToolInfo(models.Model):
     license = models.ForeignKey(SoftwareLicense)
     authors = models.ManyToManyField(
         settings.AUTH_USER_MODEL, related_name='+')
+    tags = models.ManyToManyField(ToolInfoTag, blank=True)
     repository = models.CharField(max_length=2047, blank=True, null=True)
     issues = models.CharField(max_length=2047, blank=True, null=True)
     docs = models.CharField(max_length=2047, blank=True, null=True)

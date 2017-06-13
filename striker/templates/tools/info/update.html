@@ -38,7 +38,7 @@
         </div>
       </div>
       <div class="panel-body">
-        <form method="post" action="{% url 'tools:info_edit' tool=tool.name info_id=toolinfo.pk %}" class="form">
+        <form method="post" action="{% url 'tools:info_edit' tool=tool.name info_id=toolinfo.pk %}" class="form parsley">
           {% csrf_token %}
           {% bootstrap_form form %}
           {% buttons %}
@@ -55,4 +55,5 @@
 {{ block.super }}
 <script lang="javascript" src="{% static 'js/parsley.min.js' %}"></script>
 <script lang="javascript" src="{% static 'js/parsley-bootstrap.js' %}"></script>
+{{ form.media }}
 {% endblock %}
