@@ -1,9 +1,9 @@
 =======================================
-Striker (Wikimedia Tool Labs Dashboard)
+Striker (Wikimedia Toolforge Dashboard)
 =======================================
 
 **Striker** is a Django-based project that provides services needed by
-Wikimedia Tool Labs developers. A blacksmith's striker is an assistant whose
+Wikimedia Toolforge developers. A blacksmith's striker is an assistant whose
 job is to swing a large sledgehammer in forging operations at the direction of
 the blacksmith.
 

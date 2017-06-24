@@ -1,9 +1,9 @@
 {% extends "goals/base.html" %}
 {% load i18n %}
 
-{% block title %}{% trans "Become a Tool Labs member" %}{% endblock %}
+{% block title %}{% trans "Become a Toolforge member" %}{% endblock %}
 
 {% block body %}
-<p>{% blocktrans %}Request membership in the Tool Labs project so you can create your own tool and help maintain existing tools.{% endblocktrans %}</p>
+<p>{% blocktrans %}Request membership in the Toolforge project so you can create your own tool and help maintain existing tools.{% endblocktrans %}</p>
 <p><a href="{% url 'tools:membership_apply' %}" class="btn btn-default">{% trans "Join now" %}</a></p>
 {% endblock %}

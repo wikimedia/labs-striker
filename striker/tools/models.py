@@ -202,7 +202,7 @@ class ToolInfoTag(models.Model):
 
 @reversion.register()
 class ToolInfo(models.Model):
-    """Metadata about a Tool hosted on Tool Labs.
+    """Metadata about a Tool hosted on Toolforge.
 
     A single Tool may have 1-to-N metadata records.
     """

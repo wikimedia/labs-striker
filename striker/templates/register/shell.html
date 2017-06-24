@@ -8,8 +8,9 @@
     <h3 class="panel-title">{% bootstrap_icon "hdd" %} {% trans "Choose your UNIX shell username" %}</h3>
   </div>
   <div class="panel-body">
-    <p>{% blocktrans %}Your shell username will be used when logging into Tool
-      Labs and other Labs hosts using <a href="https://en.wikipedia.org/wiki/Secure_Shell">ssh</a>. This name is typically shorter than a wiki username. It must start with <code>a-z</code>, and can only contain lowercase <code>a-z</code>, <code>0-9</code> and <code>-</code> characters.{% endblocktrans %}</p>
+    <p>{% blocktrans with ssh="https://en.wikipedia.org/wiki/Secure_Shell" %}
+      Your shell username will be used when logging into Toolforge and other Wikimedia VPS hosts using <a href="{{ ssh }}">ssh</a>. This name is typically shorter than a wiki username. It must start with <code>a-z</code>, and can only contain lowercase <code>a-z</code>, <code>0-9</code> and <code>-</code> characters.
+    {% endblocktrans %}</p>
     <form method="post" action="" class="form parsley">
       {% csrf_token %}
       {{ wizard.management_form }}

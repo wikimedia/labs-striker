@@ -74,8 +74,8 @@ class AccessRequestForm(forms.ModelForm):
             'reason': forms.Textarea(
                 attrs={
                     'placeholder': _(
-                        'Briefly explain how you will use Tool '
-                        'Labs to benefit the Wikimedia movement.'
+                        'Briefly explain how you will use Toolforge '
+                        'to benefit the Wikimedia movement.'
                     ),
                     'rows': 5,
                 },

@@ -23,7 +23,7 @@ from distutils.core import setup
 setup(
     name='Striker',
     version='0.1',
-    description='Wikimedia Tool Labs Dashboard',
+    description='Wikimedia Toolforge Dashboard',
     author='Wikimedia Foundation',
     license='GPLv3+',
     url='https://tools.wmflabs.org/',

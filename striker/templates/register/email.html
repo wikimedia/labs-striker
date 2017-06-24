@@ -8,7 +8,7 @@
     <h3 class="panel-title">{% bootstrap_icon "envelope" %} {% trans "Add your email address" %}</h3>
   </div>
   <div class="panel-body">
-    <p>{% blocktrans %}A valid email address is required to use Tool Labs. Tool Labs administrators may need to contact you concerning your tools and other processes running in Labs. This email address <strong>will</strong> be publically visible.{% endblocktrans %}</p>
+    <p>{% blocktrans %}A valid email address is required to use Toolforge. Toolforge administrators may need to contact you concerning your tools and other processes running in Wikimedia VPS. This email address <strong>will</strong> be publically visible.{% endblocktrans %}</p>
     <form method="post" action="" class="form parsley">
       {% csrf_token %}
       {{ wizard.management_form }}

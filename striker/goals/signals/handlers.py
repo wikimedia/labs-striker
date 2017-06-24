@@ -52,7 +52,7 @@ def check_goal_ssh(ldap):
 
 
 def check_goal_member(user):
-    """Check LabsUser model for Tool Labs membership."""
+    """Check LabsUser model for Toolforge membership."""
     groups = user.groups.values_list('name', flat=True)
     if settings.TOOLS_TOOL_LABS_GROUP_NAME in groups:
         user.milestones.recordMilestone(GOALS['TOOL_MEMBER'])

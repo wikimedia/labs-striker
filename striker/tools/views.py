@@ -63,8 +63,8 @@ from striker.tools.models import ToolInfo
 from striker.tools.models import ToolInfoTag
 
 
-WELCOME_MSG = "== Welcome to Tool Labs! ==\n{{subst:ToolsGranted}}"
-WELCOME_SUMMARY = 'Welcome to Tool Labs!'
+WELCOME_MSG = "== Welcome to Toolforge! ==\n{{subst:ToolsGranted}}"
+WELCOME_SUMMARY = 'Welcome to Toolforge!'
 
 logger = logging.getLogger(__name__)
 phab = phabricator.Client.default_client()
@@ -555,7 +555,7 @@ def membership_apply(req):
     """Request membership in the Tools project."""
     if project_member(req.user):
         messages.error(
-            req, _('You are already a member of Tool Labs'))
+            req, _('You are already a member of Toolforge'))
         return see_other(urlresolvers.reverse('tools:index'))
 
     pending = AccessRequest.objects.filter(
@@ -588,7 +588,7 @@ def membership_apply(req):
                     ],
                 )
                 messages.info(
-                    req, _("Tool Labs membership request submitted"))
+                    req, _("Toolforge membership request submitted"))
                 return shortcuts.redirect(urlresolvers.reverse('tools:index'))
             except DatabaseError:
                 logger.exception('AccessRequest.save failed')
@@ -673,7 +673,7 @@ def membership_status(req, app_id):
                 )
 
                 messages.info(
-                    req, _("Tool Labs membership request updated"))
+                    req, _("Toolforge membership request updated"))
                 return shortcuts.redirect(
                     urlresolvers.reverse(
                         'tools:membership_status', args=[request.id]))

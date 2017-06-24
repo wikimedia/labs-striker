@@ -2,12 +2,12 @@
 {% load bootstrap3 %}
 {% load i18n %}
 
-{% block title %}{% trans "Join Tool Labs" %}{% endblock %}
+{% block title %}{% trans "Join Toolforge" %}{% endblock %}
 
 {% block pre_content %}
 <ol class="breadcrumb">
   <li><a href="{% url 'tools:index' %}">{% trans "Tools" %}</a></li>
-  <li class="active">{% trans "Join Tool Labs" %}</li>
+  <li class="active">{% trans "Join Toolforge" %}</li>
 </ol>
 {{ block.super }}
 {% endblock %}
@@ -17,7 +17,7 @@
   <div class="row">
     <div class="panel panel-default">
       <div class="panel-heading">
-        <h3 class="panel-title">{% trans "Request Tool Labs project membership" %}</h3>
+        <h3 class="panel-title">{% trans "Request Toolforge project membership" %}</h3>
       </div>
       <div class="panel-body">
         <form method="post" action="{% url 'tools:membership_apply' %}" class="form">
