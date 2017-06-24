@@ -21,15 +21,19 @@
 import re
 
 from django import forms
+from django.core import validators
+from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 
 from dal import autocomplete
 from parsley.decorators import parsleyfy
 
 from striker import phabricator
+from striker.tools import utils
 from striker.tools.models import AccessRequest
 from striker.tools.models import SoftwareLicense
 from striker.tools.models import ToolInfo
+from striker.tools.models import ToolInfoTag
 
 
 phab = phabricator.Client.default_client()
@@ -194,3 +198,95 @@ class ToolInfoForm(forms.ModelForm):
 class ToolInfoPublicForm(ToolInfoForm):
     class Meta(ToolInfoForm.Meta):
         exclude = ('name', 'tool', 'license', 'authors', 'is_webservice')
+
+
+@parsleyfy
+class ToolCreateForm(forms.Form):
+    # Unix username regex suggested by useradd(8).
+    # We don't allow a leading '_' or trailing '$' however.
+    RE_NAME = r'^[a-z][a-z0-9_-]{0,31}$'
+    NAME_ERR_MSG = _(
+        'Must start with a-z, and can only contain '
+        'lowercase a-z, 0-9, _, and - characters.'
+    )
+
+    name = forms.CharField(
+        label=_('Unique tool name'),
+        help_text=_(
+            "The tool name is used as part of the URL for the tool's "
+            "webservice."
+        ),
+        widget=forms.TextInput(
+            attrs={
+                'autofocus': 'autofocus',
+                'placeholder': _('A unique name for your tool'),
+                # Parsley gets confused if {value} is url encoded, so wrap in
+                # mark_safe().
+                # FIXME: I tried everything I could think of to use
+                # urlresolvers.reverse_lazy and I just couldn't get it to work
+                # with mark_safe(). I would get either the URL encoded
+                # property value or the __str__ of a wrapper object.
+                'data-parsley-remote': mark_safe(
+                    '/tools/api/toolname/{value}'),
+                'data-parsley-trigger': 'focusin focusout input',
+                'data-parsley-remote-message': _(
+                    'Tool name is already in use or invalid.'),
+                'data-parsley-pattern': RE_NAME,
+                'data-parsley-pattern-message': NAME_ERR_MSG,
+                'data-parsley-debounce': '500',
+            }
+        ),
+        max_length=32,
+        validators=[
+            validators.RegexValidator(regex=RE_NAME, message=NAME_ERR_MSG),
+        ]
+    )
+    title = forms.CharField(
+        label=_('Title'),
+        widget=forms.TextInput(
+            attrs={
+                'placeholder': _('A descriptive title for your tool'),
+            },
+        ),
+    )
+    description = forms.CharField(
+        label=_('Description of tool'),
+        widget=forms.Textarea(
+            attrs={
+                'placeholder': _(
+                    'A short summary of what your tool will do'
+                ),
+                'rows': 5,
+            },
+        ),
+    )
+    license = forms.ModelChoiceField(
+        queryset=SoftwareLicense.objects.filter(
+            osi_approved=True).order_by('-recommended', 'slug'),
+        empty_label=_('-- Choose your software license --'),
+        label=_('Default software license'),
+        help_text=_(
+            'Need help choosing a license? '
+            'Try <a href="{choose_a_license}">choosealicense.com</a>.'
+        ).format(choose_a_license='https://choosealicense.com/'),
+    )
+    tags = forms.ModelMultipleChoiceField(
+        queryset=ToolInfoTag.objects.all().order_by('name'),
+        widget=autocomplete.ModelSelect2Multiple(
+            url='tools:tags_autocomplete',
+        ),
+        required=False,
+    )
+
+    def clean_name(self):
+        """Validate that name is available."""
+        name = self.cleaned_data['name']
+        if not utils.toolname_available(name):
+            raise forms.ValidationError(_('Tool name is already in use.'))
+
+        # Check that it isn't banned by some abusefilter type rule
+        check = utils.check_toolname_create(name)
+        if check['ok'] is False:
+            raise forms.ValidationError(check['error'])
+
+        return name

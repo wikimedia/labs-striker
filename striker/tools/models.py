@@ -36,7 +36,7 @@ class Maintainer(ldapdb.models.Model):
     base_dn = settings.TOOLS_MAINTAINER_BASE_DN
     object_classes = ['posixAccount']
 
-    username = fields.CharField(db_column='uid', unique=True)
+    username = fields.CharField(db_column='uid', primary_key=True)
     full_name = fields.CharField(db_column='cn')
 
     def __str__(self):
@@ -56,7 +56,7 @@ class Tool(ldapdb.models.Model):
 
     objects = ToolManager()
 
-    cn = fields.CharField(db_column='cn', max_length=200, unique=True)
+    cn = fields.CharField(db_column='cn', max_length=200, primary_key=True)
     gid_number = fields.IntegerField(db_column='gidNumber', unique=True)
     members = fields.ListField(db_column='member')
 
@@ -86,6 +86,44 @@ class Tool(ldapdb.models.Model):
 
     def __str__(self):
         return self.name
+
+
+class ToolUser(ldapdb.models.Model):
+    """Posix account that a tool runs as."""
+    base_dn = 'ou=people,{}'.format(settings.TOOLS_TOOL_BASE_DN)
+    object_classes = [
+        'shadowAccount',
+        'posixAccount',
+        'person',
+        'top'
+    ]
+
+    uid = fields.CharField(db_column='uid', primary_key=True)
+    cn = fields.CharField(db_column='cn', unique=True)
+    sn = fields.CharField(db_column='sn', unique=True)
+    uid_number = fields.IntegerField(db_column='uidNumber', unique=True)
+    gid_number = fields.IntegerField(db_column='gidNumber')
+    home_directory = fields.CharField(
+        db_column='homeDirectory', max_length=200)
+    login_shell = fields.CharField(db_column='loginShell', max_length=64)
+
+    def __str__(self):
+        return 'uid=%s,%s' % (self.uid, self.base_dn)
+
+
+class SudoRole(ldapdb.models.Model):
+    base_dn = 'ou=sudoers,cn=tools,{}'.format(settings.PROJECTS_BASE_DN)
+    object_classes = ['sudoRole']
+
+    cn = fields.CharField(db_column='cn', primary_key=True)
+    users = fields.ListField(db_column='sudoUser')
+    hosts = fields.ListField(db_column='sudoHost')
+    commands = fields.ListField(db_column='sudoCommand')
+    options = fields.ListField(db_column='sudoOption')
+    runas_users = fields.ListField(db_column='sudoRunAsUser')
+
+    def __str__(self):
+        return 'cn=%s,%s' % (self.cn, self.base_dn)
 
 
 class DiffusionRepo(models.Model):

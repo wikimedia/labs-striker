@@ -11,11 +11,14 @@
         <div class="panel-heading">{% bootstrap_icon "star" %} {% trans "Your tools" %}</div>
         {% if not user.is_anonymous %}
         <div class="list-group">
+          {% if member %}
+          <a class="list-group-item" href="{% url 'tools:tool_create' %}">{% bootstrap_icon "plus-sign" %} {% trans "Create Tool account" %}</a>
+          {% endif %}
           {% for tool in my_tools %}
           <a href="{% url 'tools:tool' tool=tool %}" class="list-group-item">{{ tool.name }}</a>
           {% empty %}
           {% if member %}
-          <div class="list-group-item">{% blocktrans with url='https://tools.wmflabs.org/' %}Your account is not associated with any tools. Visit <a href="{{ url }}">tools.wmflabs.org</a> to find a existing tool to join or create a new tool.{% endblocktrans %}</div>
+          <div class="list-group-item">{% blocktrans %}Your account is not associated with any tools.{% endblocktrans %}</div>
           {% else %}
           <div class="list-group-item">
             <p>{% blocktrans %}Request membership in the Tool Labs project so you can create your own tool and help maintain existing tools.{% endblocktrans %}</p>

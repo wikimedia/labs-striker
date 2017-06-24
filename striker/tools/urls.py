@@ -117,4 +117,18 @@ urlpatterns = [
         'striker.tools.views.toolinfo',
         name='toolinfo'
     ),
+    urls.url(
+        r'create/$',
+        'striker.tools.views.tool_create',
+        name='tool_create'
+    ),
+    urls.url(r'^api/', urls.include(
+        urls.patterns(
+            'striker.tools.views',
+            urls.url(
+                r'^toolname/(?P<name>.+)$',
+                'toolname_available', name='toolname'),
+        ),
+        namespace='api'
+    )),
 ]

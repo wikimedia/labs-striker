@@ -29,6 +29,7 @@ from django.contrib.auth.models import Group
 from django.core import paginator
 from django.core import urlresolvers
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import PermissionDenied
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import transaction
 from django.db.utils import DatabaseError
@@ -37,6 +38,7 @@ from django.http import JsonResponse
 from django.utils import timezone
 from django.utils.text import slugify
 from django.utils.translation import ugettext_lazy as _
+from django.views.decorators.cache import never_cache
 
 from dal import autocomplete
 from notifications.signals import notify
@@ -47,9 +49,11 @@ import reversion_compare.views
 from striker import mediawiki
 from striker import openstack
 from striker import phabricator
+from striker.tools import utils
 from striker.tools.forms import AccessRequestAdminForm
 from striker.tools.forms import AccessRequestForm
 from striker.tools.forms import RepoCreateForm
+from striker.tools.forms import ToolCreateForm
 from striker.tools.forms import ToolInfoForm
 from striker.tools.forms import ToolInfoPublicForm
 from striker.tools.models import AccessRequest
@@ -110,6 +114,16 @@ def tools_admin(user):
 def project_member(user):
     groups = user.groups.values_list('name', flat=True)
     return settings.TOOLS_TOOL_LABS_GROUP_NAME in groups
+
+
+def require_tools_member(f):
+    """Ensure that the active user is a member of the tools project."""
+    @functools.wraps(f)
+    def decorated(request, *args, **kwargs):
+        if project_member(request.user):
+            return f(request, *args, **kwargs)
+        raise PermissionDenied
+    return decorated
 
 
 def index(req):
@@ -426,20 +440,26 @@ def repo_create(req, tool):
                     created_by=req.user)
                 try:
                     repo_model.save()
-                    notify.send(
-                        recipient=Group.objects.get(name=tool.cn),
-                        sender=req.user,
-                        verb=_('created'),
-                        target=repo_model,
-                        public=True,
-                        level='info',
-                        actions=[
-                            {
-                                'title': _('View repository'),
-                                'href': repo_model.get_absolute_url(),
-                            },
-                        ],
-                    )
+                    try:
+                        maintainers = Group.objects.get(name=tool.cn)
+                    except ObjectDoesNotExist:
+                        # Can't find group for the tool
+                        pass
+                    else:
+                        notify.send(
+                            recipient=Group.objects.get(name=tool.cn),
+                            sender=req.user,
+                            verb=_('created new repo'),
+                            target=repo_model,
+                            public=True,
+                            level='info',
+                            actions=[
+                                {
+                                    'title': _('View repository'),
+                                    'href': repo_model.get_absolute_url(),
+                                },
+                            ],
+                        )
                     # Redirect to repo view
                     return shortcuts.redirect(
                         urlresolvers.reverse('tools:repo_view', kwargs={
@@ -706,3 +726,89 @@ def toolinfo(req):
         encoder=PrettyPrintJSONEncoder,
         safe=False,
     )
+
+
+@require_tools_member
+@login_required
+def tool_create(req):
+    form = ToolCreateForm(req.POST or None, req.FILES or None)
+    if req.method == 'POST':
+        if form.is_valid():
+            try:
+                tool = utils.create_tool(form.cleaned_data['name'], req.user)
+            except Exception:
+                logger.exception('utils.create_tool failed')
+                messages.error(
+                    req,
+                    _("Error creating tool. [req id: {id}]").format(
+                        id=req.id))
+            else:
+                messages.info(
+                    req, _("Tool {} created".format(tool.name)))
+                try:
+                    with reversion.create_revision():
+                        toolinfo = ToolInfo(
+                            name='toolforge.{}'.format(
+                                form.cleaned_data['name']),
+                            tool=form.cleaned_data['name'],
+                            title=form.cleaned_data['title'],
+                            description=form.cleaned_data['description'],
+                            license=form.cleaned_data['license'],
+                            is_webservice=False,
+                        )
+                        reversion.set_user(req.user)
+                        reversion.set_comment('Tool created')
+                        toolinfo.save()
+                        toolinfo.authors.add(req.user)
+                        if form.cleaned_data['tags']:
+                            toolinfo.tags.add(*form.cleaned_data['tags'])
+                except Exception:
+                    logger.exception('ToolInfo create failed')
+                    messages.error(
+                        req,
+                        _("Error creating toolinfo. [req id: {id}]").format(
+                            id=req.id))
+                try:
+                    maintainers = Group.objects.get(name=tool.cn)
+                except ObjectDoesNotExist:
+                    # Can't find group for the tool
+                    pass
+                else:
+                    # Do not set tool as the notification target because the
+                    # framework does not understand LDAP models.
+                    notify.send(
+                        recipient=maintainers,
+                        sender=req.user,
+                        verb=_('created tool {}').format(tool.name),
+                        public=True,
+                        level='info',
+                        actions=[
+                            {
+                                'title': _('View tool'),
+                                'href': tool.get_absolute_url(),
+                            },
+                        ],
+                    )
+
+                return shortcuts.redirect(tool.get_absolute_url())
+    ctx = {
+        'form': form,
+    }
+    return shortcuts.render(req, 'tools/create.html', ctx)
+
+
+@never_cache
+def toolname_available(req, name):
+    """JSON callback for parsley validation of tool name.
+
+    Kind of gross, but it returns a 406 status code when the name is not
+    available. This is to work with the limited choice of default response
+    validators in parsley.
+    """
+    available = utils.toolname_available(name)
+    if available:
+        available = utils.check_toolname_create(name)['ok']
+    status = 200 if available else 406
+    return JsonResponse({
+        'available': available,
+    }, status=status)

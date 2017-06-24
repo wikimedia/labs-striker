@@ -384,6 +384,9 @@ TOOLS_MAINTAINER_BASE_DN = ini.get('ldap', 'TOOLS_MAINTAINER_BASE_DN')
 TOOLS_TOOL_BASE_DN = ini.get('ldap', 'TOOLS_TOOL_BASE_DN')
 TOOLS_TOOL_LABS_GROUP_NAME = ini.get('ldap', 'TOOLS_TOOL_LABS_GROUP_NAME')
 
+# == Project settings ==
+PROJECTS_BASE_DN = 'ou=projects,{}'.format(ini.get('ldap', 'BASE_DN'))
+
 # == OATH settings ==
 OATHMIDDLEWARE_REDIRECT = 'labsauth:oath'
 
