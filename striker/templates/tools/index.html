@@ -11,9 +11,6 @@
         <div class="panel-heading">{% bootstrap_icon "star" %} {% trans "Your tools" %}</div>
         {% if not user.is_anonymous %}
         <div class="list-group">
-          {% if member %}
-          <a class="list-group-item" href="{% url 'tools:tool_create' %}">{% bootstrap_icon "plus-sign" %} {% trans "Create Tool account" %}</a>
-          {% endif %}
           {% for tool in my_tools %}
           <a href="{% url 'tools:tool' tool=tool %}" class="list-group-item">{{ tool.name }}</a>
           {% empty %}
@@ -22,21 +19,25 @@
           {% else %}
           <div class="list-group-item">
             <p>{% blocktrans %}Request membership in the Toolforge project so you can create your own tool and help maintain existing tools.{% endblocktrans %}</p>
-            <p><a href="{% url 'tools:membership_apply' %}" class="btn btn-default">{% trans "Join now" %}</a></p>
+            <a href="{% url 'tools:membership_apply' %}" class="btn btn-success">{% trans "Join now" %}</a>
           </div>
           {% endif %}
           {% endfor %}
         </div>
-        {% else %}
+        {% if member %}
+        <div class="list-group">
+          <a class="list-group-item" href="{% url 'tools:tool_create' %}">{% bootstrap_icon "plus-sign" %} {% trans "Create new tool" %}</a>
+        </div>
+        {% endif %}
+        {% else %}{# user.is_anonymous #}
         <div class="panel-body">
           {% url 'labsauth:login' as login_url %}
           {% url 'tools:index' as tools_url %}
           {% blocktrans with login_url=login_url tools_url=tools_url %}
-          <p><a href="{{ login_url }}?next={{ tools_url }}">Login</a> to see your tools.</p>
+          <a href="{{ login_url }}?next={{ tools_url }}">Login</a> to see your tools.
           {% endblocktrans %}
         </div>
         {% endif %}
-        <div class="panel-footer"></div>
       </div>
       <div class="panel panel-default">
         <ul class="nav nav-pills nav-stacked">

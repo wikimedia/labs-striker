@@ -31,9 +31,11 @@ from parsley.decorators import parsleyfy
 from striker import phabricator
 from striker.tools import utils
 from striker.tools.models import AccessRequest
+from striker.tools.models import Maintainer
 from striker.tools.models import SoftwareLicense
 from striker.tools.models import ToolInfo
 from striker.tools.models import ToolInfoTag
+from striker.tools.models import ToolUser
 
 
 phab = phabricator.Client.default_client()
@@ -290,3 +292,40 @@ class ToolCreateForm(forms.Form):
             raise forms.ValidationError(check['error'])
 
         return name
+
+
+class MaintainerChoiceField(forms.ModelMultipleChoiceField):
+    def label_from_instance(self, obj):
+        return obj.cn
+
+
+@parsleyfy
+class MantainersForm(forms.Form):
+    maintainers = MaintainerChoiceField(
+        queryset=Maintainer.objects.all(),
+        widget=autocomplete.ModelSelect2Multiple(
+            url='tools:api:maintainer',
+        ),
+    )
+    tools = forms.ModelMultipleChoiceField(
+        queryset=ToolUser.objects.all(),
+        widget=autocomplete.ModelSelect2Multiple(
+            url='tools:api:tooluser',
+        ),
+        help_text=_(
+            'Adding another tool as a maintainer will allow all '
+            'maintainers of that tool to access this tool. '
+            'It will also allow access to maintainers of any tool added to '
+            'that tool, and so on. Make sure you trust everyone and know what '
+            'you are doing before selecting anything in the "Tools" section.'
+        ),
+        required=False,
+    )
+
+    def __init__(self, *args, **kwargs):
+        tool = kwargs.pop('tool')
+        initial = kwargs.pop('initial', {})
+        initial['maintainers'] = tool.maintainer_ids()
+        initial['tools'] = tool.tool_member_ids()
+        kwargs['initial'] = initial
+        super(MantainersForm, self).__init__(*args, **kwargs)

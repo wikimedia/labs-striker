@@ -21,6 +21,7 @@
 import configparser
 import ldap
 import os
+import sys
 
 import django_auth_ldap.config
 
@@ -37,6 +38,10 @@ ini.read([
     os.path.join(BASE_DIR, 'striker.ini'),
     '/etc/striker/striker.ini',
 ])
+
+# Hack so that we can guard things that will probably fail miserably in test
+# like contacting an external server
+TEST_MODE = 'test' in sys.argv
 
 # == Logging ==
 LOGGING = {

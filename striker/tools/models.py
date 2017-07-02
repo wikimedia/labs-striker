@@ -30,14 +30,35 @@ from ldapdb.models import fields
 import ldapdb.models
 import reversion
 
+from striker.tools import cache
+
+
+class MaintainerManager(models.Manager):
+    def _get_tool_users(self):
+        if settings.TEST_MODE:
+            # Hack to keep from trying to talk to openstack API from django
+            # test harness
+            return []
+        users = cache.get_openstack_users()
+        return (
+            users[settings.OPENSTACK_USER_ROLE] +
+            users[settings.OPENSTACK_ADMIN_ROLE]
+        )
+
+    def get_queryset(self):
+        return super(MaintainerManager, self).get_queryset().filter(
+            uid__in=self._get_tool_users())
+
 
 class Maintainer(ldapdb.models.Model):
     """A tool maintainer."""
     base_dn = settings.TOOLS_MAINTAINER_BASE_DN
     object_classes = ['posixAccount']
 
-    username = fields.CharField(db_column='uid', primary_key=True)
-    full_name = fields.CharField(db_column='cn')
+    uid = fields.CharField(db_column='uid', primary_key=True)
+    cn = fields.CharField(db_column='cn')
+
+    objects = MaintainerManager()
 
     def __str__(self):
         return self.username
@@ -68,11 +89,25 @@ class Tool(ldapdb.models.Model):
     def name(self, value):
         self.cn = 'tools.{0!s}'.format(value)
 
+    def maintainer_ids(self):
+        return [
+            dn.split(',')[0].split('=')[1]
+            for dn in self.members
+            if not dn.startswith('uid=tools.')
+        ]
+
     def maintainers(self):
-        # OMG, this is horrible. You can't search LDAP by dn.
-        return Maintainer.objects.filter(
-            username__in=(
-                dn.split(',')[0].split('=')[1] for dn in self.members))
+        return Maintainer.objects.filter(uid__in=self.maintainer_ids())
+
+    def tool_member_ids(self):
+        return [
+            dn.split(',')[0].split('=')[1]
+            for dn in self.members
+            if dn.startswith('uid=tools.')
+        ]
+
+    def tool_members(self):
+        return ToolUser.objects.filter(uid__in=self.tool_member_ids())
 
     def toolinfo(self):
         try:
@@ -107,8 +142,16 @@ class ToolUser(ldapdb.models.Model):
         db_column='homeDirectory', max_length=200)
     login_shell = fields.CharField(db_column='loginShell', max_length=64)
 
+    @property
+    def name(self):
+        return self.cn[6:]
+
+    @name.setter
+    def name(self, value):
+        self.cn = 'tools.{0!s}'.format(value)
+
     def __str__(self):
-        return 'uid=%s,%s' % (self.uid, self.base_dn)
+        return self.name
 
 
 class SudoRole(ldapdb.models.Model):

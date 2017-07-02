@@ -18,6 +18,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
 
+import itertools
 import functools
 import logging
 
@@ -49,18 +50,23 @@ import reversion_compare.views
 from striker import mediawiki
 from striker import openstack
 from striker import phabricator
+from striker.labsauth.models import LabsUser
+from striker.tools import cache
 from striker.tools import utils
 from striker.tools.forms import AccessRequestAdminForm
 from striker.tools.forms import AccessRequestForm
+from striker.tools.forms import MantainersForm
 from striker.tools.forms import RepoCreateForm
 from striker.tools.forms import ToolCreateForm
 from striker.tools.forms import ToolInfoForm
 from striker.tools.forms import ToolInfoPublicForm
 from striker.tools.models import AccessRequest
 from striker.tools.models import DiffusionRepo
+from striker.tools.models import Maintainer
 from striker.tools.models import Tool
 from striker.tools.models import ToolInfo
 from striker.tools.models import ToolInfoTag
+from striker.tools.models import ToolUser
 
 
 WELCOME_MSG = "== Welcome to Toolforge! ==\n{{subst:ToolsGranted}}"
@@ -99,15 +105,12 @@ def inject_tool(f):
     return decorated
 
 
-def tool_member(tool, user):
+def member_or_admin(tool, user):
+    """Is the given user a member of the given tool or a global admin?"""
     if user.is_anonymous():
         return False
-    return user.ldap_dn in tool.members
-
-
-def tools_admin(user):
-    if user.is_anonymous():
-        return False
+    if user.ldap_dn in tool.members:
+        return True
     return user.ldap_dn in Tool.objects.get(cn='tools.admin').members
 
 
@@ -162,7 +165,7 @@ def tool(req, tool):
         'tool': tool,
         'toolinfo': tool.toolinfo(),
         'repos': DiffusionRepo.objects.filter(tool=tool.name),
-        'can_edit': tool_member(tool, req.user),
+        'can_edit': member_or_admin(tool, req.user),
     })
 
 
@@ -171,10 +174,10 @@ def tool(req, tool):
 @inject_tool
 def info_create(req, tool):
     """Create a ToolInfo record."""
-    if not tool_member(tool, req.user):
+    if not member_or_admin(tool, req.user):
         messages.error(
             req, _('You are not a member of {tool}').format(tool=tool.name))
-        return shortcuts.redirect(urlresolvers.reverse('tools:index'))
+        return shortcuts.redirect(tool.get_absolute_url())
 
     initial_values = {
         'name': tool.name,
@@ -229,7 +232,7 @@ def info_read(req, tool, info_id):
 def info_edit(req, tool, info_id):
     """Create a ToolInfo record."""
     toolinfo = shortcuts.get_object_or_404(ToolInfo, pk=info_id, tool=tool)
-    if tool_member(tool, req.user):
+    if member_or_admin(tool, req.user):
         form = ToolInfoForm(
             req.POST or None, req.FILES or None, instance=toolinfo)
     else:
@@ -287,13 +290,11 @@ class ToolInfoHistoryView(reversion_compare.views.HistoryCompareDetailView):
     def get_context_data(self, **kwargs):
         user = self.request.user
         tool = Tool.objects.get(cn='tools.{0}'.format(kwargs['object'].tool))
-        is_member = tool_member(tool, user)
-        is_admin = tools_admin(user)
 
         ctx = super(ToolInfoHistoryView, self).get_context_data(**kwargs)
         ctx['toolinfo'] = kwargs['object']
         ctx['tool'] = tool
-        ctx['show_suppressed'] = is_member or is_admin
+        ctx['show_suppressed'] = member_or_admin(tool, user)
         return ctx
 
 
@@ -305,10 +306,8 @@ def info_revision(req, tool, info_id, version_id):
     version = shortcuts.get_object_or_404(
         reversion.models.Version, pk=version_id, object_id=info_id)
 
-    is_member = tool_member(tool, req.user)
-    is_admin = tools_admin(req.user)
-    can_revert = is_member or is_admin
-    can_suppress = is_member or is_admin
+    can_revert = member_or_admin(tool, req.user)
+    can_suppress = member_or_admin(tool, req.user)
 
     history_url = urlresolvers.reverse(
         'tools:info_history',
@@ -410,7 +409,7 @@ def info_revision(req, tool, info_id, version_id):
 @inject_tool
 def repo_create(req, tool):
     """Create a new Diffusion repo."""
-    if not tool_member(tool, req.user):
+    if not member_or_admin(tool, req.user):
         messages.error(
             req, _('You are not a member of {tool}').format(tool=tool.name))
         return shortcuts.redirect(urlresolvers.reverse('tools:index'))
@@ -630,6 +629,7 @@ def membership_status(req, app_id):
                         msg = '{}\n{}'.format(
                             talk.text(), WELCOME_MSG).strip()
                         talk.save(msg, summary=WELCOME_SUMMARY, bot=False)
+                        cache.purge_openstack_users()
 
                     if request.status != AccessRequest.PENDING:
                         request.resolved_by = req.user
@@ -812,3 +812,125 @@ def toolname_available(req, name):
     return JsonResponse({
         'available': available,
     }, status=status)
+
+
+@login_required
+@inject_tool
+def maintainers(req, tool):
+    """Manage the maintainers list for a tool"""
+    if not member_or_admin(tool, req.user):
+        messages.error(
+            req, _('You are not a member of {tool}').format(tool=tool.name))
+        return shortcuts.redirect(tool.get_absolute_url())
+    form = MantainersForm(req.POST or None, req.FILES or None, tool=tool)
+    if req.method == 'POST':
+        if form.is_valid():
+            old_members = set(tool.members)
+            new_members = set(
+                m.dn for m in itertools.chain(
+                    form.cleaned_data['maintainers'],
+                    form.cleaned_data['tools']
+                )
+            )
+            tool.members = new_members
+            tool.save()
+
+            maintainers, created = Group.objects.get_or_create(name=tool.cn)
+            added_maintainers = list(new_members - old_members)
+            removed_maintainers = list(old_members - new_members)
+            for dn in added_maintainers:
+                uid = dn.split(',')[0][4:]
+                logging.info('Added %s', uid)
+                try:
+                    added = LabsUser.objects.get(shellname=uid)
+                except ObjectDoesNotExist:
+                    # No local user for this account
+                    logging.info('No LabsUser found for %s', uid)
+                    pass
+                else:
+                    # Add user to the mirrored group
+                    added.groups.add(maintainers.id)
+                    # Do not set tool as the notification target because the
+                    # framework does not understand LDAP models.
+                    notify.send(
+                        recipient=added,
+                        sender=req.user,
+                        verb=_(
+                            'added you as a maintainer of {}'
+                        ).format(tool.name),
+                        public=True,
+                        level='info',
+                        actions=[
+                            {
+                                'title': _('View tool'),
+                                'href': tool.get_absolute_url(),
+                            },
+                        ],
+                    )
+
+            for dn in removed_maintainers:
+                uid = dn.split(',')[0][4:]
+                logging.info('Removed %s', uid)
+                try:
+                    removed = LabsUser.objects.get(shellname=uid)
+                except ObjectDoesNotExist:
+                    # No local user for this account
+                    logging.info('No LabsUser found for %s', uid)
+                    pass
+                else:
+                    # Add user to the mirrored group
+                    removed.groups.remove(maintainers.id)
+                    # Do not set tool as the notification target because the
+                    # framework does not understand LDAP models.
+                    notify.send(
+                        recipient=removed,
+                        sender=req.user,
+                        verb=_(
+                            'removed you from the maintainers of {}'
+                        ).format(tool.name),
+                        public=True,
+                        level='info',
+                        actions=[
+                            {
+                                'title': _('View tool'),
+                                'href': tool.get_absolute_url(),
+                            },
+                        ],
+                    )
+
+            messages.info(req, _('Maintainers updated'))
+            return shortcuts.redirect(tool.get_absolute_url())
+
+    ctx = {
+        'tool': tool,
+        'form': form,
+    }
+    return shortcuts.render(req, 'tools/maintainers.html', ctx)
+
+
+class MaintainerAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        if not self.request.user.is_authenticated():
+            return Maintainer.objects.none()
+        qs = Maintainer.objects.all()
+        if self.q:
+            qs = qs.filter(cn__icontains=self.q)
+        qs.order_by('cn')
+        return qs
+
+    def get_result_label(self, result):
+        return result.cn
+
+
+class ToolUserAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        if not self.request.user.is_authenticated():
+            return ToolUser.objects.none()
+        qs = ToolUser.objects.all()
+        if self.q:
+            qs = qs.filter(uid__icontains=self.q)
+        qs.order_by('uid')
+        return qs
+
+    def get_result_label(self, result):
+        return result.name

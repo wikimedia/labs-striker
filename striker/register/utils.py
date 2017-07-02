@@ -27,7 +27,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from striker import mediawiki
 from striker.labsauth.models import LabsUser
-from striker.tools.models import Maintainer
+from striker.labsauth.models import PosixAccount
 
 
 logger = logging.getLogger(__name__)
@@ -35,6 +35,7 @@ logger = logging.getLogger(__name__)
 
 def sul_available(name):
     try:
+        # TODO: change to LdapUser once T148048 is done
         LabsUser.objects.get(sulname=name)
     except LabsUser.DoesNotExist:
         return True
@@ -82,8 +83,9 @@ def username_valid(name):
 
 def username_available(name):
     try:
-        Maintainer.objects.get(full_name=name)
-    except Maintainer.DoesNotExist:
+        # Check vs any posix account
+        PosixAccount.objects.get(cn=name)
+    except PosixAccount.DoesNotExist:
         return True
     else:
         return False
@@ -91,8 +93,9 @@ def username_available(name):
 
 def shellname_available(name):
     try:
-        Maintainer.objects.get(username=name)
-    except Maintainer.DoesNotExist:
+        # Check vs any posix account
+        PosixAccount.objects.get(uid=name)
+    except PosixAccount.DoesNotExist:
         return True
     else:
         return False

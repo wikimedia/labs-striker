@@ -93,6 +93,11 @@ urlpatterns = [
         name='repo_view'
     ),
     urls.url(
+        r'^id/{tool}/maintainers/$'.format(tool=TOOL),
+        'striker.tools.views.maintainers',
+        name='maintainers'
+    ),
+    urls.url(
         r'^membership/$',
         'striker.tools.views.membership',
         name='membership'
@@ -125,6 +130,14 @@ urlpatterns = [
     urls.url(r'^api/', urls.include(
         urls.patterns(
             'striker.tools.views',
+            urls.url(
+                r'^autocomplete/maintainer$',
+                striker.tools.views.MaintainerAutocomplete.as_view(),
+                name='maintainer'),
+            urls.url(
+                r'^autocomplete/tooluser$',
+                striker.tools.views.ToolUserAutocomplete.as_view(),
+                name='tooluser'),
             urls.url(
                 r'^toolname/(?P<name>.+)$',
                 'toolname_available', name='toolname'),

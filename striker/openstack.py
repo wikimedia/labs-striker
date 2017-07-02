@@ -81,11 +81,14 @@ class Client(object):
         """Convenience method for getting a client with super user rights."""
         return self._client(project='admin', interface='admin')
 
-    def role(self, name):
+    def _roles(self):
         if self.roles is None:
             keystone = self._client()
             self.roles = {r.name: r for r in keystone.roles.list()}
-        return self.roles[name]
+        return self.roles
+
+    def role(self, name):
+        return self._roles()[name]
 
     def grant_role(self, role, user, project=None):
         project = project or self.project
@@ -98,3 +101,18 @@ class Client(object):
         # We need global admin rights to change role assignments
         keystone = self._admin_client()
         keystone.roles.revoke(role, user=user, project=project)
+
+    def users_by_role(self, project=None):
+        project = project or self.project
+        keystone = self._client()
+        # Ignore novaadmin & novaobserver in all user lists
+        seen = ['novaadmin', 'novaobserver']
+        data = {}
+        for role_name, role_id in self._roles().items():
+            data[role_name] = [
+                r.user['id'] for r in keystone.role_assignments.list(
+                    project=project, role=role_id)
+                if r.user['id'] not in seen
+            ]
+            seen += data[role_name]
+        return data

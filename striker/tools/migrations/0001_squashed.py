@@ -35,8 +35,8 @@ class Migration(migrations.Migration):
             name='Maintainer',
             fields=[
                 ('dn', models.CharField(primary_key=True, serialize=False, max_length=200)),
-                ('username', ldapdb.models.fields.CharField(max_length=200, unique=True, db_column='uid')),
-                ('full_name', ldapdb.models.fields.CharField(max_length=200, db_column='cn')),
+                ('uid', ldapdb.models.fields.CharField(max_length=200, unique=True, db_column='uid')),
+                ('cn', ldapdb.models.fields.CharField(max_length=200, db_column='cn')),
             ],
             options={
                 'abstract': False,
