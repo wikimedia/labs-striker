@@ -20,6 +20,7 @@
 
 import logging
 
+from django.conf import settings
 from django.contrib.auth.models import Group
 
 from striker.labsauth.utils import get_next_gid
@@ -96,3 +97,17 @@ def create_tool(name, user):
             'Failed to add %s to django maintainers group', user)
 
     return tool
+
+
+def member_or_admin(tool, user):
+    """Is the given user a member of the given tool or a global admin?"""
+    if user.is_anonymous():
+        return False
+    if user.ldap_dn in tool.members:
+        return True
+    return user.ldap_dn in Tool.objects.get(cn='tools.admin').members
+
+
+def project_member(user):
+    groups = user.groups.values_list('name', flat=True)
+    return settings.TOOLS_TOOL_LABS_GROUP_NAME in groups

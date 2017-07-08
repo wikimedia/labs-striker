@@ -20,7 +20,10 @@
 
 from django.conf import urls
 
-import striker.tools.views
+from striker.tools.views.toolinfo import HistoryView
+from striker.tools.views.toolinfo import TagAutocomplete
+from striker.tools.views.tool import MaintainerAutocomplete
+from striker.tools.views.tool import ToolUserAutocomplete
 
 
 TOOL = r'(?P<tool>[_a-z][-0-9_a-z]*)'
@@ -32,12 +35,12 @@ urlpatterns = [
     urls.url(r'^$', 'striker.tools.views.index', name='index'),
     urls.url(
         r'^id/{tool}$'.format(tool=TOOL),
-        'striker.tools.views.tool',
+        'striker.tools.views.tool.view',
         name='tool'
     ),
     urls.url(
         r'^id/{tool}/info/create$'.format(tool=TOOL),
-        'striker.tools.views.info_create',
+        'striker.tools.views.toolinfo.create',
         name='info_create'
     ),
     urls.url(
@@ -45,7 +48,7 @@ urlpatterns = [
             tool=TOOL,
             info_id=INFO_ID,
         ),
-        'striker.tools.views.info_read',
+        'striker.tools.views.toolinfo.read',
         name='info_read'
     ),
     urls.url(
@@ -53,7 +56,7 @@ urlpatterns = [
             tool=TOOL,
             info_id=INFO_ID,
         ),
-        'striker.tools.views.info_edit',
+        'striker.tools.views.toolinfo.edit',
         name='info_edit'
     ),
     urls.url(
@@ -61,7 +64,7 @@ urlpatterns = [
             tool=TOOL,
             info_id=INFO_ID,
         ),
-        striker.tools.views.ToolInfoHistoryView.as_view(),
+        HistoryView.as_view(),
         name='info_history'
     ),
     urls.url(
@@ -70,7 +73,7 @@ urlpatterns = [
             info_id=INFO_ID,
             version_id=VERSION_ID,
         ),
-        'striker.tools.views.info_revision',
+        'striker.tools.views.toolinfo.revision',
         name='info_revision'
     ),
     urls.url(
@@ -79,52 +82,52 @@ urlpatterns = [
             info_id=INFO_ID,
             version_id=VERSION_ID,
         ),
-        'striker.tools.views.info_revision',
+        'striker.tools.views.toolinfo.revision',
         name='info_admin'
     ),
     urls.url(
         r'^id/{tool}/repos/create$'.format(tool=TOOL),
-        'striker.tools.views.repo_create',
+        'striker.tools.views.repo.create',
         name='repo_create'
     ),
     urls.url(
         r'^id/{tool}/repos/id/{repo}$'.format(tool=TOOL, repo=REPO),
-        'striker.tools.views.repo_view',
+        'striker.tools.views.repo.view',
         name='repo_view'
     ),
     urls.url(
         r'^id/{tool}/maintainers/$'.format(tool=TOOL),
-        'striker.tools.views.maintainers',
+        'striker.tools.views.tool.maintainers',
         name='maintainers'
     ),
     urls.url(
         r'^membership/$',
-        'striker.tools.views.membership',
+        'striker.tools.views.membership.membership',
         name='membership'
     ),
     urls.url(
         r'^membership/apply$',
-        'striker.tools.views.membership_apply',
+        'striker.tools.views.membership.apply',
         name='membership_apply'
     ),
     urls.url(
         r'^membership/status/(?P<app_id>\d+)$',
-        'striker.tools.views.membership_status',
+        'striker.tools.views.membership.status',
         name='membership_status'
     ),
     urls.url(
         r'tags/autocomplete/$',
-        striker.tools.views.ToolInfoTagAutocomplete.as_view(),
+        TagAutocomplete.as_view(),
         name='tags_autocomplete'
     ),
     urls.url(
         r'toolinfo/v1/toolinfo.json$',
-        'striker.tools.views.toolinfo',
+        'striker.tools.views.toolinfo.json_v1',
         name='toolinfo'
     ),
     urls.url(
         r'create/$',
-        'striker.tools.views.tool_create',
+        'striker.tools.views.tool.create',
         name='tool_create'
     ),
     urls.url(r'^api/', urls.include(
@@ -132,15 +135,16 @@ urlpatterns = [
             'striker.tools.views',
             urls.url(
                 r'^autocomplete/maintainer$',
-                striker.tools.views.MaintainerAutocomplete.as_view(),
+                MaintainerAutocomplete.as_view(),
                 name='maintainer'),
             urls.url(
                 r'^autocomplete/tooluser$',
-                striker.tools.views.ToolUserAutocomplete.as_view(),
+                ToolUserAutocomplete.as_view(),
                 name='tooluser'),
             urls.url(
                 r'^toolname/(?P<name>.+)$',
-                'toolname_available', name='toolname'),
+                'striker.tools.views.tool.name_available',
+                name='toolname'),
         ),
         namespace='api'
     )),
