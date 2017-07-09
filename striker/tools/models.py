@@ -60,6 +60,9 @@ class Maintainer(ldapdb.models.Model):
 
     objects = MaintainerManager()
 
+    class Meta:
+        managed = False
+
     def __str__(self):
         return self.username
 
@@ -80,6 +83,9 @@ class Tool(ldapdb.models.Model):
     cn = fields.CharField(db_column='cn', max_length=200, primary_key=True)
     gid_number = fields.IntegerField(db_column='gidNumber', unique=True)
     members = fields.ListField(db_column='member')
+
+    class Meta:
+        managed = False
 
     @property
     def name(self):
@@ -142,6 +148,9 @@ class ToolUser(ldapdb.models.Model):
         db_column='homeDirectory', max_length=200)
     login_shell = fields.CharField(db_column='loginShell', max_length=64)
 
+    class Meta:
+        managed = False
+
     @property
     def name(self):
         return self.cn[6:]
@@ -164,6 +173,9 @@ class SudoRole(ldapdb.models.Model):
     commands = fields.ListField(db_column='sudoCommand')
     options = fields.ListField(db_column='sudoOption')
     runas_users = fields.ListField(db_column='sudoRunAsUser')
+
+    class Meta:
+        managed = False
 
     def __str__(self):
         return 'cn=%s,%s' % (self.cn, self.base_dn)
