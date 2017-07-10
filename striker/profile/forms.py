@@ -66,6 +66,10 @@ class SshKeyForm(forms.Form):
         required=True,
     )
 
+    def __init__(self, *args, **kwargs):
+        self.keys = kwargs.pop('keys', [])
+        super(SshKeyForm, self).__init__(*args, **kwargs)
+
     def clean_public_key(self):
         pub_key = self.cleaned_data.get('public_key').strip()
         key = utils.parse_ssh_key(pub_key)
@@ -78,6 +82,11 @@ class SshKeyForm(forms.Form):
             # of extracting the public key from an unencrypted private key.
             raise forms.ValidationError(
                 _('Invalid public key.'), code='key_invalid')
+        if pub_key in self.keys:
+            raise forms.ValidationError(
+                _('Public key {hash} already in use.').format(
+                    hash=key.hash_sha256()),
+                code='key_duplicate')
         self.key = key
         return pub_key
 

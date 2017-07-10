@@ -29,6 +29,8 @@ from django.db.utils import DatabaseError
 from django.views.decorators.debug import sensitive_post_parameters
 from django.utils.translation import ugettext_lazy as _
 
+import ldap
+
 from striker import decorators
 from striker import phabricator
 from striker.profile import forms
@@ -111,19 +113,27 @@ def ssh_key_delete(req):
 @login_required
 def ssh_key_add(req):
     if req.method == 'POST':
-        form = forms.SshKeyForm(data=req.POST)
+        ldapuser = req.user.ldapuser
+        keys = ldapuser.ssh_keys
+        form = forms.SshKeyForm(data=req.POST, keys=keys)
         if form.is_valid():
-            ldapuser = req.user.ldapuser
-            keys = ldapuser.ssh_keys
             keys.append(form.cleaned_data.get('public_key'))
             ldapuser.ssh_keys = keys
-            ldapuser.save()
-            messages.info(
-                req,
-                _('Added SSH key {key_hash}').format(
-                    key_hash=form.key.hash_sha256()))
+            try:
+                ldapuser.save()
+                messages.info(
+                    req,
+                    _('Added SSH key {key_hash}').format(
+                        key_hash=form.key.hash_sha256()))
+            except ldap.TYPE_OR_VALUE_EXISTS as e:
+                logger.exception('Failed to add ssh key')
+                messages.error(
+                    req,
+                    _('Error saving ssh key. [req id: {id}]').format(
+                        id=req.id))
         else:
-            messages.error(req, _('Invalid public key.'))
+            # Pull the error message out of the form's errors
+            messages.error(req, form.errors['public_key'][0])
     return shortcuts.redirect(urlresolvers.reverse('profile:ssh_keys'))
 
 
