@@ -293,8 +293,9 @@ class Client(object):
         :param task: Task number (e.g. T12345)
         :param comment: Comment to add to task
         """
-        phid = self.task(task)['phid']
-        self.post('maniphest.update', {
-            'phid': phid,
-            'comments': comment,
+        self.post('maniphest.edit', {
+            'objectIdentifier': self.task(task)['phid'],
+            'transactions': [
+                {'type': 'comment', 'value': comment},
+            ],
         })
