@@ -27,6 +27,7 @@ from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.auth import views as auth_views
 from django.core import urlresolvers
 from django.db.utils import DatabaseError
+from django.db.utils import IntegrityError
 from django.utils.six.moves.urllib.parse import urlparse
 from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.cache import never_cache
@@ -151,6 +152,14 @@ def oauth_callback(req):
             messages.info(
                 req, _("Updated OAuth credentials for {user}".format(
                     user=sul_user['username'])))
+        except IntegrityError:
+            logger.exception('user.save failed')
+            messages.error(
+                req,
+                _(
+                    'Wikimedia account "{sul}" is already attached '
+                    'to another LDAP account.'
+                ).format(sul=sul_user['username']))
         except DatabaseError:
             logger.exception('user.save failed')
             messages.error(
