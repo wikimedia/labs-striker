@@ -27,7 +27,7 @@ from django.core import urlresolvers
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import transaction
 from django.db.utils import DatabaseError
-from django.http import JsonResponse
+from django.http import HttpResponse
 from django.utils.text import slugify
 from django.utils.translation import ugettext_lazy as _
 
@@ -324,17 +324,12 @@ class AuthorAutocomplete(autocomplete.Select2QuerySetView):
 
 
 def json_v1(req):
-    class PrettyPrintJSONEncoder(DjangoJSONEncoder):
-        def __init__(self, *args, **kwargs):
-            kwargs['indent'] = 2
-            kwargs['separators'] = (',', ':')
-            super(PrettyPrintJSONEncoder, self).__init__(*args, **kwargs)
-
-    return JsonResponse(
+    enc = DjangoJSONEncoder(
+        ensure_ascii=False, indent=2, separators=(',', ':'))
+    return HttpResponse(enc.encode(
         [
             info.toolinfo()
             for info in ToolInfo.objects.all().order_by('name')
-        ],
-        encoder=PrettyPrintJSONEncoder,
-        safe=False,
+        ]),
+        content_type="application/json; charset=utf8"
     )
