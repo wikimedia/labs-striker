@@ -39,6 +39,7 @@ from striker.labsauth.models import LabsUser
 from striker.tools import utils
 from striker.tools.forms import MantainersForm
 from striker.tools.forms import ToolCreateForm
+from striker.tools.models import Author
 from striker.tools.models import DiffusionRepo
 from striker.tools.models import Maintainer
 from striker.tools.models import ToolInfo
@@ -92,7 +93,9 @@ def create(req):
                         reversion.set_user(req.user)
                         reversion.set_comment('Tool created')
                         toolinfo.save()
-                        toolinfo.authors.add(req.user)
+                        founder, created = Author.objects.get_or_create(
+                            name=req.user.get_full_name())
+                        toolinfo.authors.add(founder)
                         if form.cleaned_data['tags']:
                             toolinfo.tags.add(*form.cleaned_data['tags'])
                 except Exception:

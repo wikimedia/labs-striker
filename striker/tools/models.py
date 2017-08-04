@@ -255,6 +255,17 @@ class ToolInfoTag(models.Model):
         ordering = ('name',)
 
 
+class Author(models.Model):
+    """Describe an author."""
+    name = models.CharField(max_length=128, unique=True)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        ordering = ('name',)
+
+
 @reversion.register()
 class ToolInfo(models.Model):
     """Metadata about a Tool hosted on Toolforge.
@@ -266,8 +277,7 @@ class ToolInfo(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField()
     license = models.ForeignKey(SoftwareLicense)
-    authors = models.ManyToManyField(
-        settings.AUTH_USER_MODEL, related_name='+')
+    authors = models.ManyToManyField(Author, related_name='+')
     tags = models.ManyToManyField(ToolInfoTag, blank=True)
     repository = models.CharField(max_length=2047, blank=True, null=True)
     issues = models.CharField(max_length=2047, blank=True, null=True)
@@ -297,7 +307,6 @@ class ToolInfo(models.Model):
             ('description', self.description),
             ('url', url),
             ('keywords', ", ".join(tag.name for tag in self.tags.all())),
-            ('author', ", ".join(
-                a.get_full_name() for a in self.authors.all())),
+            ('author', ", ".join(a.name for a in self.authors.all())),
             ('repository', self.repository),
         ])

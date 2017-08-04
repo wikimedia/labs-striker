@@ -172,6 +172,9 @@ class ToolInfoForm(forms.ModelForm):
             'tags': autocomplete.ModelSelect2Multiple(
                 url='tools:tags_autocomplete',
             ),
+            'authors': autocomplete.ModelSelect2Multiple(
+                url='tools:api:author',
+            ),
             'repository': forms.TextInput(
                 attrs={
                     'placeholder': _("URL to your tool's source code"),

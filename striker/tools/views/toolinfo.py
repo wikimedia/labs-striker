@@ -38,6 +38,7 @@ import reversion_compare.views
 
 from striker.tools.forms import ToolInfoForm
 from striker.tools.forms import ToolInfoPublicForm
+from striker.tools.models import Author
 from striker.tools.models import Tool
 from striker.tools.models import ToolInfo
 from striker.tools.models import ToolInfoTag
@@ -48,7 +49,6 @@ from striker.tools.views.decorators import inject_tool
 logger = logging.getLogger(__name__)
 
 
-@reversion.views.create_revision()
 @login_required
 @inject_tool
 def create(req, tool):
@@ -69,19 +69,20 @@ def create(req, tool):
     if req.method == 'POST':
         if form.is_valid():
             try:
-                reversion.set_comment(form.cleaned_data['comment'])
-                toolinfo = form.save(commit=False)
-                toolinfo.tool = tool.name
-                toolinfo.save()
-                form.save_m2m()
-                reversion.add_to_revision(toolinfo)
+                with reversion.create_revision():
+                    reversion.set_comment(form.cleaned_data['comment'])
+                    toolinfo = form.save(commit=False)
+                    toolinfo.tool = tool.name
+                    toolinfo.save()
+                    form.save_m2m()
+                    reversion.add_to_revision(toolinfo)
                 messages.info(
                     req, _("Toolinfo {} created".format(toolinfo.title)))
                 return shortcuts.redirect(
                     urlresolvers.reverse('tools:tool', kwargs={
                         'tool': tool.name,
                     }))
-            except DatabaseError:
+            except DatabaseError as dbe:
                 logger.exception('ToolInfo.save failed')
                 messages.error(
                     req,
@@ -105,7 +106,6 @@ def read(req, tool, info_id):
     return shortcuts.render(req, 'tools/info/read.html', ctx)
 
 
-@reversion.views.create_revision()
 @login_required
 @inject_tool
 def edit(req, tool, info_id):
@@ -121,9 +121,10 @@ def edit(req, tool, info_id):
     if req.method == 'POST':
         if form.is_valid():
             try:
-                reversion.set_comment(form.cleaned_data['comment'])
-                toolinfo = form.save()
-                reversion.add_to_revision(toolinfo)
+                with reversion.create_revision():
+                    reversion.set_comment(form.cleaned_data['comment'])
+                    toolinfo = form.save()
+                    reversion.add_to_revision(toolinfo)
                 messages.info(
                     req, _("Toolinfo {} updated".format(toolinfo.title)))
                 return shortcuts.redirect(
@@ -301,6 +302,25 @@ class TagAutocomplete(autocomplete.Select2QuerySetView):
 
     def create_object(self, text):
         return ToolInfoTag.objects.create(name=text, slug=slugify(text))
+
+
+class AuthorAutocomplete(autocomplete.Select2QuerySetView):
+    create_field = 'name'
+
+    def get_queryset(self):
+        if not self.request.user.is_authenticated():
+            return Author.objects.none()
+        qs = Author.objects.all()
+        if self.q:
+            qs = qs.filter(name__icontains=self.q)
+        qs.order_by('name')
+        return qs
+
+    def has_add_permission(self, request):
+        return request.user.is_authenticated()
+
+    def create_object(self, text):
+        return Author.objects.create(name=text)
 
 
 def json_v1(req):

@@ -20,10 +20,11 @@
 
 from django.conf import urls
 
-from striker.tools.views.toolinfo import HistoryView
-from striker.tools.views.toolinfo import TagAutocomplete
 from striker.tools.views.tool import MaintainerAutocomplete
 from striker.tools.views.tool import ToolUserAutocomplete
+from striker.tools.views.toolinfo import AuthorAutocomplete
+from striker.tools.views.toolinfo import HistoryView
+from striker.tools.views.toolinfo import TagAutocomplete
 
 
 TOOL = r'(?P<tool>[_a-z][-0-9_a-z]*)'
@@ -134,6 +135,10 @@ urlpatterns = [
         urls.patterns(
             'striker.tools.views',
             urls.url(
+                r'autocomplete/author',
+                AuthorAutocomplete.as_view(),
+                name='author'),
+            urls.url(
                 r'^autocomplete/maintainer$',
                 MaintainerAutocomplete.as_view(),
                 name='maintainer'),
@@ -143,7 +148,7 @@ urlpatterns = [
                 name='tooluser'),
             urls.url(
                 r'^toolname/(?P<name>.+)$',
-                'striker.tools.views.tool.name_available',
+                'tool.toolname_available',
                 name='toolname'),
         ),
         namespace='api'
