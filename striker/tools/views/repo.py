@@ -60,7 +60,7 @@ def create(req, tool):
             # * You can not select this edit policy, because you would no
             #   longer be able to edit the object. (ERR-CONDUIT-CORE)
             # Convert list of maintainers to list of phab users
-            maintainers = [m.full_name for m in tool.maintainers()]
+            maintainers = [m.cn for m in tool.maintainers()]
             try:
                 phab_maintainers = [m['phid'] for m in phab.user_ldapquery(
                     maintainers)]
