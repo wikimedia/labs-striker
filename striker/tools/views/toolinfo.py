@@ -70,6 +70,7 @@ def create(req, tool):
         if form.is_valid():
             try:
                 with reversion.create_revision():
+                    reversion.set_user(req.user)
                     reversion.set_comment(form.cleaned_data['comment'])
                     toolinfo = form.save(commit=False)
                     toolinfo.tool = tool.name
@@ -122,6 +123,7 @@ def edit(req, tool, info_id):
         if form.is_valid():
             try:
                 with reversion.create_revision():
+                    reversion.set_user(req.user)
                     reversion.set_comment(form.cleaned_data['comment'])
                     toolinfo = form.save()
                     reversion.add_to_revision(toolinfo)
