@@ -60,12 +60,27 @@
     </div>
     <div class="col-sm-6">
       {% block left-col %}
-      <div class="panel panel-default">
-        <div class="panel-heading">
-          {% bootstrap_icon "info-sign" %} {% trans "About Toolforge accounts" %}
+      <div class="panel-group">
+        <div class="panel panel-info">
+          <div class="panel-heading">
+            {% bootstrap_icon "info-sign" %} {% trans "About Toolforge accounts" %}
+          </div>
+          <div class="panel-body">
+            {% blocktrans %}<strong>Toolforge</strong> shares an account system with many other technical tools used by Wikimedians. The <a href="https://en.wikipedia.org/wiki/Lightweight_Directory_Access_Protocol/">LDAP</a> user account used here also works with <a href="https://wikitech.wikimedia.org/">Wikitech</a>, <a href="https://gerrit.wikimedia.org/">Gerrit</a>, <a href="https://phabricator.wikimedia.org/">Phabricator</a>, and other tools designed to help our technical contributors build and maintain software. These accounts are separate from the <a href="https://meta.wikimedia.org/wiki/Help:Unified_login">Wikimedia unified accounts</a> that are used by most <a href="https://meta.wikimedia.org/wiki/Wikimedia_wikis">Wikimedia wikis</a>.{% endblocktrans %}
+          </div>
         </div>
-        <div class="panel-body">
-          {% blocktrans %}<strong>Toolforge</strong> shares an account system with many other technical tools used by Wikimedians. The <a href="https://en.wikipedia.org/wiki/Lightweight_Directory_Access_Protocol/">LDAP</a> user account used here also works with <a href="https://wikitech.wikimedia.org/">Wikitech</a>, <a href="https://gerrit.wikimedia.org/">Gerrit</a>, <a href="https://phabricator.wikimedia.org/">Phabricator</a>, and other tools designed to help our technical contributors build and maintain software. These accounts are separate from the <a href="https://meta.wikimedia.org/wiki/Help:Unified_login">Wikimedia unified accounts</a> that are used by most <a href="https://meta.wikimedia.org/wiki/Wikimedia_wikis">Wikimedia wikis</a>.{% endblocktrans %}
+        <div class="panel panel-danger">
+          <div class="panel-heading">
+            {% bootstrap_icon "alert" %} {% trans "Privacy notices" %}
+          </div>
+          <div class="panel-body">
+            {% blocktrans %}Creating and using an LDAP account will expose some
+            information to other Cloud Services users:{% endblocktrans %}
+            <ul>
+              <li>{% blocktrans %}The email address you associate with your LDAP account <strong>will</strong> be publically visible.{% endblocktrans %}</li>
+              <li>{% blocktrans %}Your IP address <strong>will</strong> be recorded and <strong>may</strong> be visible to other users of Cloud VPS and Toolforge when you connect to virtual machines using SSH.{% endblocktrans %}</li>
+            </ul>
+          </div>
         </div>
       </div>
       {% endblock %}
