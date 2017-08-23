@@ -72,7 +72,7 @@ def get_next_id_number(clazz, attr, low_val, high_val):
         # From OpenStackNovaUser::getNextIdNumber:
         # Upper limit is only a warning, not a fatal error.
         logger.warning(
-            'Id range limit exceded for %s. Soft limit %d; next %d',
+            'Id range limit exceeded for %s. Soft limit %d; next %d',
             attr, high_val, next_id)
     return next_id
 
