@@ -168,6 +168,13 @@ def maintainers(req, tool):
                     form.cleaned_data['tools']
                 )
             )
+
+            # LDAP doesn't like it when we change the list to be the same
+            # list, so make sure there is some delta before saving
+            if old_members == new_members:
+                messages.warning(req, _('Maintainers unchanged'))
+                return shortcuts.redirect(tool.get_absolute_url())
+
             tool.members = new_members
             tool.save()
 
@@ -186,8 +193,8 @@ def maintainers(req, tool):
                 else:
                     # Add user to the mirrored group
                     added.groups.add(maintainers.id)
-                    # Do not set tool as the notification target because the
-                    # framework does not understand LDAP models.
+                    # Do not set tool as the notification target because
+                    # the framework does not understand LDAP models.
                     notify.send(
                         recipient=added,
                         sender=req.user,
@@ -216,8 +223,8 @@ def maintainers(req, tool):
                 else:
                     # Add user to the mirrored group
                     removed.groups.remove(maintainers.id)
-                    # Do not set tool as the notification target because the
-                    # framework does not understand LDAP models.
+                    # Do not set tool as the notification target because
+                    # the framework does not understand LDAP models.
                     notify.send(
                         recipient=removed,
                         sender=req.user,
