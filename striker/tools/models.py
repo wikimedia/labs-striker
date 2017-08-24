@@ -64,7 +64,7 @@ class Maintainer(ldapdb.models.Model):
         managed = False
 
     def __str__(self):
-        return self.username
+        return self.cn
 
 
 class ToolManager(models.Manager):
