@@ -37,7 +37,7 @@ import reversion.models
 
 from striker.labsauth.models import LabsUser
 from striker.tools import utils
-from striker.tools.forms import MantainersForm
+from striker.tools.forms import MaintainersForm
 from striker.tools.forms import ToolCreateForm
 from striker.tools.models import Author
 from striker.tools.models import DiffusionRepo
@@ -158,7 +158,7 @@ def maintainers(req, tool):
         messages.error(
             req, _('You are not a member of {tool}').format(tool=tool.name))
         return shortcuts.redirect(tool.get_absolute_url())
-    form = MantainersForm(req.POST or None, req.FILES or None, tool=tool)
+    form = MaintainersForm(req.POST or None, req.FILES or None, tool=tool)
     if req.method == 'POST':
         if form.is_valid():
             old_members = set(tool.members)

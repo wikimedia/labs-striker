@@ -303,7 +303,7 @@ class MaintainerChoiceField(forms.ModelMultipleChoiceField):
 
 
 @parsleyfy
-class MantainersForm(forms.Form):
+class MaintainersForm(forms.Form):
     maintainers = MaintainerChoiceField(
         queryset=Maintainer.objects.all(),
         widget=autocomplete.ModelSelect2Multiple(
@@ -331,4 +331,4 @@ class MantainersForm(forms.Form):
         initial['maintainers'] = tool.maintainer_ids()
         initial['tools'] = tool.tool_member_ids()
         kwargs['initial'] = initial
-        super(MantainersForm, self).__init__(*args, **kwargs)
+        super(MaintainersForm, self).__init__(*args, **kwargs)
