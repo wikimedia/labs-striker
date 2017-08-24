@@ -266,8 +266,7 @@ class ToolCreateForm(forms.Form):
         ),
     )
     license = forms.ModelChoiceField(
-        queryset=SoftwareLicense.objects.filter(
-            osi_approved=True).order_by('-recommended', 'slug'),
+        queryset=SoftwareLicense.objects.none(),
         empty_label=_('-- Choose your software license --'),
         label=_('Default software license'),
         help_text=_(
@@ -276,12 +275,19 @@ class ToolCreateForm(forms.Form):
         ).format(choose_a_license='https://choosealicense.com/'),
     )
     tags = forms.ModelMultipleChoiceField(
-        queryset=ToolInfoTag.objects.all().order_by('name'),
+        queryset=ToolInfoTag.objects.none(),
         widget=autocomplete.ModelSelect2Multiple(
             url='tools:tags_autocomplete',
         ),
         required=False,
     )
+
+    def __init__(self, *args, **kwargs):
+        super(ToolCreateForm, self).__init__(*args, **kwargs)
+        self.fields['license'].queryset = SoftwareLicense.objects.filter(
+            osi_approved=True).order_by('-recommended', 'slug')
+        self.fields['tags'].queryset = ToolInfoTag.objects.all().order_by(
+            'name')
 
     def clean_name(self):
         """Validate that name is available."""
@@ -305,13 +311,13 @@ class MaintainerChoiceField(forms.ModelMultipleChoiceField):
 @parsleyfy
 class MaintainersForm(forms.Form):
     maintainers = MaintainerChoiceField(
-        queryset=Maintainer.objects.all(),
+        queryset=Maintainer.objects.none(),
         widget=autocomplete.ModelSelect2Multiple(
             url='tools:api:maintainer',
         ),
     )
     tools = forms.ModelMultipleChoiceField(
-        queryset=ToolUser.objects.all(),
+        queryset=ToolUser.objects.none(),
         widget=autocomplete.ModelSelect2Multiple(
             url='tools:api:tooluser',
         ),
@@ -332,3 +338,5 @@ class MaintainersForm(forms.Form):
         initial['tools'] = tool.tool_member_ids()
         kwargs['initial'] = initial
         super(MaintainersForm, self).__init__(*args, **kwargs)
+        self.fields['maintainers'].queryset = Maintainer.objects.all()
+        self.fields['tools'].queryset = ToolUser.objects.all()
