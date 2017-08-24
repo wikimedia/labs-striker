@@ -105,6 +105,11 @@ def member_or_admin(tool, user):
         return False
     if user.ldap_dn in tool.members:
         return True
+    return tools_admin(user)
+
+
+def tools_admin(user):
+    """Is the given user an administrator of the tools project?"""
     return user.ldap_dn in Tool.objects.get(cn='tools.admin').members
 
 

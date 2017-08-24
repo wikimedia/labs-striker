@@ -41,6 +41,7 @@ from striker.tools.forms import AccessRequestAdminForm
 from striker.tools.forms import AccessRequestForm
 from striker.tools.models import AccessRequest
 from striker.tools.utils import project_member
+from striker.tools.utils import tools_admin
 
 
 WELCOME_MSG = "== Welcome to Toolforge! ==\n{{subst:ToolsGranted}}"
@@ -70,7 +71,7 @@ def membership(req):
             {'field': 'status', 'label': 'Status'},
         ],
     }
-    if req.user.is_staff:
+    if tools_admin(req.user):
         all_requests = AccessRequest.objects.all()
     else:
         all_requests = AccessRequest.objects.filter(suppressed=False)
@@ -145,7 +146,7 @@ def status(req, app_id):
         # An applicant can amend their own request while it is pending
         form = AccessRequestForm(
                 req.POST or None, req.FILES or None, instance=request)
-    elif req.user.is_staff:
+    elif tools_admin(req.user):
         # TODO: guard condition will need changing if/when striker handles
         # more than tools
         as_admin = True
