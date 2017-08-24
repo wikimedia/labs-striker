@@ -73,6 +73,7 @@ def create_tool(name, user):
         uid_number=gid,
         gid_number=gid,
         home_directory='/data/project/{}'.format(name),
+        login_shell='/bin/bash',
     )
     service_user.save()
 
