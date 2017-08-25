@@ -18,7 +18,10 @@
 # You should have received a copy of the GNU General Public License
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
 
+import base64
+import hashlib
 import logging
+
 import sshpubkeys
 
 
@@ -54,8 +57,19 @@ def parse_ssh_key(pubkey):
     return key
 
 
+def invalid_key_hash(key):
+    """Generate a hash for an invalid ssh public key."""
+    return 'INVALID:{}'.format(base64.b85encode(
+        hashlib.sha256(key.encode('utf-8')).digest()).decode('utf-8'))
+
+
 def ssh_keys_by_hash(user):
-    return {
-        parse_ssh_key(key).hash_sha256(): key
-        for key in user.ldapuser.ssh_keys
-    }
+    ret = {}
+    for key in user.ldapuser.ssh_keys:
+        pkey = parse_ssh_key(key)
+        if pkey:
+            ret[pkey.hash_sha256()] = key
+        else:
+            # T174112: handle invalid keys
+            ret[invalid_key_hash(key)] = key
+    return ret

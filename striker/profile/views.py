@@ -28,6 +28,7 @@ from django.core import urlresolvers
 from django.db.utils import DatabaseError
 from django.views.decorators.debug import sensitive_post_parameters
 from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ungettext
 
 import ldap
 
@@ -83,12 +84,38 @@ def phab_attach(req):
 def ssh_keys(req):
     ldapuser = req.user.ldapuser
     ctx = {
-        'ssh_keys': [utils.parse_ssh_key(key) for key in ldapuser.ssh_keys],
+        'ssh_keys': [],
         'new_key': forms.SshKeyForm(),
     }
-    for key in ctx['ssh_keys']:
-        key.form = forms.SshKeyDeleteForm(
-            initial={'key_hash': key.hash_sha256()})
+    invalids = 0
+    for key in ldapuser.ssh_keys:
+        pkey = utils.parse_ssh_key(key)
+        if pkey:
+            pkey.form = forms.SshKeyDeleteForm(
+                initial={'key_hash': pkey.hash_sha256()})
+        else:
+            # T174112: handle invalid keys
+            invalids += 1
+            khash = utils.invalid_key_hash(key)
+            pkey = {
+                'comment': _('Invalid key'),
+                'bits': _('0'),
+                'type_name': _('UNKNOWN'),
+                'hash_md5': khash,
+                'hash_sha256': '',
+                'keydata': key,
+                'form': forms.SshKeyDeleteForm(initial={'key_hash': khash}),
+            }
+        ctx['ssh_keys'].append(pkey)
+    if invalids:
+        messages.error(
+            req,
+            ungettext(
+                "Invalid ssh key detected.",
+                "{count} invalid ssh keys detected.",
+                invalids
+            ).format(count=invalids)
+        )
     return shortcuts.render(req, 'profile/settings/ssh-keys.html', ctx)
 
 

@@ -28,7 +28,7 @@ from striker.profile import utils
 
 class SshKeyDeleteForm(forms.Form):
     key_hash = forms.CharField(
-        label=_('SHA512 hash of ssh key'),
+        label=_('SHA256 hash of ssh key'),
         widget=forms.HiddenInput(),
         required=True,
     )
