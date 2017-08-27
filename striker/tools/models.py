@@ -201,10 +201,12 @@ class DiffusionRepo(models.Model):
 class AccessRequest(models.Model):
     """Request to join Tools project."""
     PENDING = 'p'
+    FEEDBACK = 'f'
     APPROVED = 'a'
     DECLINED = 'd'
     STATUS_CHOICES = (
         (PENDING, _('Pending')),
+        (FEEDBACK, _('Feedback needed')),
         (APPROVED, _('Approved')),
         (DECLINED, _('Declined')),
     )
@@ -229,6 +231,30 @@ class AccessRequest(models.Model):
     def get_absolute_url(self):
         return urlresolvers.reverse(
             'tools:membership_status', args=[str(self.id)])
+
+    def closed(self):
+        return self.status in [AccessRequest.APPROVED, AccessRequest.DECLINED]
+
+    def open(self):
+        return not self.closed()
+
+
+class AccessRequestComment(models.Model):
+    request = models.ForeignKey(
+        AccessRequest,
+        related_name='comments', db_index=True, on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, related_name='+', on_delete=models.CASCADE)
+    created_date = models.DateTimeField(
+        default=timezone.now, blank=True, editable=False, db_index=True)
+    comment = models.TextField()
+
+    class Meta:
+        ordering = ('created_date', 'user',)
+
+    def __str__(self):
+        return '{} --{} {:%Y-%m-%dT%H:%MZ}'.format(
+            self.comment, self.user.ldapname, self.created_date)
 
 
 class SoftwareLicense(models.Model):

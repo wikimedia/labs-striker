@@ -38,8 +38,10 @@ from striker import mediawiki
 from striker import openstack
 from striker.tools import cache
 from striker.tools.forms import AccessRequestAdminForm
+from striker.tools.forms import AccessRequestCommentForm
 from striker.tools.forms import AccessRequestForm
 from striker.tools.models import AccessRequest
+from striker.tools.models import AccessRequestComment
 from striker.tools.utils import project_member
 from striker.tools.utils import tools_admin
 
@@ -142,23 +144,33 @@ def status(req, app_id):
     request = shortcuts.get_object_or_404(AccessRequest, pk=app_id)
     form = None
     as_admin = False
-    if req.user == request.user and request.status == AccessRequest.PENDING:
-        # An applicant can amend their own request while it is pending
-        form = AccessRequestForm(
-                req.POST or None, req.FILES or None, instance=request)
-    elif tools_admin(req.user):
-        # TODO: guard condition will need changing if/when striker handles
-        # more than tools
+    if tools_admin(req.user):
         as_admin = True
         form = AccessRequestAdminForm(
-                req.POST or None, req.FILES or None, instance=request)
+            req.POST or None, req.FILES or None, instance=request)
+    elif req.user == request.user and request.open():
+        # An applicant can comment on their own request while it is pending
+        form = AccessRequestCommentForm(
+            req.POST or None, req.FILES or None, instance=request)
 
     if form is not None and req.method == 'POST':
         if form.is_valid() and form.has_changed():
             try:
                 request = form.save(commit=False)
+                comment = None
+                if form.cleaned_data.get('comment'):
+                    comment = AccessRequestComment(
+                        request=request,
+                        user=req.user,
+                        comment=form.cleaned_data.get('comment')
+                    )
                 if as_admin:
-                    if request.status == AccessRequest.APPROVED:
+                    if request.open() and comment:
+                        # Mark as feedback needed when admin comments
+                        # publically on request without resolving
+                        request.status = AccessRequest.FEEDBACK
+
+                    elif request.status == AccessRequest.APPROVED:
                         openstack.grant_role(
                             settings.OPENSTACK_USER_ROLE,
                             request.user.shellname,
@@ -170,20 +182,31 @@ def status(req, app_id):
                         talk.save(msg, summary=WELCOME_SUMMARY, bot=False)
                         cache.purge_openstack_users()
 
-                    if request.status != AccessRequest.PENDING:
-                        request.resolved_by = req.user
-                        request.resolved_date = timezone.now()
+                    if request.closed():
+                        if request.resolved_by is None:
+                            request.resolved_by = req.user
+                            request.resolved_date = timezone.now()
                     else:
                         request.resolved_by = None
                         request.resolved_date = None
-                request.save()
 
+                elif comment and request.status == AccessRequest.FEEDBACK:
+                    # Mark as pending when applicant replies
+                    request.status = AccessRequest.PENDING
+
+                request.save()
+                if comment:
+                    comment.save()
+
+                # Send notification of change
                 if as_admin:
                     recipient = request.user
                     verb = _('commented on')
-                    description = request.admin_notes
+                    description = ''
+                    if comment:
+                        description = comment.comment
                     level = 'info'
-                    if request.status != AccessRequest.PENDING:
+                    if request.closed():
                         verb = request.get_status_display().lower()
                         if request.status == AccessRequest.APPROVED:
                             level = 'success'
@@ -192,7 +215,7 @@ def status(req, app_id):
                 else:
                     recipient = Group.objects.get(name='tools.admin')
                     verb = _('updated')
-                    description = request.reason
+                    description = comment.comment
                     level = 'info'
 
                 notify.send(

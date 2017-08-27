@@ -69,6 +69,7 @@ class RepoCreateForm(forms.Form):
 
 
 class AccessRequestForm(forms.ModelForm):
+    """Form for creating a new access request."""
     class Meta:
         model = AccessRequest
         fields = ('reason',)
@@ -85,16 +86,35 @@ class AccessRequestForm(forms.ModelForm):
         }
 
 
-class AccessRequestAdminForm(forms.ModelForm):
-    class Meta:
-        model = AccessRequest
-        fields = ('admin_notes', 'status', 'suppressed')
-        widgets = {
-            'admin_notes': forms.Textarea(
-                attrs={
-                    'rows': 5,
-                },
-            ),
+class AccessRequestCommentForm(AccessRequestForm):
+    """Form for commenting on an access request."""
+    comment = forms.CharField(
+        widget=forms.Textarea(
+            attrs={
+                'placeholder': _('Add a publicly visible comment'),
+                'rows': 2,
+            },
+        ),
+        required=True,
+    )
+
+    class Meta(AccessRequestForm.Meta):
+        fields = ('comment',)
+
+
+class AccessRequestAdminForm(AccessRequestCommentForm):
+    """Form for approving/denying an access request."""
+
+    def __init__(self, *args, **kwargs):
+        super(AccessRequestAdminForm, self).__init__(*args, **kwargs)
+        self.fields['comment'].required = False
+        self.fields['comment'].widget.is_required = False
+
+    class Meta(AccessRequestCommentForm.Meta):
+        fields = ('status', 'comment', 'suppressed')
+        labels = {
+            'suppressed': _(
+                'Suppress this request (hide from non-admin users)'),
         }
 
 
