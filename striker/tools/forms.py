@@ -207,12 +207,12 @@ class ToolInfoPublicForm(ToolInfoForm):
 
 @parsleyfy
 class ToolCreateForm(forms.Form):
-    # Unix username regex suggested by useradd(8).
-    # We don't allow a leading '_' or trailing '$' however.
-    RE_NAME = r'^[a-z][a-z0-9_-]{0,31}$'
+    # Intersection of username regex suggested by useradd(8)
+    # and the RFC 1035 definition of a DNS_LABEL.
+    RE_NAME = r'^[a-z]([-a-z0-9]{0,30}[a-z0-9])?$'
     NAME_ERR_MSG = _(
-        'Must start with a-z, and can only contain '
-        'lowercase a-z, 0-9, _, and - characters.'
+        'Must start with a-z, end with a-z or 0-9, be 1-32 characters long, '
+        'and can only contain lowercase a-z, 0-9, and - characters.'
     )
 
     name = forms.CharField(
