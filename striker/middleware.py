@@ -34,3 +34,13 @@ class XForwaredForMiddleware(object):
             if ip is not None:
                 request.META['REMOTE_ADDR'] = ip
         return None
+
+
+class ReferrerPolicyMiddleware(object):
+    """Add a Referrer-Policy header to responses."""
+    def process_response(self, request, response):
+        header = 'Referrer-Policy'
+        if header not in response:
+            response[header] = getattr(
+                settings, 'REFERRER_POLICY', 'strict-origin')
+        return response

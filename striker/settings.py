@@ -167,6 +167,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'striker.middleware.ReferrerPolicyMiddleware',
     'csp.middleware.CSPMiddleware',
     'ratelimitbackend.middleware.RateLimitMiddleware',
 )
@@ -308,6 +309,9 @@ CSP_SANDBOX = [
     'allow-top-navigation',
 ]
 CSP_REPORT_URI = '/csp-report'
+
+# == Referrer-Policy settings ==
+REFERRER_POLICY = 'strict-origin-when-cross-origin'
 
 # == Bootstrap3 settings ==
 BOOTSTRAP3 = {
