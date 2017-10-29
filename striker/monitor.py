@@ -57,7 +57,7 @@ def _modified(path):
         # has been restored.
         if mtime != _times[path]:
             return True
-    except:
+    except os.error:
         # If any exception occured, likely that file has been
         # been removed just before stat(), so force a restart.
         return True
@@ -88,7 +88,7 @@ def _monitor():
         # Go to sleep for specified interval.
         try:
             return _queue.get(timeout=_interval)
-        except:
+        except queue.Empty:
             pass
 
 
@@ -99,7 +99,7 @@ _thread.setDaemon(True)
 def _exiting():
     try:
         _queue.put(True)
-    except:
+    except queue.Full:
         pass
     if _thread.is_alive():
         _thread.join()
