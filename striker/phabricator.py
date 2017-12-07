@@ -157,7 +157,7 @@ class Client(object):
         """Lookup information on a diffusion repository by name."""
         r = self.post('diffusion.repository.search', {
             'constraints': {
-                'name': name,
+                'query': name,
             },
             'attachments': {
                 'uris': True,
