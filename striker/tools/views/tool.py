@@ -62,8 +62,8 @@ def view(req, tool):
     })
 
 
-@require_tools_member
 @login_required
+@require_tools_member
 def create(req):
     form = ToolCreateForm(req.POST or None, req.FILES or None)
     if req.method == 'POST':
