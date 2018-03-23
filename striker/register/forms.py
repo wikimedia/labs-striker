@@ -111,7 +111,7 @@ class ShellUsername(forms.Form):
         label=_('Shell username'),
         widget=forms.TextInput(
             attrs={
-                'placeholder': _('Enter your desired shell account username'),
+                'placeholder': _('Enter your desired UNIX shell username'),
                 'autofocus': 'autofocus',
                 # Parsley gets confused if {value} is url encoded, so wrap in
                 # mark_safe().
@@ -138,7 +138,8 @@ class ShellUsername(forms.Form):
         """Validate that shellname is available."""
         shellname = self.cleaned_data['shellname']
         if not utils.shellname_available(shellname):
-            raise forms.ValidationError(_('Shell username is already in use.'))
+            raise forms.ValidationError(
+                _('UNIX shell username is already in use.'))
 
         # Check that it isn't banned by some abusefilter type rule
         user = utils.check_username_create(shellname)

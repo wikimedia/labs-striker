@@ -5,10 +5,10 @@
 {% block step-ldap %}
 <div class="panel panel-primary">
   <div class="panel-heading">
-    <h3 class="panel-title">{% bootstrap_icon "user" %} {% trans "Choose your LDAP username" %}</h3>
+    <h3 class="panel-title">{% bootstrap_icon "user" %} {% trans "Choose your developer username" %}</h3>
   </div>
   <div class="panel-body">
-    <p>{% blocktrans %}LDAP usernames are commonly either the same as a user's Wikimedia unified account username or their real name (e.g. "Jimmy Wales").{% endblocktrans %}</p>
+    <p>{% blocktrans %}Developer account usernames are commonly either the same as a user's Wikimedia account username or their real name (e.g. "Jimmy Wales").{% endblocktrans %}</p>
     <form method="post" action="" class="form parsley">
       {% csrf_token %}
       {{ wizard.management_form }}

@@ -5,18 +5,14 @@
 {% block step-oauth %}
 <div class="panel panel-primary">
   <div class="panel-heading">
-    <h3 class="panel-title">{% bootstrap_icon "globe" %} {% trans "Login with your Wikimedia unified account" %}</h3>
+    <h3 class="panel-title">{% bootstrap_icon "globe" %} {% trans "Login with your Wikimedia account" %}</h3>
   </div>
   <div class="panel-body">
-    <p>{% blocktrans %}Login with your Wikimedia unified account to get started creating a new LDAP account.{% endblocktrans %}</p>
-    <div class="row">
-      <div class="col-sm-6 col-sm-push-6">
-        <a href="{% url 'labsauth:oauth_initiate' %}?next={% url 'register:oauth' %}" class="btn btn-primary btn-block">
-          {% bootstrap_icon "log-in" %}
-          {% trans 'Login using OAuth' %}
-        </a>
-      </div>
-    </div>
+    <p>{% blocktrans with oauth="https://www.mediawiki.org/wiki/Special:MyLanguage/Help:OAuth" %}Login with your Wikimedia account using <a href="{{ oauth }}">OAuth</a> to get started creating a new developer account.{% endblocktrans %}</p>
+    <a href="{% url 'labsauth:oauth_initiate' %}?next={% url 'register:oauth' %}" class="btn btn-primary btn-block">
+      {% bootstrap_icon "log-in" %}
+      {% trans 'Login using Wikimedia account' %}
+    </a>
   </div>
 </div>
 {% endblock %}

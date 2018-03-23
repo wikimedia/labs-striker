@@ -51,7 +51,7 @@ def oauth_required(f):
         oauth = oauth_from_session(req.session)
         if oauth['username'] is None:
             messages.error(
-                req, _('Please login with your Wikimedia unified account'))
+                req, _('Please login with your Wikimedia account'))
             return shortcuts.redirect(urlresolvers.reverse('register:index'))
         return f(*args, **kwargs)
     return decorated
@@ -102,7 +102,7 @@ def oauth(req):
     oauth = oauth_from_session(req.session)
     if not utils.sul_available(oauth['username']):
         messages.error(
-            req, _('Wikimedia unified account is already in use.'))
+            req, _('Wikimedia account is already in use.'))
         return shortcuts.redirect(urlresolvers.reverse('register:index'))
     return shortcuts.redirect(
         urlresolvers.reverse('register:wizard', kwargs={'step': 'ldap'}))

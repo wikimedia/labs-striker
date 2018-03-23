@@ -24,7 +24,7 @@
     <h3 class="panel-title">{% bootstrap_icon "pushpin" %} {% trans "Linked Phabricator account not found" %}</h3>
   </div>
   <div class="panel-body">
-    <p>{% blocktrans with url=phab_url%}Login to <a href="{{ url }}">Phabricator</a> using your Wikimedia unified account or your LDAP account to create a new Phabricator account if you do not have one.{% endblocktrans %}</p>
+    <p>{% blocktrans with url=phab_url%}Login to <a href="{{ url }}">Phabricator</a> using your Wikimedia account or your developer account. This will create a new Phabricator account if you do not have one yet.{% endblocktrans %}</p>
     <p><a class="btn btn-primary" href="{% url 'profile:phabricator_attach' %}">{% trans "Connect Phabricator account" %}</a></p>
   </div>
 </div>

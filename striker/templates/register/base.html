@@ -3,12 +3,12 @@
 {% load i18n %}
 {% load staticfiles %}
 
-{% block title %}{% trans "Create an LDAP account" %}{% endblock %}
+{% block title %}{% trans "Create a Wikimedia developer account" %}{% endblock %}
 {% block content %}
 <div class="container-fluid">
   <div class="row">
     <div class="col-sm-12">
-      <h3 class="page-header">{% trans "Create an LDAP account" %}</h3>
+      <h3 class="page-header">{% trans "Create a Wikimedia developer account" %}</h3>
     </div>
   </div>
   <div class="row">
@@ -17,14 +17,14 @@
         {% block step-oauth %}
         <div class="panel panel-{% if wizard.steps.step1|default:-1 > 0 %}success{% else %}default{% endif %}">
           <div class="panel-heading">
-            <span class="text-muted">{% bootstrap_icon "globe" %} {% trans "Login with your Wikimedia unified account" %}</span>
+            <span class="text-muted">{% bootstrap_icon "globe" %} {% trans "Login with your Wikimedia account" %}</span>
           </div>
         </div>
         {% endblock %}
         {% block step-ldap %}
         <div class="panel panel-{% if wizard.steps.step1|default:-1 > 1 %}success{% else %}default{% endif %}">
           <div class="panel-heading">
-            <span class="text-muted">{% bootstrap_icon "user" %} {% trans "Choose your LDAP username" %}</span>
+            <span class="text-muted">{% bootstrap_icon "user" %} {% trans "Choose your developer account username" %}</span>
           </div>
         </div>
         {% endblock %}
@@ -63,10 +63,10 @@
       <div class="panel-group">
         <div class="panel panel-info">
           <div class="panel-heading">
-            {% bootstrap_icon "info-sign" %} {% trans "About Toolforge accounts" %}
+            {% bootstrap_icon "info-sign" %} {% trans "About Wikimedia developer accounts" %}
           </div>
           <div class="panel-body">
-            {% blocktrans %}<strong>Toolforge</strong> shares an account system with many other technical tools used by Wikimedians. The <a href="https://en.wikipedia.org/wiki/Lightweight_Directory_Access_Protocol/">LDAP</a> user account used here also works with <a href="https://wikitech.wikimedia.org/">Wikitech</a>, <a href="https://gerrit.wikimedia.org/">Gerrit</a>, <a href="https://phabricator.wikimedia.org/">Phabricator</a>, and other tools designed to help our technical contributors build and maintain software. These accounts are separate from the <a href="https://meta.wikimedia.org/wiki/Help:Unified_login">Wikimedia unified accounts</a> that are used by most <a href="https://meta.wikimedia.org/wiki/Wikimedia_wikis">Wikimedia wikis</a>.{% endblocktrans %}
+            {% blocktrans %}<strong>Toolforge</strong> shares an account system with many other technical tools used by Wikimedians. The developer account used here also works with <a href="https://wikitech.wikimedia.org/">Wikitech</a>, <a href="https://gerrit.wikimedia.org/">Gerrit</a>, <a href="https://phabricator.wikimedia.org/">Phabricator</a>, and other tools designed to help our technical contributors build and maintain software. This developer account is separate from the <a href="https://meta.wikimedia.org/wiki/Help:Unified_login">Wikimedia accounts</a> that are used by most <a href="https://meta.wikimedia.org/wiki/Wikimedia_wikis">Wikimedia wikis</a>.{% endblocktrans %}
           </div>
         </div>
         <div class="panel panel-danger">
@@ -74,10 +74,9 @@
             {% bootstrap_icon "alert" %} {% trans "Privacy notices" %}
           </div>
           <div class="panel-body">
-            {% blocktrans %}Creating and using an LDAP account will expose some
-            information to other Cloud Services users:{% endblocktrans %}
+            {% blocktrans %}Creating and using a developer account will expose some information to other Cloud Services users:{% endblocktrans %}
             <ul>
-              <li>{% blocktrans %}The email address you associate with your LDAP account <strong>will</strong> be publically visible.{% endblocktrans %}</li>
+              <li>{% blocktrans %}The email address you associate with your developer account <strong>will</strong> be publically visible.{% endblocktrans %}</li>
               <li>{% blocktrans %}Your IP address <strong>will</strong> be recorded and <strong>may</strong> be visible to other users of Cloud VPS and Toolforge when you connect to virtual machines using SSH.{% endblocktrans %}</li>
             </ul>
           </div>
