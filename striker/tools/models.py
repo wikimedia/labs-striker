@@ -47,7 +47,7 @@ class MaintainerManager(models.Manager):
 
     def get_queryset(self):
         return super(MaintainerManager, self).get_queryset().filter(
-            uid__in=self._get_tool_users())
+            uid__in=self._get_tool_users()).order_by('cn')
 
 
 class Maintainer(ldapdb.models.Model):

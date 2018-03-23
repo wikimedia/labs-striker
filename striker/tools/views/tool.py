@@ -175,7 +175,7 @@ def maintainers(req, tool):
                 messages.warning(req, _('Maintainers unchanged'))
                 return shortcuts.redirect(tool.get_absolute_url())
 
-            tool.members = new_members
+            tool.members = sorted(new_members)
             tool.save()
 
             maintainers, created = Group.objects.get_or_create(name=tool.cn)
