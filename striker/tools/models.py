@@ -33,6 +33,17 @@ import reversion
 from striker.tools import cache
 
 
+# Inspiration from https://stackoverflow.com/a/24668215/8171
+#
+# Add a 'suppressed' field to the reversion Version model.
+# This this will be used to allow suppression of malicious changes by an
+# admin.
+reversion.models.Version.add_to_class(
+    'suppressed',
+    models.BooleanField(blank=True, default=False, db_index=True)
+)
+
+
 class MaintainerManager(models.Manager):
     def _get_tool_users(self):
         if settings.TEST_MODE:
