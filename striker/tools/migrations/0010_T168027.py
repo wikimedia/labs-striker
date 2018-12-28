@@ -33,11 +33,11 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='accessrequestcomment',
             name='request',
-            field=models.ForeignKey(related_name='comments', to='tools.AccessRequest'),
+            field=models.ForeignKey(related_name='comments', to='tools.AccessRequest', on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='accessrequestcomment',
             name='user',
-            field=models.ForeignKey(related_name='+', to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(related_name='+', to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE),
         ),
     ]

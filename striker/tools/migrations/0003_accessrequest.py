@@ -23,8 +23,8 @@ class Migration(migrations.Migration):
                 ('admin_notes', models.TextField(blank=True, null=True)),
                 ('status', models.CharField(default='p', max_length=1, choices=[('p', 'Pending'), ('a', 'Approved'), ('d', 'Declined')], db_index=True)),
                 ('resolved_date', models.DateTimeField(blank=True, null=True)),
-                ('resolved_by', models.ForeignKey(to=settings.AUTH_USER_MODEL, related_name='resolver+', blank=True, null=True)),
-                ('user', models.ForeignKey(related_name='requestor+', to=settings.AUTH_USER_MODEL)),
+                ('resolved_by', models.ForeignKey(to=settings.AUTH_USER_MODEL, related_name='resolver+', blank=True, null=True, on_delete=models.SET_NULL)),
+                ('user', models.ForeignKey(related_name='requestor+', to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)),
             ],
         ),
     ]

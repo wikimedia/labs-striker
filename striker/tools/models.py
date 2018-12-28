@@ -197,7 +197,8 @@ class DiffusionRepo(models.Model):
     tool = models.CharField(max_length=64)
     name = models.CharField(max_length=255)
     phid = models.CharField(max_length=64)
-    created_by = models.ForeignKey(settings.AUTH_USER_MODEL)
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL)
     created_date = models.DateTimeField(
         default=timezone.now, blank=True, editable=False)
 
@@ -223,7 +224,8 @@ class AccessRequest(models.Model):
     )
 
     user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, related_name='requestor+', db_index=True)
+        settings.AUTH_USER_MODEL, related_name='requestor+', db_index=True,
+        on_delete=models.CASCADE)
     reason = models.TextField()
     created_date = models.DateTimeField(
         default=timezone.now, blank=True, editable=False, db_index=True)
@@ -232,7 +234,7 @@ class AccessRequest(models.Model):
         max_length=1, choices=STATUS_CHOICES, default=PENDING, db_index=True)
     resolved_by = models.ForeignKey(
         settings.AUTH_USER_MODEL, related_name='resolver+',
-        blank=True, null=True)
+        blank=True, null=True, on_delete=models.SET_NULL)
     resolved_date = models.DateTimeField(blank=True, null=True)
     suppressed = models.BooleanField(blank=True, default=False, db_index=True)
 
@@ -313,7 +315,7 @@ class ToolInfo(models.Model):
     tool = models.CharField(max_length=64, db_index=True)
     title = models.CharField(max_length=255)
     description = models.TextField()
-    license = models.ForeignKey(SoftwareLicense)
+    license = models.ForeignKey(SoftwareLicense, on_delete=models.PROTECT)
     authors = models.ManyToManyField(Author, related_name='+')
     tags = models.ManyToManyField(ToolInfoTag, blank=True)
     repository = models.CharField(max_length=2047, blank=True, null=True)

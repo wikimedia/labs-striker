@@ -44,7 +44,7 @@ class Migration(migrations.Migration):
                 ('issues', models.CharField(null=True, max_length=2047, blank=True)),
                 ('docs', models.CharField(null=True, max_length=2047, blank=True)),
                 ('authors', models.ManyToManyField(to=settings.AUTH_USER_MODEL, related_name='_toolinfo_authors_+')),
-                ('license', models.ForeignKey(to='tools.SoftwareLicense')),
+                ('license', models.ForeignKey(to='tools.SoftwareLicense', on_delete=models.CASCADE)),
                 ('is_webservice', models.BooleanField()),
             ],
         ),

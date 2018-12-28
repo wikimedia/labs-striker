@@ -27,7 +27,7 @@ class Migration(migrations.Migration):
                 ('tool', models.CharField(max_length=255)),
                 ('name', models.CharField(max_length=255)),
                 ('phid', models.CharField(max_length=255)),
-                ('created_by', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+                ('created_by', models.ForeignKey(to=settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL)),
                 ('created_date', models.DateTimeField(default=timezone.now, editable=False, blank=True)),
             ],
         ),
