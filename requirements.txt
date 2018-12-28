@@ -1,60 +1,34 @@
-## The following requirements were added by pip --freeze:
-Babel==2.4.0
-Django==1.8.14
-PyJWT==1.4.2
-appdirs==1.4.3
-cffi==1.7.0
-cryptography==1.5
-debtcollector==1.13.0
-diff-match-patch==20121119
-django-auth-ldap==1.2.8
-django-autocomplete-light==3.2.9
-django-bootstrap3==7.0.1
-django-csp==3.0
-django-formtools==1.0
-django-ipware==1.1.5
-django-ldapdb==0.6.0
-django-log-request-id==1.3.1
-django-model-utils==3.0.0
-django-notifications-hq==1.2
-django-parsley==0.6
-django-ratelimit-backend==1.0
-django-reversion==2.0.9
-django-reversion-compare==0.7.5
-ecdsa==0.13
-idna==2.1
-iso8601==0.1.11
-jsonfield==2.0.1
-keystoneauth1==2.19.0
-monotonic==1.3
-msgpack-python==0.4.8
-mwclient==0.8.2
-mwoauth==0.2.8
-mysqlclient==1.3.7
-netaddr==0.7.19
-netifaces==0.10.5
-oauthlib==1.1.2
-oslo.config==4.1.0
-oslo.i18n==3.15.0
-oslo.serialization==2.18.0
-oslo.utils==3.25.0
-packaging==16.8
-pbr==3.0.0
-positional==1.1.1
-pyasn1==0.1.9
-pycparser==2.14
-pycrypto==2.6.1
-pyldap==2.4.25.1
-pyparsing==2.2.0
-python-keystoneclient==3.10.0
-python-logstash==0.4.6
-python-memcached==1.58
-pytz==2017.2
-requests==2.11.1
-requests-oauthlib==0.6.2
-rfc3986==0.4.1
-six==1.10.0
-sqlparse==0.2.3
-sshpubkeys==2.2.0
-stevedore==1.21.0
-wrapt==1.10.10
+cffi>=1.11.5  # MIT
+cryptography>=2.4.2  # (dual) BSD or Apache 2.0
+diff-match-patch>=20181111  # Apache 2.0
+Django<2.2,>=2.1.4  # BSD
+django-auth-ldap>=1.7.0  # BSD
+django-autocomplete-light>=3.3.2  # MIT
+django-bootstrap3<12.0.0,>=11.0.0  # Apache 2.0
+django-csp<4,>=3.4  # BSD
+django-formtools<3,>=2.1  # BSD
+django-ipware<3,>=2.1.0  # BSD
+django-ldapdb==1.1.0  # BSD
+django-log-request-id<2,>=1.3.2  # BSD
+django-notifications-hq<2,>=1.5.0  # BSD
+django-parsley<1,>=0.7  # BSD
+django-ratelimit-backend<3,>=2.0  # BSD
+django-reversion<4,>=3.0.2  # BSD
+django-reversion-compare<1,>=0.8.5  # GPLv3
+idna<3,>=2.8  # BSD
+mwclient<1,>=0.9.3  # MIT
+mwoauth<1,>=0.3.2  # MIT
+mysqlclient<2,>=1.3.14  # GPLv2
+oauthlib<3,>=2.1.0  # BSD
+pyasn1<1,>=0.4.4  # BSD
+pycparser<3,>=2.19  # BSD
+PyJWT<2,>=1.7.1  # MIT
+pyldap<4,>=3.0.0.post1  # Python style
+python-keystoneclient<4,>=3.18.0  # Apache 2.0
+python-logstash<1,>=0.4.6  # MIT
+python-memcached<2,>=1.59  # Python style
+requests<3,>=2.21.0  # Apache 2.0
+requests-oauthlib<2,>=1.0.0  # ISC
+six<2,>=1.12.0  # MIT
+sqlparse<1,>=0.2.4  # BSD
+sshpubkeys<4,>=3.1.0  # BSD
