@@ -21,11 +21,11 @@
 import logging
 
 from django import shortcuts
+from django import urls
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
-from django.core import urlresolvers
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.utils import DatabaseError
 from django.utils.translation import ugettext_lazy as _
@@ -50,7 +50,7 @@ def create(req, tool):
     if not member_or_admin(tool, req.user):
         messages.error(
             req, _('You are not a member of {tool}').format(tool=tool.name))
-        return shortcuts.redirect(urlresolvers.reverse('tools:index'))
+        return shortcuts.redirect(urls.reverse('tools:index'))
 
     form = RepoCreateForm(req.POST or None, req.FILES or None, tool=tool)
     if req.method == 'POST':
@@ -99,7 +99,7 @@ def create(req, tool):
                         )
                     # Redirect to repo view
                     return shortcuts.redirect(
-                        urlresolvers.reverse('tools:repo_view', kwargs={
+                        urls.reverse('tools:repo_view', kwargs={
                             'tool': tool.name,
                             'repo': name,
                         }))

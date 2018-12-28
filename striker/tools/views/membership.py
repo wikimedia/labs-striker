@@ -21,12 +21,12 @@
 import logging
 
 from django import shortcuts
+from django import urls
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
 from django.core import paginator
-from django.core import urlresolvers
 from django.db.utils import DatabaseError
 from django.http import HttpResponseRedirect
 from django.utils import timezone
@@ -96,13 +96,13 @@ def apply(req):
     if project_member(req.user):
         messages.error(
             req, _('You are already a member of Toolforge'))
-        return see_other(urlresolvers.reverse('tools:index'))
+        return see_other(urls.reverse('tools:index'))
 
     pending = AccessRequest.objects.filter(
             user=req.user, status=AccessRequest.PENDING)
     if pending:
         return see_other(
-            urlresolvers.reverse(
+            urls.reverse(
                 'tools:membership_status', args=[pending[0].id]))
 
     form = AccessRequestForm(req.POST or None, req.FILES or None)
@@ -129,7 +129,7 @@ def apply(req):
                 )
                 messages.info(
                     req, _("Toolforge membership request submitted"))
-                return shortcuts.redirect(urlresolvers.reverse('tools:index'))
+                return shortcuts.redirect(urls.reverse('tools:index'))
             except DatabaseError:
                 logger.exception('AccessRequest.save failed')
                 messages.error(
@@ -237,7 +237,7 @@ def status(req, app_id):
                 messages.info(
                     req, _("Toolforge membership request updated"))
                 return shortcuts.redirect(
-                    urlresolvers.reverse(
+                    urls.reverse(
                         'tools:membership_status', args=[request.id]))
             except DatabaseError:
                 logger.exception('AccessRequest.save failed')

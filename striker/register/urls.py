@@ -18,24 +18,20 @@
 # You should have received a copy of the GNU General Public License
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.conf import urls
+from django.urls import include
+from django.urls import path
 
+from striker.register import views
 
-urlpatterns = urls.patterns(
-    'striker.register.views',
-    urls.url(r'^$', 'index', name='index'),
-    urls.url(r'^api/', urls.include(
-        urls.patterns(
-            'striker.register.views',
-            urls.url(
-                r'^username/(?P<name>.+)$',
-                'username_available', name='username'),
-            urls.url(
-                r'^shellname/(?P<name>.+)$',
-                'shellname_available', name='shellname'),
-        ),
-        namespace='api'
-    )),
-    urls.url(r'^oauth$', 'oauth', name='oauth'),
-    urls.url(r'^(?P<step>.+)$', 'account_wizard', name='wizard'),
-)
+api_patterns = ([
+    path('username/<name>', views.username_available, name='username'),
+    path('shellname/<name>', views.shellname_available, name='shellname'),
+], 'api')
+
+app_name = 'register'
+urlpatterns = [
+    path('', views.index, name='index'),
+    path('api/', include(api_patterns)),
+    path('oauth', views.oauth, name='oauth'),
+    path('<step>', views.account_wizard, name='wizard'),
+]

@@ -18,139 +18,73 @@
 # You should have received a copy of the GNU General Public License
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.conf import urls
+from django.urls import include
+from django.urls import path
 
-from striker.tools.views.tool import MaintainerAutocomplete
-from striker.tools.views.tool import ToolUserAutocomplete
-from striker.tools.views.toolinfo import AuthorAutocomplete
-from striker.tools.views.toolinfo import HistoryView
-from striker.tools.views.toolinfo import TagAutocomplete
-
+from striker.tools import views
+from striker.tools.views import membership
+from striker.tools.views import repo
+from striker.tools.views import tool
+from striker.tools.views import toolinfo
 
 TOOL = r'(?P<tool>[_a-z][-0-9_a-z]*)'
 REPO = r'(?P<repo>[_a-zA-Z][-0-9_a-zA-Z]*)'
 INFO_ID = r'(?P<info_id>\d+)'
 VERSION_ID = r'(?P<version_id>\d+)'
 
+app_name = 'tools'
 urlpatterns = [
-    urls.url(r'^$', 'striker.tools.views.index', name='index'),
-    urls.url(
-        r'^id/{tool}$'.format(tool=TOOL),
-        'striker.tools.views.tool.view',
-        name='tool'
-    ),
-    urls.url(
-        r'^id/{tool}/info/create$'.format(tool=TOOL),
-        'striker.tools.views.toolinfo.create',
-        name='info_create'
-    ),
-    urls.url(
-        r'^id/{tool}/info/id/{info_id}$'.format(
-            tool=TOOL,
-            info_id=INFO_ID,
-        ),
-        'striker.tools.views.toolinfo.read',
-        name='info_read'
-    ),
-    urls.url(
-        r'^id/{tool}/info/id/{info_id}/edit$'.format(
-            tool=TOOL,
-            info_id=INFO_ID,
-        ),
-        'striker.tools.views.toolinfo.edit',
-        name='info_edit'
-    ),
-    urls.url(
-        r'^id/{tool}/info/id/{info_id}/history$'.format(
-            tool=TOOL,
-            info_id=INFO_ID,
-        ),
-        HistoryView.as_view(),
-        name='info_history'
-    ),
-    urls.url(
-        r'^id/{tool}/info/id/{info_id}/history/rev/{version_id}$'.format(
-            tool=TOOL,
-            info_id=INFO_ID,
-            version_id=VERSION_ID,
-        ),
-        'striker.tools.views.toolinfo.revision',
-        name='info_revision'
-    ),
-    urls.url(
-        r'^id/{tool}/info/id/{info_id}/history/admin/{version_id}$'.format(
-            tool=TOOL,
-            info_id=INFO_ID,
-            version_id=VERSION_ID,
-        ),
-        'striker.tools.views.toolinfo.revision',
-        name='info_admin'
-    ),
-    urls.url(
-        r'^id/{tool}/repos/create$'.format(tool=TOOL),
-        'striker.tools.views.repo.create',
-        name='repo_create'
-    ),
-    urls.url(
-        r'^id/{tool}/repos/id/{repo}$'.format(tool=TOOL, repo=REPO),
-        'striker.tools.views.repo.view',
-        name='repo_view'
-    ),
-    urls.url(
-        r'^id/{tool}/maintainers/$'.format(tool=TOOL),
-        'striker.tools.views.tool.maintainers',
-        name='maintainers'
-    ),
-    urls.url(
-        r'^membership/$',
-        'striker.tools.views.membership.membership',
-        name='membership'
-    ),
-    urls.url(
-        r'^membership/apply$',
-        'striker.tools.views.membership.apply',
-        name='membership_apply'
-    ),
-    urls.url(
-        r'^membership/status/(?P<app_id>\d+)$',
-        'striker.tools.views.membership.status',
-        name='membership_status'
-    ),
-    urls.url(
-        r'tags/autocomplete/$',
-        TagAutocomplete.as_view(),
-        name='tags_autocomplete'
-    ),
-    urls.url(
-        r'toolinfo/v1/toolinfo.json$',
-        'striker.tools.views.toolinfo.json_v1',
-        name='toolinfo'
-    ),
-    urls.url(
-        r'create/$',
-        'striker.tools.views.tool.create',
-        name='tool_create'
-    ),
-    urls.url(r'^api/', urls.include(
-        urls.patterns(
-            'striker.tools.views',
-            urls.url(
-                r'autocomplete/author',
-                AuthorAutocomplete.as_view(),
-                name='author'),
-            urls.url(
-                r'^autocomplete/maintainer$',
-                MaintainerAutocomplete.as_view(),
-                name='maintainer'),
-            urls.url(
-                r'^autocomplete/tooluser$',
-                ToolUserAutocomplete.as_view(),
-                name='tooluser'),
-            urls.url(
-                r'^toolname/(?P<name>.+)$',
-                'tool.toolname_available',
-                name='toolname'),
-        ),
-        namespace='api'
-    )),
+    path('', views.index, name='index'),
+    path('id/<slug:tool>', views.tool.view, name='tool'),
+    path('id/<slug:tool>/', include([
+        path('info/', include([
+            path('create', toolinfo.create, name='info_create'),
+            path('id/<int:info_id>', toolinfo.read, name='info_read'),
+            path('id/<int:info_id>/', include([
+                path('edit', toolinfo.edit, name='info_edit'),
+                path(
+                    'history',
+                    toolinfo.HistoryView.as_view(), name='info_history'),
+                path('history/', include([
+                    path(
+                        'rev/<int:version_id>',
+                        toolinfo.revision, name='info_revision'),
+                    path(
+                        'admin/<int:version_id>',
+                        toolinfo.revision, name='info_admin'),
+                ])),
+            ])),
+        ])),
+        path('repos/', include([
+            path('create', repo.create, name='repo_create'),
+            path('id/<slug:repo>', repo.view, name='repo_view'),
+        ])),
+        path('maintainers/', tool.maintainers, name='maintainers'),
+    ])),
+    path('membership/', include([
+        path('', membership.membership, name='membership'),
+        path('apply', membership.apply, name='membership_apply'),
+        path(
+            'status/<int:app_id>',
+            membership.status, name='membership_status'),
+    ])),
+    path(
+        'tags/autocomplete/',
+        toolinfo.TagAutocomplete.as_view(), name='tags_autocomplete'),
+    path('toolinfo/v1/toolinfo.json', toolinfo.json_v1, name='toolinfo'),
+    path('create', tool.create, name='tool_create'),
+    path('api/', include(([
+        path('autocomplete/', include([
+            path(
+                'author',
+                toolinfo.AuthorAutocomplete.as_view(), name='author'),
+            path(
+                'maintainer',
+                tool.MaintainerAutocomplete.as_view(), name='maintainer'),
+            path(
+                'tooluser',
+                tool.ToolUserAutocomplete.as_view(), name='tooluser'),
+        ])),
+        path('toolname/<name>', tool.toolname_available, name='toolname'),
+    ], 'api'))),
 ]

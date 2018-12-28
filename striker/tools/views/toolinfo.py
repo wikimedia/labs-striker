@@ -21,9 +21,9 @@
 import logging
 
 from django import shortcuts
+from django import urls
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.core import urlresolvers
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import transaction
 from django.db.utils import DatabaseError
@@ -80,7 +80,7 @@ def create(req, tool):
                 messages.info(
                     req, _("Toolinfo {} created".format(toolinfo.title)))
                 return shortcuts.redirect(
-                    urlresolvers.reverse('tools:tool', kwargs={
+                    urls.reverse('tools:tool', kwargs={
                         'tool': tool.name,
                     }))
             except DatabaseError:
@@ -130,7 +130,7 @@ def edit(req, tool, info_id):
                 messages.info(
                     req, _("Toolinfo {} updated".format(toolinfo.title)))
                 return shortcuts.redirect(
-                    urlresolvers.reverse('tools:tool', kwargs={
+                    urls.reverse('tools:tool', kwargs={
                         'tool': tool.name,
                     }))
             except DatabaseError:
@@ -159,7 +159,7 @@ class HistoryView(reversion_compare.views.HistoryCompareDetailView):
     def _get_action_list(self):
         actions = super(HistoryView, self)._get_action_list()
         for action in actions:
-            action['url'] = urlresolvers.reverse(
+            action['url'] = urls.reverse(
                 'tools:info_revision',
                 kwargs={
                     'tool': self.kwargs['tool'],
@@ -191,7 +191,7 @@ def revision(req, tool, info_id, version_id):
     can_revert = member_or_admin(tool, req.user)
     can_suppress = member_or_admin(tool, req.user)
 
-    history_url = urlresolvers.reverse(
+    history_url = urls.reverse(
         'tools:info_history',
         kwargs={
             'tool': tool.name,

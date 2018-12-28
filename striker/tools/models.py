@@ -20,8 +20,8 @@
 
 import collections
 
+from django import urls
 from django.conf import settings
-from django.core import urlresolvers
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
@@ -133,7 +133,7 @@ class Tool(ldapdb.models.Model):
             return None
 
     def get_absolute_url(self):
-        return urlresolvers.reverse(
+        return urls.reverse(
             'tools:tool', args=[str(self.name)])
 
     def __str__(self):
@@ -205,7 +205,7 @@ class DiffusionRepo(models.Model):
         return self.name
 
     def get_absolute_url(self):
-        return urlresolvers.reverse(
+        return urls.reverse(
             'tools:repo_view', args=[self.tool, self.name])
 
 
@@ -240,7 +240,7 @@ class AccessRequest(models.Model):
         return _('Access request {id}').format(id=self.id)
 
     def get_absolute_url(self):
-        return urlresolvers.reverse(
+        return urls.reverse(
             'tools:membership_status', args=[str(self.id)])
 
     def closed(self):

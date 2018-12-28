@@ -44,7 +44,7 @@ class LDAPUsername(forms.Form):
                 # Parsley gets confused if {value} is url encoded, so wrap in
                 # mark_safe().
                 # FIXME: I tried everything I could think of to use
-                # urlresolvers.reverse_lazy and I just couldn't get it to work
+                # urls.reverse_lazy and I just couldn't get it to work
                 # with mark_safe(). I would get either the URL encoded
                 # property value or the __str__ of a wrapper object.
                 'data-parsley-remote': mark_safe(
@@ -116,7 +116,7 @@ class ShellUsername(forms.Form):
                 # Parsley gets confused if {value} is url encoded, so wrap in
                 # mark_safe().
                 # FIXME: I tried everything I could think of to use
-                # urlresolvers.reverse_lazy and I just couldn't get it to work
+                # urls.reverse_lazy and I just couldn't get it to work
                 # with mark_safe(). I would get either the URL encoded
                 # property value or the __str__ of a wrapper object.
                 'data-parsley-remote': mark_safe(

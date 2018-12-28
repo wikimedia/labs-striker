@@ -19,9 +19,9 @@
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
 
 from django import shortcuts
+from django import urls
 from django.conf import settings
 from django.contrib.auth import REDIRECT_FIELD_NAME
-from django.core import urlresolvers
 from django.utils import functional
 from django.utils import http
 
@@ -40,7 +40,7 @@ class OathMiddleware(object):
         if not plain_user.is_authenticated():
             return None
 
-        oath_path = urlresolvers.reverse(settings.OATHMIDDLEWARE_REDIRECT)
+        oath_path = urls.reverse(settings.OATHMIDDLEWARE_REDIRECT)
         request_path = request.path_info
         if request_path == oath_path:
             # Don't redirect if the user is already on the token entry page

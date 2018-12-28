@@ -24,8 +24,8 @@ import logging
 import re
 
 from django import shortcuts
+from django import urls
 from django.contrib import messages
-from django.core import urlresolvers
 from django.http import JsonResponse
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy as _
@@ -52,7 +52,7 @@ def oauth_required(f):
         if oauth['username'] is None:
             messages.error(
                 req, _('Please login with your Wikimedia account'))
-            return shortcuts.redirect(urlresolvers.reverse('register:index'))
+            return shortcuts.redirect(urls.reverse('register:index'))
         return f(*args, **kwargs)
     return decorated
 
@@ -65,7 +65,7 @@ def anon_required(f):
         if not req.user.is_anonymous():
             messages.error(
                 req, _('Logged in users can not create new accounts.'))
-            return shortcuts.redirect(urlresolvers.reverse('index'))
+            return shortcuts.redirect(urls.reverse('index'))
         return f(*args, **kwargs)
     return decorated
 
@@ -83,7 +83,7 @@ def check_ip(f):
                     'Your IP address has been blocked from creating accounts. '
                     'The reason given was: "%(reason)s"'
                 ) % {'reason': block})
-            return shortcuts.redirect(urlresolvers.reverse('index'))
+            return shortcuts.redirect(urls.reverse('index'))
         return f(*args, **kwargs)
     return decorated
 
@@ -103,9 +103,9 @@ def oauth(req):
     if not utils.sul_available(oauth['username']):
         messages.error(
             req, _('Wikimedia account is already in use.'))
-        return shortcuts.redirect(urlresolvers.reverse('register:index'))
+        return shortcuts.redirect(urls.reverse('register:index'))
     return shortcuts.redirect(
-        urlresolvers.reverse('register:wizard', kwargs={'step': 'ldap'}))
+        urls.reverse('register:wizard', kwargs={'step': 'ldap'}))
 
 
 @never_cache
@@ -226,7 +226,7 @@ class AccountWizard(NamedUrlSessionWizardView):
         )
         messages.success(
             self.request, _('Account created. Login to continue.'))
-        return shortcuts.redirect(urlresolvers.reverse('labsauth:login'))
+        return shortcuts.redirect(urls.reverse('labsauth:login'))
 
 
 account_wizard = AccountWizard.as_view(url_name='register:wizard')

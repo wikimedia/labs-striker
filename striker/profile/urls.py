@@ -18,46 +18,36 @@
 # You should have received a copy of the GNU General Public License
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.conf import urls
+from django.urls import include
+from django.urls import path
 from django.views.generic import TemplateView
+
 from django.contrib.auth.decorators import login_required
 
+from striker.profile import views
 
+app_name = 'profile'
 urlpatterns = [
-    urls.url(
-        r'^nojs/$',
+    path(
+        'nojs/',
         login_required(
             TemplateView.as_view(template_name='profile/nojs.html')),
         name='nojs'
     ),
-    urls.url(
-        r'^settings/accounts$',
-        'striker.profile.views.accounts',
-        name='accounts'
-    ),
-    urls.url(
-        r'^settings/phabricator/attach$',
-        'striker.profile.views.phab_attach',
-        name='phabricator_attach'
-    ),
-    urls.url(
-        r'^settings/ssh-keys$',
-        'striker.profile.views.ssh_keys',
-        name='ssh_keys'
-    ),
-    urls.url(
-        r'^settings/ssh-keys/delete$',
-        'striker.profile.views.ssh_key_delete',
-        name='ssh_key_delete'
-    ),
-    urls.url(
-        r'^settings/ssh-keys/add$',
-        'striker.profile.views.ssh_key_add',
-        name='ssh_key_add'
-    ),
-    urls.url(
-        r'^settings/change_password$',
-        'striker.profile.views.change_password',
-        name='change_password'
-    ),
+    path('settings/', include([
+        path('accounts/', views.accounts, name='accounts'),
+        path('phabricator/', include([
+            path('attach', views.phab_attach, name='phabricator_attach'),
+        ])),
+        path('ssh-keys/', include([
+            path('', views.ssh_keys, name='ssh_keys'),
+            path('delete', views.ssh_key_delete, name='ssh_key_delete'),
+            path('add', views.ssh_key_add, name='ssh_key_add'),
+        ])),
+        path(
+            'change_password/',
+            views.change_password,
+            name='change_password'
+        ),
+    ])),
 ]

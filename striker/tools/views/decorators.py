@@ -21,8 +21,8 @@
 import functools
 
 from django import shortcuts
+from django import urls
 from django.contrib import messages
-from django.core import urlresolvers
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.exceptions import PermissionDenied
 from django.utils.translation import ugettext_lazy as _
@@ -44,7 +44,7 @@ def inject_tool(f):
                 messages.error(
                     req, _('Tool {tool} not found').format(tool=name))
                 return shortcuts.redirect(
-                    urlresolvers.reverse('tools:index'))
+                    urls.reverse('tools:index'))
         return f(*args, **kwargs)
     return decorated
 

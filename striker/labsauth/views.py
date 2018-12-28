@@ -21,11 +21,11 @@
 import logging
 
 from django import shortcuts
+from django import urls
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.auth import views as auth_views
-from django.core import urlresolvers
 from django.db.utils import DatabaseError
 from django.db.utils import IntegrityError
 from django.utils.six.moves.urllib.parse import urlparse
@@ -85,7 +85,7 @@ def oath(req):
 
 def logout(req):
     auth_views.logout(req)
-    return shortcuts.redirect(urlresolvers.reverse('index'))
+    return shortcuts.redirect(urls.reverse('index'))
 
 
 @never_cache
@@ -101,7 +101,7 @@ def oauth_initiate(req):
             settings.OAUTH_MWURL,
             consumer_token,
             req.build_absolute_uri(
-                urlresolvers.reverse('labsauth:oauth_callback')))
+                urls.reverse('labsauth:oauth_callback')))
     except Exception:
         # FIXME: get upstream to use a narrower exception class
         logger.exception('mwoauth.initiate failed')
@@ -121,7 +121,7 @@ def oauth_callback(req):
     if serialized_token is None:
         messages.error(req, _("Session invalid."))
         return shortcuts.redirect(
-            urlresolvers.reverse('labsauth:oauth_initiate'))
+            urls.reverse('labsauth:oauth_initiate'))
     # Convert from unicode stored in session to bytes expected by mwoauth
     serialized_token = utils.tuple_to_bytes(serialized_token)
 

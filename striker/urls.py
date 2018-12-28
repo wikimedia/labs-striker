@@ -19,8 +19,9 @@
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.conf import settings
-from django.conf import urls
 from django.conf.urls.static import static
+from django.urls import include
+from django.urls import path
 
 import notifications.urls
 import ratelimitbackend.admin
@@ -29,6 +30,7 @@ import striker.labsauth.urls
 import striker.profile.urls
 import striker.register.urls
 import striker.tools.urls
+import striker.views
 
 # Install custom error handler callbacks.
 # https://docs.djangoproject.com/en/1.8/topics/http/views/#customizing-error-views
@@ -41,25 +43,17 @@ handler500 = 'striker.views.server_error'  # noqa
 ratelimitbackend.admin.autodiscover()
 
 urlpatterns = [
-    urls.url(r'^$', 'striker.views.index', name='index'),
-    urls.url(r'^csp-report', 'striker.views.csp_report', name='csp_report'),
-    urls.url(r'^e400', 'striker.views.force_400', name='force_400'),
-    urls.url(r'^e403', 'striker.views.force_403', name='force_403'),
-    urls.url(r'^e500', 'striker.views.force_500', name='force_500'),
+    path('', striker.views.index, name='index'),
+    path('csp-report', striker.views.csp_report, name='csp_report'),
+    path('e400', striker.views.force_400, name='force_400'),
+    path('e403', striker.views.force_403, name='force_403'),
+    path('e500', striker.views.force_500, name='force_500'),
 
-    urls.url(
-        r'^alerts/',
-        urls.include(notifications.urls, namespace='notifications')),
-    urls.url(
-        r'^auth/', urls.include(striker.labsauth.urls, namespace='labsauth')),
-    urls.url(
-        r'^profile/', urls.include(striker.profile.urls, namespace='profile')),
-    urls.url(
-        r'^register/',
-        urls.include(striker.register.urls, namespace='register')),
-    urls.url(
-        r'^tools/', urls.include(striker.tools.urls, namespace='tools')),
+    path('alerts/', include(notifications.urls, namespace='notifications')),
+    path('auth/', include(striker.labsauth.urls, namespace='labsauth')),
+    path('profile/', include(striker.profile.urls, namespace='profile')),
+    path('register/', include(striker.register.urls, namespace='register')),
+    path('tools/', include(striker.tools.urls, namespace='tools')),
 
-    urls.url(
-        r'^contrib-admin/', urls.include(ratelimitbackend.admin.site.urls)),
+    path('contrib-admin/', ratelimitbackend.admin.site.urls),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

@@ -21,10 +21,10 @@
 import logging
 
 from django import shortcuts
+from django import urls
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.core import urlresolvers
 from django.db.utils import DatabaseError
 from django.views.decorators.debug import sensitive_post_parameters
 from django.utils.translation import ugettext_lazy as _
@@ -76,7 +76,7 @@ def phab_attach(req):
                     id=req.id))
 
     next_page = req.GET.get(
-        'next', urlresolvers.reverse('profile:accounts'))
+        'next', urls.reverse('profile:accounts'))
     return shortcuts.redirect(next_page)
 
 
@@ -134,7 +134,7 @@ def ssh_key_delete(req):
                 _("Deleted SSH key {key_hash}").format(key_hash=key_hash))
         else:
             messages.error(req, _('Key not found.'))
-    return shortcuts.redirect(urlresolvers.reverse('profile:ssh_keys'))
+    return shortcuts.redirect(urls.reverse('profile:ssh_keys'))
 
 
 @login_required
@@ -161,7 +161,7 @@ def ssh_key_add(req):
         else:
             # Pull the error message out of the form's errors
             messages.error(req, form.errors['public_key'][0])
-    return shortcuts.redirect(urlresolvers.reverse('profile:ssh_keys'))
+    return shortcuts.redirect(urls.reverse('profile:ssh_keys'))
 
 
 @sensitive_post_parameters()
@@ -176,7 +176,7 @@ def change_password(req):
             # LDAP passwords are detached from the normal Django session
             # management methods.
             return shortcuts.redirect(
-                urlresolvers.reverse('profile:change_password'))
+                urls.reverse('profile:change_password'))
     else:
         form = forms.PasswordChangeForm(user=req.user)
     ctx = {
