@@ -152,7 +152,7 @@ def ssh_key_add(req):
                     req,
                     _('Added SSH key {key_hash}').format(
                         key_hash=form.key.hash_sha256()))
-            except ldap.TYPE_OR_VALUE_EXISTS as e:
+            except ldap.TYPE_OR_VALUE_EXISTS:
                 logger.exception('Failed to add ssh key')
                 messages.error(
                     req,

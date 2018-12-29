@@ -83,7 +83,7 @@ def create(req, tool):
                     urlresolvers.reverse('tools:tool', kwargs={
                         'tool': tool.name,
                     }))
-            except DatabaseError as dbe:
+            except DatabaseError:
                 logger.exception('ToolInfo.save failed')
                 messages.error(
                     req,

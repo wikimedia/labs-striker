@@ -61,11 +61,11 @@ class LDAPUsername(forms.Form):
         # catch errors.
         validators=[
             validators.RegexValidator(
-                regex='^\S',
+                regex=r'^\S',
                 message=_('Must not start with whitespace')
             ),
             validators.RegexValidator(
-                regex='\S$',
+                regex=r'\S$',
                 message=_('Must not end with whitespace')
             ),
             validators.RegexValidator(
