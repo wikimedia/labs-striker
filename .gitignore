@@ -4,6 +4,7 @@
 /.coverage
 /.pc
 /.pybuild
+/.python-version
 /.tox
 /.venv
 /build
