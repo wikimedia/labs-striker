@@ -102,7 +102,7 @@ def create_tool(name, user):
 
 def member_or_admin(tool, user):
     """Is the given user a member of the given tool or a global admin?"""
-    if user.is_anonymous():
+    if user.is_anonymous:
         return False
     if user.ldap_dn in tool.members:
         return True
@@ -111,7 +111,7 @@ def member_or_admin(tool, user):
 
 def tools_admin(user):
     """Is the given user an administrator of the tools project?"""
-    if user.is_anonymous():
+    if user.is_anonymous:
         return False
     return user.ldap_dn in Tool.objects.get(cn='tools.admin').members
 

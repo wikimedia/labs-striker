@@ -19,12 +19,16 @@
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.conf import settings
+
 import ipware.ip
 
 
 class XForwaredForMiddleware(object):
     """Replace request.META['REMOTE_ADDR'] with X-Forwared-For data."""
-    def process_request(self, request):
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
         if settings.STRIKER_USE_XFF_HEADER:
             ip = None
             if settings.IPWARE_TRUSTED_PROXY_LIST:
@@ -33,12 +37,17 @@ class XForwaredForMiddleware(object):
                 ip = ipware.ip.get_ip(request)
             if ip is not None:
                 request.META['REMOTE_ADDR'] = ip
-        return None
+        response = self.get_response(request)
+        return response
 
 
 class ReferrerPolicyMiddleware(object):
     """Add a Referrer-Policy header to responses."""
-    def process_response(self, request, response):
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        response = self.get_response(request)
         header = 'Referrer-Policy'
         if header not in response:
             response[header] = getattr(

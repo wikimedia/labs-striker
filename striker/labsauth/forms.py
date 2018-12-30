@@ -69,7 +69,7 @@ class OathVerifyForm(forms.Form):
         token = self.cleaned_data.get('token')
         user = self.request.user
 
-        if user.is_authenticated() and token:
+        if user.is_authenticated and token:
             try:
                 valid = utils.oath_validate_token(user, token)
             except mwclient.APIError as ex:

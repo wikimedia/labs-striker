@@ -62,7 +62,7 @@ def anon_required(f):
     @functools.wraps(f)
     def decorated(*args, **kwargs):
         req = args[0]
-        if not req.user.is_anonymous():
+        if not req.user.is_anonymous:
             messages.error(
                 req, _('Logged in users can not create new accounts.'))
             return shortcuts.redirect(urls.reverse('index'))

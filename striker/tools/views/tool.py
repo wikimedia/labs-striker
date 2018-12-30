@@ -253,7 +253,7 @@ def maintainers(req, tool):
 
 class MaintainerAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
-        if not self.request.user.is_authenticated():
+        if not self.request.user.is_authenticated:
             return Maintainer.objects.none()
         qs = Maintainer.objects.all()
         if self.q:
@@ -267,7 +267,7 @@ class MaintainerAutocomplete(autocomplete.Select2QuerySetView):
 
 class ToolUserAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
-        if not self.request.user.is_authenticated():
+        if not self.request.user.is_authenticated:
             return ToolUser.objects.none()
         qs = ToolUser.objects.all()
         if self.q:

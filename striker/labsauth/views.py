@@ -56,7 +56,7 @@ def login(req):
         req.session.set_expiry(settings.REMEMBER_ME_TTL)
         req.session.save()
 
-    if req.user.is_authenticated():
+    if req.user.is_authenticated:
         # Flag the session with OATH status and expect that OathMiddleware is
         # installed to force the user to provide validation if needed
         req.session[constants.OATH_REQUIRED] = utils.oath_enabled(req.user)
@@ -142,7 +142,7 @@ def oauth_callback(req):
     req.session[constants.OAUTH_EMAIL_KEY] = sul_user['email']
     req.session[constants.OAUTH_REALNAME_KEY] = sul_user['realname']
 
-    if req.user.is_authenticated():
+    if req.user.is_authenticated:
         req.user.set_accesstoken(access_token)
         req.user.sulname = sul_user['username']
         req.user.sulemail = sul_user['email']

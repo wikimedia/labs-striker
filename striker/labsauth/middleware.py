@@ -30,34 +30,35 @@ from striker.labsauth import constants
 
 class OathMiddleware(object):
     """Ensure that OATH account protection is enforced for configured users"""
-    def process_request(self, request):
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
         assert hasattr(request, 'user'), "AuthenticationMiddleware required"
 
         plain_user = request.user
         request.user = functional.SimpleLazyObject(
             lambda: self.decorate_oath_user(request, plain_user))
 
-        if not plain_user.is_authenticated():
-            return None
-
-        oath_path = urls.reverse(settings.OATHMIDDLEWARE_REDIRECT)
-        request_path = request.path_info
-        if request_path == oath_path:
+        if plain_user.is_authenticated:
+            oath_path = urls.reverse(settings.OATHMIDDLEWARE_REDIRECT)
+            request_path = request.path_info
             # Don't redirect if the user is already on the token entry page
-            return None
-
-        oath_required = request.session.get(constants.OATH_REQUIRED, False)
-        if oath_required and not request.user.oath_verified():
-            # Redirect the user to the oath input form
-            return shortcuts.redirect(
-                "%s?%s" % (
-                    oath_path,
-                    http.urlencode({
-                        REDIRECT_FIELD_NAME: request.get_full_path(),
-                    })
-                )
-            )
-        return None
+            if request_path != oath_path:
+                oath_required = request.session.get(
+                        constants.OATH_REQUIRED, False)
+                if oath_required and not request.user.oath_verified():
+                    # Redirect the user to the oath input form
+                    return shortcuts.redirect(
+                        "%s?%s" % (
+                            oath_path,
+                            http.urlencode({
+                                REDIRECT_FIELD_NAME: request.get_full_path(),
+                            })
+                        )
+                    )
+        response = self.get_response(request)
+        return response
 
     def decorate_oath_user(self, request, user):
         """Decorate the user with oath data."""
@@ -69,7 +70,7 @@ class OathMiddleware(object):
         user.oath_verified = lambda: user._oath_time is not None
         user.oath_required = lambda: user._oath_required
 
-        if user.is_authenticated() and user.oath_required():
+        if user.is_authenticated and user.oath_required():
             oath_data = request.session.get(constants.OATH_INFO)
             if oath_data is not None:
                 if oath_data['user'] != user.ldapname:

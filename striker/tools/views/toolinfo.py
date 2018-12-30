@@ -291,7 +291,7 @@ class TagAutocomplete(autocomplete.Select2QuerySetView):
     create_field = 'name'
 
     def get_queryset(self):
-        if not self.request.user.is_authenticated():
+        if not self.request.user.is_authenticated:
             return ToolInfoTag.objects.none()
         qs = ToolInfoTag.objects.all()
         if self.q:
@@ -300,7 +300,7 @@ class TagAutocomplete(autocomplete.Select2QuerySetView):
         return qs
 
     def has_add_permission(self, request):
-        return request.user.is_authenticated()
+        return request.user.is_authenticated
 
     def create_object(self, text):
         return ToolInfoTag.objects.create(name=text, slug=slugify(text))
@@ -310,7 +310,7 @@ class AuthorAutocomplete(autocomplete.Select2QuerySetView):
     create_field = 'name'
 
     def get_queryset(self):
-        if not self.request.user.is_authenticated():
+        if not self.request.user.is_authenticated:
             return Author.objects.none()
         qs = Author.objects.all()
         if self.q:
@@ -319,7 +319,7 @@ class AuthorAutocomplete(autocomplete.Select2QuerySetView):
         return qs
 
     def has_add_permission(self, request):
-        return request.user.is_authenticated()
+        return request.user.is_authenticated
 
     def create_object(self, text):
         return Author.objects.create(name=text)

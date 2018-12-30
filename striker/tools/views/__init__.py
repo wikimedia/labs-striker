@@ -31,7 +31,7 @@ def index(req):
         'query': req.GET.get('q', ''),
         'member': False,
     }
-    if not req.user.is_anonymous():
+    if not req.user.is_anonymous:
         # TODO: do we need to paginate the user's tools too? Magnus has 60!
         ctx['my_tools'] = Tool.objects.filter(
             members__contains=req.user.ldap_dn).order_by('cn')
