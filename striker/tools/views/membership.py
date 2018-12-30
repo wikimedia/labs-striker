@@ -26,6 +26,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
+from django.core import exceptions
 from django.core import paginator
 from django.db.utils import DatabaseError
 from django.http import HttpResponseRedirect
@@ -112,21 +113,26 @@ def apply(req):
                 request = form.save(commit=False)
                 request.user = req.user
                 request.save()
-                notify.send(
-                    recipient=Group.objects.get(name='tools.admin'),
-                    sender=req.user,
-                    verb=_('created'),
-                    target=request,
-                    public=False,
-                    description=request.reason,
-                    level='info',
-                    actions=[
-                        {
-                            'title': _('View request'),
-                            'href': request.get_absolute_url(),
-                        },
-                    ],
-                )
+                try:
+                    notify.send(
+                        recipient=Group.objects.get(name='tools.admin'),
+                        sender=req.user,
+                        verb=_('created'),
+                        target=request,
+                        public=False,
+                        description=request.reason,
+                        level='info',
+                        actions=[
+                            {
+                                'title': _('View request'),
+                                'href': request.get_absolute_url(),
+                            },
+                        ],
+                    )
+                except exceptions.ObjectDoesNotExist:
+                    logger.exception(
+                        'Notify failed. '
+                        'Have you logged in with an admin account yet?')
                 messages.info(
                     req, _("Toolforge membership request submitted"))
                 return shortcuts.redirect(urls.reverse('tools:index'))
@@ -213,7 +219,12 @@ def status(req, app_id):
                         else:
                             level = 'warning'
                 else:
-                    recipient = Group.objects.get(name='tools.admin')
+                    try:
+                        recipient = Group.objects.get(name='tools.admin')
+                    except exceptions.ObjectDoesNotExist:
+                        logger.exception(
+                            'Have you logged in with an admin account yet?')
+                        recipient = req.user
                     verb = _('updated')
                     description = comment.comment
                     level = 'info'
