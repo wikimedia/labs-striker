@@ -216,7 +216,8 @@ DATABASES = {
 DATABASE_ROUTERS = [
     'striker.labsauth.router.CustomLdapRouter',
 ]
-if DATABASES['default']['ENGINE'] == 'django.db.backends.mysql':
+if DATABASES['default']['ENGINE'] in \
+        ['django.db.backends.mysql', 'striker.db']:
     # Make Django and MySQL play nice
     # https://blog.ionelmc.ro/2014/12/28/terrible-choices-mysql/
     # NOTE: use of utf8mb4 charset assumes innodb_large_prefix on the hosting
