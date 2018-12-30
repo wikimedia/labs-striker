@@ -18,6 +18,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
 
+from django.contrib.auth import views as auth_views
 from django.urls import path
 
 from striker.labsauth import views
@@ -25,7 +26,7 @@ from striker.labsauth import views
 app_name = 'labsauth'
 urlpatterns = [
     path('login/', views.login, name='login'),
-    path('logout/', views.logout, name='logout'),
+    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('oath', views.oath, name='oath'),
     path('initiate', views.oauth_initiate, name='oauth_initiate'),
     path('callback', views.oauth_callback, name='oauth_callback'),

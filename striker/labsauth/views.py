@@ -25,7 +25,6 @@ from django import urls
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import REDIRECT_FIELD_NAME
-from django.contrib.auth import views as auth_views
 from django.db.utils import DatabaseError
 from django.db.utils import IntegrityError
 from django.utils.six.moves.urllib.parse import urlparse
@@ -81,11 +80,6 @@ def oath(req):
     else:
         form = forms.OathVerifyForm()
     return shortcuts.render(req, 'labsauth/oath.html', {'form': form})
-
-
-def logout(req):
-    auth_views.logout(req)
-    return shortcuts.redirect(urls.reverse('index'))
 
 
 @never_cache
