@@ -301,8 +301,8 @@ CSP_FONT_SRC = ["'self'"]
 CSP_CONNECT_SRC = ["'self'"]
 CSP_STYLE_SRC = ["'self'"]
 CSP_BASE_URI = ["'none'"]
-CSP_CHILD_SRC = ["'none'"]
 CSP_FRAME_ANCESTORS = ["'none'"]
+CSP_FRAME_SRC = ["'none'"]
 CSP_FORM_ACTION = ["'self'"]
 CSP_SANDBOX = [
     'allow-forms',
@@ -311,6 +311,7 @@ CSP_SANDBOX = [
     'allow-top-navigation',
 ]
 CSP_REPORT_URI = '/csp-report'
+CSP_WORKER_SRC = ["'none'"]
 
 # == Referrer-Policy settings ==
 REFERRER_POLICY = 'strict-origin-when-cross-origin'
