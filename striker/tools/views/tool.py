@@ -59,6 +59,8 @@ def view(req, tool):
         'toolinfo': tool.toolinfo(),
         'repos': DiffusionRepo.objects.filter(tool=tool.name),
         'can_edit': member_or_admin(tool, req.user),
+        'can_revert': False,
+        'can_suppress': False,
     })
 
 
