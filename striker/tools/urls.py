@@ -27,11 +27,6 @@ from striker.tools.views import repo
 from striker.tools.views import tool
 from striker.tools.views import toolinfo
 
-TOOL = r'(?P<tool>[_a-z][-0-9_a-z]*)'
-REPO = r'(?P<repo>[_a-zA-Z][-0-9_a-zA-Z]*)'
-INFO_ID = r'(?P<info_id>\d+)'
-VERSION_ID = r'(?P<version_id>\d+)'
-
 app_name = 'tools'
 urlpatterns = [
     path('', views.index, name='index'),
