@@ -33,6 +33,7 @@ from django.utils.translation import ugettext_lazy as _
 from notifications.signals import notify
 
 from striker import phabricator
+from striker.labsauth.models import LabsUser
 from striker.tools.forms import RepoCreateForm
 from striker.tools.models import DiffusionRepo
 from striker.tools.utils import member_or_admin
@@ -65,12 +66,25 @@ def create(req, tool):
                 phab_maintainers = [m['phid'] for m in phab.user_ldapquery(
                     maintainers)]
             except KeyError:
-                messages.error(
-                    req, 'No Phabricator accounts found for tool maintainers.')
-            else:
+                pass
+            try:
+                phab_maintainers += [
+                    m['phid'] for m in phab.user_mediawikiquery(
+                        list(LabsUser.objects.filter(
+                            ldapname__in=maintainers
+                        ).values_list('sulname', flat=True))
+                    )
+                ]
+            except KeyError:
+                pass
+
+            if phab_maintainers:
                 # Create repo
                 # FIXME: error handling!
-                repo = phab.create_repository(name, phab_maintainers)
+                repo = phab.create_repository(
+                    name,
+                    list(set(phab_maintainers))
+                )
                 # Save a local association between the repo and the tool.
                 repo_model = DiffusionRepo(
                     tool=tool.name, name=name, phid=repo['phid'],
@@ -109,6 +123,9 @@ def create(req, tool):
                         req,
                         _("Error updating database. [req id: {id}]").format(
                             id=req.id))
+            else:
+                messages.error(
+                    req, 'No Phabricator accounts found for tool maintainers.')
 
     ctx = {
         'tool': tool,
