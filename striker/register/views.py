@@ -25,6 +25,7 @@ import re
 
 from django import shortcuts
 from django import urls
+from django.conf import settings
 from django.contrib import messages
 from django.http import JsonResponse
 from django.utils.decorators import method_decorator
@@ -92,7 +93,11 @@ def check_ip(f):
 @check_ip
 def index(req):
     ctx = {}
-    return shortcuts.render(req, 'register/index.html', ctx)
+    if settings.FEATURE_ACCOUNT_CREATE:
+        templ = 'register/index.html'
+    else:
+        templ = 'register/disabled.html'
+    return shortcuts.render(req, templ, ctx)
 
 
 @anon_required

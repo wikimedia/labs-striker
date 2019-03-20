@@ -18,6 +18,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
 
+from django.conf import settings
 from django.urls import include
 from django.urls import path
 
@@ -33,5 +34,6 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('api/', include(api_patterns)),
     path('oauth', views.oauth, name='oauth'),
-    path('<step>', views.account_wizard, name='wizard'),
 ]
+if settings.FEATURE_ACCOUNT_CREATE:
+    urlpatterns.append(path('<step>', views.account_wizard, name='wizard'))

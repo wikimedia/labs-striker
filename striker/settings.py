@@ -414,3 +414,6 @@ OPENSTACK_ADMIN_ROLE = ini.get('openstack', 'ADMIN_ROLE')
 # == Notifications ==
 NOTIFICATIONS_SOFT_DELETE = True
 NOTIFICATIONS_USE_JSONFIELD = True
+
+# == Feature flags ==
+FEATURE_ACCOUNT_CREATE = ini.getboolean('features', 'ACCOUNT_CREATE')
