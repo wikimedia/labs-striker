@@ -60,6 +60,11 @@ LOGGING = {
                 '%(message)s',
             'datefmt': '%Y-%m-%dT%H:%M:%SZ',
         },
+        'cee': {
+            '()': 'striker.logging.CeeFormatter',
+            'message_type': 'striker',
+            'fqdn': False,
+        },
     },
     'handlers': {
         'console': {
@@ -82,6 +87,11 @@ LOGGING = {
             'message_type': 'striker',
             'fqdn': False,
             'filters': ['request_id'],
+            'level': 'DEBUG',
+        },
+        'cee': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'cee',
             'level': 'DEBUG',
         },
     },
