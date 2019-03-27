@@ -62,8 +62,9 @@ def create(req, tool):
             #   longer be able to edit the object. (ERR-CONDUIT-CORE)
             # Convert list of maintainers to list of phab users
             maintainers = [m.cn for m in tool.maintainers()]
+            phab_maintainers = []
             try:
-                phab_maintainers = [m['phid'] for m in phab.user_ldapquery(
+                phab_maintainers += [m['phid'] for m in phab.user_ldapquery(
                     maintainers)]
             except KeyError:
                 pass
