@@ -27,8 +27,6 @@ from django.conf import settings
 from django.core.cache import cache
 from django.core.exceptions import PermissionDenied
 from django.core.exceptions import SuspiciousOperation
-from django.template import loader
-from django.template import RequestContext
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.csrf import requires_csrf_token
 from django.views.decorators.http import require_POST
@@ -93,44 +91,40 @@ def csp_report(req):
 
 
 @requires_csrf_token
-def page_not_found(request, template_name='404.html'):
+def page_not_found(request, exception, template_name='404.html'):
+    """Handler for 404 responses."""
     ctx = {'request_path': request.path}
-    context = RequestContext(request, ctx)
-    t = loader.get_template(template_name)
-    return http.HttpResponseNotFound(t.render(context))
+    return shortcuts.render(request, template_name, ctx, status=404)
 
 
 @requires_csrf_token
 def server_error(request, template_name='500.html'):
+    """Handler for 500 responses."""
     ctx = {
         'request_path': request.path,
         'request_id': request.id,
     }
-    context = RequestContext(request, ctx)
-    t = loader.get_template(template_name)
-    return http.HttpResponseServerError(t.render(context))
+    return shortcuts.render(request, template_name, ctx, status=500)
 
 
 @requires_csrf_token
-def bad_request(request, template_name='400.html'):
+def bad_request(request, exception, template_name='400.html'):
+    """Handler for 400 responses."""
     ctx = {
         'request_path': request.path,
         'request_id': request.id,
     }
-    context = RequestContext(request, ctx)
-    t = loader.get_template(template_name)
-    return http.HttpResponseBadRequest(t.render(context))
+    return shortcuts.render(request, template_name, ctx, status=400)
 
 
 @requires_csrf_token
-def permission_denied(request, template_name='403.html'):
+def permission_denied(request, exception, template_name='403.html'):
+    """Handler for 403 responses."""
     ctx = {
         'request_path': request.path,
         'request_id': request.id,
     }
-    context = RequestContext(request, ctx)
-    t = loader.get_template(template_name)
-    return http.HttpResponseBadRequest(t.render(context))
+    return shortcuts.render(request, template_name, ctx, status=403)
 
 
 def force_400(request):
