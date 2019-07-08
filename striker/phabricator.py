@@ -196,8 +196,7 @@ class Client(object):
                 {'type': 'shortName', 'value': name},
                 {'type': 'allowDangerousChanges', 'value': True},
                 {'type': 'status', 'value': 'active'},
-                {'type': 'publish', 'value': True},
-                {'type': 'autoclose', 'value': False},
+                {'type': 'publish', 'value': False},  # T227508
                 {'type': 'policy.push', 'value': custom_policy},
                 {'type': 'view', 'value': 'public'},
                 {'type': 'edit', 'value': custom_policy},
