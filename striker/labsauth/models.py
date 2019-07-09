@@ -35,18 +35,6 @@ import ldapdb.models
 import mwoauth
 
 
-# Monkey patch for ldapdb Django 2.1 compatibility
-# See https://github.com/django-ldapdb/django-ldapdb/commit/ec5a69d3daa33ba29a1fa88f745d5536b97dc49f  # noqa
-# TODO: remove when we have upgraded to ldapdb 1.3.0 or later
-@classmethod
-def multikey_monkeypatch(cls):
-    """Disable models.E026 system check."""
-    return []
-
-
-ldapdb.models.Model._check_single_primary_key = multikey_monkeypatch
-
-
 class LabsUserManager(BaseUserManager):
     def create_user(self, username, **extra_fields):
         if not username:
