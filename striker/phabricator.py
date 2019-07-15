@@ -77,6 +77,7 @@ class Client(object):
 
     def user_ldapquery(self, names):
         """Lookup Phabricator user data associated with LDAP cn values."""
+        names = list(filter(None, names))
         try:
             r = self.post('user.ldapquery', {
                 'ldapnames': names,
@@ -100,6 +101,7 @@ class Client(object):
 
     def user_mediawikiquery(self, names):
         """Lookup Phabricator user data associated with mediawiki accounts."""
+        names = list(filter(None, names))
         try:
             r = self.post('user.mediawikiquery', {
                 'names': names,
