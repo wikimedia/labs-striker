@@ -8,10 +8,13 @@
 # able to exclude a more descriptive path such as
 # django-autocomplete-light/vendor/vendor
 #
+set -e
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 $DIR/manage.sh collectstatic -c --noinput \
-    --ignore i18n \
     --ignore src \
     --ignore tests \
     --ignore *.json \
     --ignore Gruntfile.js
+cd $DIR/../staticfiles
+python -mjson.tool staticfiles.json > staticfiles.json.pretty
+mv staticfiles.json.pretty staticfiles.json
