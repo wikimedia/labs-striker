@@ -20,6 +20,7 @@
 
 import configparser
 import ldap
+import logging
 import os
 import sys
 
@@ -44,6 +45,7 @@ ini.read([
 TEST_MODE = 'test' in sys.argv
 
 # == Logging ==
+logging.captureWarnings(True)
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
