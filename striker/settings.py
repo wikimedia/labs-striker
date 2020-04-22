@@ -395,6 +395,8 @@ PHABRICATOR_USER = ini.get('phabricator', 'USER')
 PHABRICATOR_TOKEN = ini.get('phabricator', 'TOKEN')
 # phid of group granted Diffusion admin rights (i.e. #Repository-Admins)
 PHABRICATOR_REPO_ADMIN_GROUP = ini.get('phabricator', 'REPO_ADMIN_GROUP')
+# phid of project that tool projects should be made under (i.e. #tools)
+PHABRICATOR_PARENT_PROJECT = ini.get('phabricator', 'PARENT_PROJECT')
 
 # == Wikitech settings ==
 WIKITECH_URL = ini.get('wikitech', 'SERVER_URL')

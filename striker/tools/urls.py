@@ -26,6 +26,7 @@ from striker.tools.views import membership
 from striker.tools.views import repo
 from striker.tools.views import tool
 from striker.tools.views import toolinfo
+from striker.tools.views import project
 
 app_name = 'tools'
 urlpatterns = [
@@ -53,6 +54,10 @@ urlpatterns = [
         path('repos/', include([
             path('create', repo.create, name='repo_create'),
             path('id/<slug:repo>', repo.view, name='repo_view'),
+        ])),
+        path('projects/', include([
+            path('create', project.create, name='project_create'),
+            path('id/<slug:project>', project.view, name='project_view')
         ])),
         path('maintainers/', tool.maintainers, name='maintainers'),
     ])),

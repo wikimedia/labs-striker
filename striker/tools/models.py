@@ -192,6 +192,24 @@ class SudoRole(ldapdb.models.Model):
         return 'cn=%s,%s' % (self.cn, self.base_dn)
 
 
+class PhabricatorProject(models.Model):
+    """Associate phabricator projects with Tools."""
+    tool = models.CharField(max_length=64)
+    name = models.CharField(max_length=255)
+    phid = models.CharField(max_length=64)
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL)
+    created_date = models.DateTimeField(
+        default=timezone.now, blank=True, editable=False)
+
+    def __str__(self):
+        return self.name
+
+    def get_absolute_url(self):
+        return urls.reverse(
+            'tools:project_view', args=[self.tool, self.name])
+
+
 class DiffusionRepo(models.Model):
     """Associate diffusion repos with Tools."""
     tool = models.CharField(max_length=64)

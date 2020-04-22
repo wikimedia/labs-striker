@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% load bootstrap3 %}
+{% load i18n %}
+{% load tools %}
+
+{% block title %}{% blocktrans with name=tool.name %}Tool: {{ name }}{% endblocktrans %}{% endblock %}
+
+{% block pre_content %}
+<ol class="breadcrumb">
+  <li><a href="{% url 'tools:index' %}">{% trans "Tools" %}</a></li>
+  <li><a href="{% url 'tools:tool' tool=tool.name %}">{{ tool.name }}</a></li>
+  <li>{% trans "Phabricator projects" %}</li>
+  <li class="active">{{ project }}</li>
+</ol>
+{{ block.super }}
+{% endblock %}
+
+{% block content %}
+<div class="panel-group">
+  <div class="panel panel-default">
+    <div class="panel-heading">{% trans "Project information" %}</div>
+    <div class="panel-body">
+      <dl class="dl-horizontal">
+        <dt>{% trans "Name" %}</dt>
+        <dd>{{ project }}</dd>
+        <dt>{% trans "Primary hashtag" %}</dt>
+        <dd>#{{ slug }}</dd>
+        <dt>{% trans "View" %}</dt>
+        <dd><a href="{{ phab_url }}/tag/{{ slug }}/">{% trans "view project on Phabricator" %}</a></dd>
+      </dl>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{# vim:sw=2:ts=2:sts=2:et:ft=htmldjango: #}

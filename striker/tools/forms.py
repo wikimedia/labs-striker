@@ -68,6 +68,36 @@ class RepoCreateForm(forms.Form):
             return name
 
 
+class ProjectCreateForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        NAME_ERR_MSG = _(
+            "Must start with {prefix}, and can only contain "
+            "a-z, A-Z, 0-9, _, and - characters."
+        )
+        tool = kwargs.pop('tool')
+        super(ProjectCreateForm, self).__init__(*args, **kwargs)
+        default_name = 'Tool-{0}'.format(tool.name)
+        self.fields['project_name'] = forms.RegexField(
+            label=_("Project name"),
+            regex=r'^{0}[-a-zA-Z0-9_]*$'.format(re.escape(default_name)),
+            initial=default_name,
+            help_text=_(NAME_ERR_MSG.format(prefix=default_name)),
+            min_length=len(default_name),
+            max_length=255)
+
+    def clean_project_name(self):
+        name = self.cleaned_data.get('project_name')
+        try:
+            phab.get_project(name)
+            # If get_project doesn't raise an exception then its a dup
+            raise forms.ValidationError(
+                _('Project "%(name)s" exists.'),
+                params={'name': name},
+                code='duplicate')
+        except KeyError:
+            return name
+
+
 class AccessRequestForm(forms.ModelForm):
     """Form for creating a new access request."""
     class Meta:

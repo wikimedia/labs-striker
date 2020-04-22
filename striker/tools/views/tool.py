@@ -41,6 +41,7 @@ from striker.tools.forms import MaintainersForm
 from striker.tools.forms import ToolCreateForm
 from striker.tools.models import Author
 from striker.tools.models import DiffusionRepo
+from striker.tools.models import PhabricatorProject
 from striker.tools.models import Maintainer
 from striker.tools.models import ToolInfo
 from striker.tools.models import ToolUser
@@ -58,6 +59,7 @@ def view(req, tool):
         'tool': tool,
         'toolinfo': tool.toolinfo(),
         'repos': DiffusionRepo.objects.filter(tool=tool.name),
+        'projects': PhabricatorProject.objects.filter(tool=tool.name),
         'can_edit': member_or_admin(tool, req.user),
         'can_revert': False,
         'can_suppress': False,

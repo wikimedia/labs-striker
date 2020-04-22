@@ -79,6 +79,21 @@
         </div>
         {% endif %}
       </div>
+      <div class="panel panel-default">
+        <div class="panel-heading" role="tab" id="projects">
+          <h3 class="panel-title">{% bootstrap_icon "briefcase" %} {% trans "Phabricator projects" %}</h3>
+        </div>
+        <div class="list-group">
+          {% for project in projects %}
+          <a class="list-group-item" href="{% url 'tools:project_view' tool=tool.name project=project.name %}">{{ project.name }}</a>
+          {% endfor %}
+        </div>
+        {% if can_edit %}
+        <div class="list-group">
+          <a class="list-group-item" href="{% url 'tools:project_create' tool=tool.name %}">{% bootstrap_icon "plus-sign" %} {% trans "create project" %}</a>
+        </div>
+        {% endif %}
+      </div>
     </div>
   </div>
 </div>

@@ -300,3 +300,47 @@ class Client(object):
                 {'type': 'comment', 'value': comment},
             ],
         })
+
+    def get_project(self, name):
+        """Lookup information on a project by name."""
+        r = self.post('project.search', {
+            'constraints': {
+                'query': 'title:{}'.format(json.dumps(name))
+            },
+            'attachments': {
+                'uris': True,
+            },
+            'order': 'name',
+        })
+        if 'data' in r:
+            for repo in r['data']:
+                if repo['fields']['name'] == name:
+                    return repo
+        raise KeyError('Repository {0} not found'.format(name))
+
+    def get_project_by_phid(self, phid):
+        """Lookup information on a project by phid."""
+        r = self.post('project.search', {
+            'constraints': {
+                'phids': [phid],
+            },
+            'attachments': {
+                'uris': True,
+            },
+        })
+        if 'data' in r and len(r['data']) == 1:
+            return r['data'][0]
+        raise KeyError('Project {0} not found'.format(phid))
+
+    def create_project(self, name, members, parent):
+        """Creates a project with the given name"""
+        r = self.post('project.edit', {
+            'transactions': [
+                {'type': 'name', 'value': name},
+                {'type': 'parent', 'value': parent},
+                {'type': 'members.add', 'value': members},
+            ],
+        })
+        obj = r['object']
+        repo = self.get_project_by_phid(obj['phid'])
+        return repo
