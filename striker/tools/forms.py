@@ -43,15 +43,18 @@ phab = phabricator.Client.default_client()
 
 class RepoCreateForm(forms.Form):
     def __init__(self, *args, **kwargs):
+        NAME_ERR_MSG = _(
+            "Repository name must begin with {prefix}, and can only contain "
+            "a-z, A-Z, 0-9, _, and - characters."
+        )
         tool = kwargs.pop('tool')
         super(RepoCreateForm, self).__init__(*args, **kwargs)
         default_name = 'tool-{0}'.format(tool.name)
         self.fields['repo_name'] = forms.RegexField(
             label=_("Repository name"),
-            regex=r'^{0}'.format(re.escape(default_name)),
+            regex=r'^{0}[-a-zA-Z0-9_]*$'.format(re.escape(default_name)),
             initial=default_name,
-            help_text=_("Repository name must begin with {prefix}.".format(
-                prefix=default_name)),
+            help_text=_(NAME_ERR_MSG.format(prefix=default_name)),
             min_length=len(default_name),
             max_length=255)
 
