@@ -54,7 +54,7 @@ class RepoCreateForm(forms.Form):
             label=_("Repository name"),
             regex=r'^{0}[-a-zA-Z0-9_]*$'.format(re.escape(default_name)),
             initial=default_name,
-            help_text=_(NAME_ERR_MSG.format(prefix=default_name)),
+            help_text=NAME_ERR_MSG.format(prefix=default_name),
             min_length=len(default_name),
             max_length=255)
 
@@ -84,7 +84,7 @@ class ProjectCreateForm(forms.Form):
             label=_("Project name"),
             regex=r'^{0}[-a-zA-Z0-9_]*$'.format(re.escape(default_name)),
             initial=default_name,
-            help_text=_(NAME_ERR_MSG.format(prefix=default_name)),
+            help_text=NAME_ERR_MSG.format(prefix=default_name),
             min_length=len(default_name),
             max_length=255)
 
