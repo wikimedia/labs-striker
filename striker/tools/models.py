@@ -351,9 +351,9 @@ class ToolInfo(models.Model):
 
     def toolinfo(self):
         if self.is_webservice:
-            url = 'https://tools.wmflabs.org/{}/{}'.format(
+            url = 'https://{}.toolforge.org/{}'.format(
                 self.tool,
-                self.suburl
+                self.suburl or ''
             )
         else:
             url = self.docs

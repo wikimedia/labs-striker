@@ -26,7 +26,7 @@ setup(
     description='Wikimedia Toolforge Dashboard',
     author='Wikimedia Foundation',
     license='GPLv3+',
-    url='https://tools.wmflabs.org/',
+    url='https://www.toolforge.org/',
     packages=['striker'],
     package_dir={'striker': 'striker'},
     classifiers=[

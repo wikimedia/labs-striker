@@ -4,7 +4,7 @@
 <div class="row">
   <div class="jumbotron">
     <h1>{% trans "Welcome!" %}</h1>
-    {% blocktrans with tl_url='https://tools.wmflabs.org/' %}
+    {% blocktrans with tl_url='https://www.toolforge.org/' %}
     <p><strong>Toolforge admin console</strong> helps <a href="{{ tl_url }}">Wikimedia Toolforge</a> users manage their tools.</p>
     {% endblocktrans %}
     {% url 'labsauth:login' as login_url %}
