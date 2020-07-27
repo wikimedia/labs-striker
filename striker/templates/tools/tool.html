@@ -20,12 +20,14 @@
       <div class="panel panel-info panel-pager">
         {% include "tools/info/revision/header.html" with toolinfo=info %}
         {% include "tools/info/revision/body.html" with toolinfo=info %}
-        {% if forloop.last and can_edit %}
-        <div class="panel-body">
-          <a href="{% url 'tools:info_create' tool=tool.name %}" class="btn btn-default btn-sm pull-right">{% bootstrap_icon "plus" %} {% trans "add toolinfo" %}</a>
-        </div>
-        {% endif %}
       </div>
+      {% if forloop.last and can_edit %}
+      <div class="panel">
+        <div class="panel-body text-right">
+          <a href="{% url 'tools:info_create' tool=tool.name %}" class="btn btn-default btn-sm">{% bootstrap_icon "plus" %} {% trans "add toolinfo" %}</a>
+        </div>
+      </div>
+      {% endif %}
       {% empty %}
       <div class="panel panel-warning">
         <div class="panel-heading">
@@ -38,8 +40,8 @@
           {% blocktrans %}Creating a toolinfo description is required for new tools and recommended for all tools.{% endblocktrans %}
         </div>
         {% if can_edit %}
-        <div class="panel-body">
-          <a href="{% url 'tools:info_create' tool=tool.name %}" class="btn btn-default btn-sm pull-right">{% bootstrap_icon "plus" %} {% trans "add toolinfo" %}</a>
+        <div class="panel-body text-right">
+          <a href="{% url 'tools:info_create' tool=tool.name %}" class="btn btn-primary btn-sm">{% bootstrap_icon "plus" %} {% trans "add toolinfo" %}</a>
         </div>
         {% endif %}
       </div>
