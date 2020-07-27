@@ -59,11 +59,11 @@ def create(req, tool):
         return shortcuts.redirect(tool.get_absolute_url())
 
     initial_values = {
-        'name': tool.name,
+        'name': "toolforge.{}".format(tool.name),
         'author': req.user,
     }
     if ToolInfo.objects.filter(tool=tool.name).count():
-        initial_values['name'] = '{}-'.format(tool.name)
+        initial_values['name'] = '{}-'.format(initial_values['name'])
     form = ToolInfoForm(
         req.POST or None, req.FILES or None, initial=initial_values)
     if req.method == 'POST':
@@ -110,7 +110,7 @@ def read(req, tool, info_id):
 @login_required
 @inject_tool
 def edit(req, tool, info_id):
-    """Create a ToolInfo record."""
+    """Edit a ToolInfo record."""
     toolinfo = shortcuts.get_object_or_404(ToolInfo, pk=info_id, tool=tool)
     if member_or_admin(tool, req.user):
         form = ToolInfoForm(

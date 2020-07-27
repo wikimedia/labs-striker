@@ -186,12 +186,15 @@ class ToolInfoForm(forms.ModelForm):
                 '-- Choose your software license --')
             license.queryset = SoftwareLicense.objects.filter(
                 osi_approved=True).order_by('-recommended', 'slug')
+        instance = getattr(self, "instance", None)
+        if instance and instance.name:
+            self.fields['name'].widget.attrs["readonly"] = True
 
     class Meta:
         model = ToolInfo
         exclude = ('tool',)
         labels = {
-            'name': _('Unique tool name'),
+            'name': _('Unique toolinfo record name'),
             'title': _('Title'),
             'description': _('Description of tool'),
             'tags': _('Tags'),
@@ -201,24 +204,11 @@ class ToolInfoForm(forms.ModelForm):
             'issues': _('Issue tracker'),
             'docs': _('Documentation'),
             'is_webservice': _('This is a webservice'),
-            'suburl': _('Path to tool below main webservice'),
+            'suburl': _('Path to tool below main webservice.'),
         }
         widgets = {
-            'name': forms.TextInput(
-                attrs={
-                    'placeholder': _('A globally unique name for your tool'),
-                },
-            ),
-            'title': forms.TextInput(
-                attrs={
-                    'placeholder': _('A descriptive title for your tool'),
-                },
-            ),
             'description': forms.Textarea(
                 attrs={
-                    'placeholder': _(
-                        'A short summary of what your tool does'
-                    ),
                     'rows': 5,
                 },
             ),
@@ -228,27 +218,29 @@ class ToolInfoForm(forms.ModelForm):
             'authors': autocomplete.ModelSelect2Multiple(
                 url='tools:api:author',
             ),
-            'repository': forms.TextInput(
-                attrs={
-                    'placeholder': _("URL to your tool's source code"),
-                },
-            ),
-            'issues': forms.TextInput(
-                attrs={
-                    'placeholder': _("URL to your tool's issue tracker"),
-                },
-            ),
-            'docs': forms.TextInput(
-                attrs={
-                    'placeholder': _("URL to your tool's documentation"),
-                },
-            ),
         }
         help_texts = {
+            "name": _("A globally unique toolinfo record name for your tool"),
+            "title": _("A descriptive title for this tool"),
+            "description": _("A short summary of what this tool does"),
             'license': _(
                 'Need help choosing a license? '
                 'Try <a href="{choose_a_license}">choosealicense.com</a>.'
             ).format(choose_a_license='https://choosealicense.com/'),
+            "authors": _("Authors and maintainers of this tool"),
+            "tags": _("Keywords related to this tool and what it does"),
+            "repository": _("URL to this tool's source code"),
+            "issues": _("URL to this tool's issue tracker"),
+            "docs": _("URL to this tool's documentation"),
+            "is_webservice": _(
+                "If unchecked, the toolinfo record will link to "
+                "this tool's documentation URL in directories like Hay's "
+                "Directory and the admin tool."
+            ),
+            "suburl": _(
+                "Leave path blank unless you are creating multiple "
+                "toolinfo records for a single tool account."
+            ),
         }
 
 
@@ -269,7 +261,7 @@ class ToolCreateForm(forms.Form):
     )
 
     name = forms.CharField(
-        label=_('Unique tool name'),
+        label=_('Tool name'),
         help_text=_(
             "The tool name is used as part of the URL for the tool's "
             "webservice."
@@ -332,6 +324,7 @@ class ToolCreateForm(forms.Form):
         widget=autocomplete.ModelSelect2Multiple(
             url='tools:tags_autocomplete',
         ),
+        help_text=_("Keywords related to this tool and what it does"),
         required=False,
     )
 

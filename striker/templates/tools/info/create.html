@@ -9,7 +9,7 @@
 <ol class="breadcrumb">
   <li><a href="{% url 'tools:index' %}">{% trans "Tools" %}</a></li>
   <li><a href="{% url 'tools:tool' tool=tool.name %}">{{ tool.name }}</a></li>
-  <li class="active">{% trans "new toolinfo" %}</li>
+  <li class="active">{% trans "new toolinfo record" %}</li>
 </ol>
 {{ block.super }}
 {% endblock %}
@@ -25,6 +25,7 @@
         </h3>
       </div>
       <div class="panel-body">
+        <p>{% blocktrans %}A toolinfo record is used to advertise your tool on Toolforge. Most tools only need a single toolinfo record. The exception is when you have created a suite of related tools which are all hosted under a single Toolforge Tool account.{% endblocktrans %}</p>
         <form method="post" action="{% url 'tools:info_create' tool=tool.name %}" class="form parsley">
           {% csrf_token %}
           {% bootstrap_form form %}
