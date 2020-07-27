@@ -92,7 +92,7 @@ def create(req):
                             title=form.cleaned_data['title'],
                             description=form.cleaned_data['description'],
                             license=form.cleaned_data['license'],
-                            is_webservice=False,
+                            is_webservice=form.cleaned_data['is_webservice'],
                         )
                         reversion.set_user(req.user)
                         reversion.set_comment('Tool created')

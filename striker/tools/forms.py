@@ -327,6 +327,14 @@ class ToolCreateForm(forms.Form):
         help_text=_("Keywords related to this tool and what it does"),
         required=False,
     )
+    is_webservice = forms.BooleanField(
+        label=_("This is a webservice"),
+        help_text=_(
+            "If unchecked, the toolinfo record will link to "
+            "this tool's documentation URL in directories like Hay's "
+            "Directory and the admin tool."
+        ),
+    )
 
     def __init__(self, *args, **kwargs):
         super(ToolCreateForm, self).__init__(*args, **kwargs)
