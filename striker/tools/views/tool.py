@@ -61,6 +61,7 @@ def view(req, tool):
         'repos': DiffusionRepo.objects.filter(tool=tool.name),
         'projects': PhabricatorProject.objects.filter(tool=tool.name),
         'can_edit': member_or_admin(tool, req.user),
+        'can_delete': member_or_admin(tool, req.user),
         'can_revert': False,
         'can_suppress': False,
     })

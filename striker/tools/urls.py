@@ -38,6 +38,7 @@ urlpatterns = [
             path('id/<int:info_id>', toolinfo.read, name='info_read'),
             path('id/<int:info_id>/', include([
                 path('edit', toolinfo.edit, name='info_edit'),
+                path('delete', toolinfo.delete, name='info_delete'),
                 path(
                     'history',
                     toolinfo.HistoryView.as_view(), name='info_history'),

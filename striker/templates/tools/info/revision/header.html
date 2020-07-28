@@ -2,21 +2,28 @@
 {% load i18n %}
 <div class="panel-heading">
   <div class="row">
-    <div class="col-sm-8">
+    <div class="col-sm-6">
       <h3 class="panel-title">
         {% bootstrap_icon "info-sign" %}
         {% if toolinfo.is_webservice %}<a href="https://{{ toolinfo.tool }}.toolforge.org/{{ toolinfo.suburl|default:'' }}">{% endif %}{{ toolinfo.title }}{% if toolinfo.is_webservice %}</a>{% endif %}
       </h3>
     </div>
-    <div class="col-sm-4">
+    <div class="col-sm-6">
       {% if can_revert or can_suppress %}
       <form action="{% url 'tools:info_admin' tool=tool.name info_id=toolinfo.pk version_id=version.pk %}" method="POST" class="form-inline">
         {% csrf_token %}
-        {% endif %}
+      {% endif %}
         <div class="btn-toolbar pull-right" role="toolbar">
+          {% if can_edit %}
           <div class="btn-group" role="group">
-            <a href="{% url 'tools:info_edit' tool=tool.name info_id=toolinfo.pk %}" class="btn btn-default btn-sm">{% bootstrap_icon "edit" %} {% trans "edit" %}</a>
+            <a href="{% url 'tools:info_edit' tool=tool.name info_id=toolinfo.pk %}" class="btn btn-primary btn-sm">{% bootstrap_icon "edit" %} {% trans "edit" %}</a>
           </div>
+          {% endif %}
+          {% if can_delete %}
+          <div class="btn-group" role="group">
+            <a href="{% url 'tools:info_delete' tool=tool.name info_id=toolinfo.pk %}" class="btn btn-danger btn-sm">{% bootstrap_icon "trash" %} {% trans "delete" %}</a>
+          </div>
+          {% endif %}
           <div class="btn-group" role="group">
             {% if can_revert and not version.suppressed %}
             <button name="_revert" type="submit" class="btn btn-default btn-sm">{% bootstrap_icon "repeat" %} {% trans "revert" %}</button>

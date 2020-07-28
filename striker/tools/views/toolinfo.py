@@ -80,8 +80,9 @@ def create(req, tool):
                 messages.info(
                     req, _("Toolinfo {} created".format(toolinfo.title)))
                 return shortcuts.redirect(
-                    urls.reverse('tools:tool', kwargs={
+                    urls.reverse('tools:info_read', kwargs={
                         'tool': tool.name,
+                        'info_id': toolinfo.pk,
                     }))
             except DatabaseError:
                 logger.exception('ToolInfo.save failed')
@@ -103,6 +104,10 @@ def read(req, tool, info_id):
     ctx = {
         'tool': tool,
         'toolinfo': toolinfo,
+        'can_edit': member_or_admin(tool, req.user),
+        'can_delete': member_or_admin(tool, req.user),
+        'can_revert': False,
+        'can_suppress': False,
     }
     return shortcuts.render(req, 'tools/info/read.html', ctx)
 
@@ -130,8 +135,9 @@ def edit(req, tool, info_id):
                 messages.info(
                     req, _("Toolinfo {} updated".format(toolinfo.title)))
                 return shortcuts.redirect(
-                    urls.reverse('tools:tool', kwargs={
+                    urls.reverse('tools:info_read', kwargs={
                         'tool': tool.name,
+                        'info_id': toolinfo.pk,
                     }))
             except DatabaseError:
                 logger.exception('ToolInfo.save failed')
@@ -143,8 +149,44 @@ def edit(req, tool, info_id):
         'tool': tool,
         'toolinfo': toolinfo,
         'form': form,
+        'can_edit': False,
+        'can_delete': member_or_admin(tool, req.user),
+        'can_revert': False,
+        'can_suppress': False,
     }
     return shortcuts.render(req, 'tools/info/update.html', ctx)
+
+
+@login_required
+@inject_tool
+def delete(req, tool, info_id):
+    """Delete a toolinfo record."""
+    toolinfo = shortcuts.get_object_or_404(ToolInfo, pk=info_id, tool=tool)
+    if req.method == 'POST' and "__confirm__" in req.POST:
+        if member_or_admin(tool, req.user):
+            try:
+                title = toolinfo.title
+                toolinfo.delete()
+                messages.info(
+                    req, _("Toolinfo {title} deleted").format(title=title))
+            except DatabaseError:
+                logger.exception("Toolinfo.delete failed")
+                messages.error(
+                    req,
+                    _("Error updating database. [req id: {id}]").format(
+                        id=req.id)
+                )
+        else:
+            messages.error(
+                req,
+                _("You are not allowed to delete this toolinfo record."))
+    else:
+        ctx = {
+            'tool': tool,
+            'toolinfo': toolinfo,
+        }
+        return shortcuts.render(req, 'tools/info/delete.html', ctx)
+    return shortcuts.redirect(tool.get_absolute_url())
 
 
 class HistoryView(reversion_compare.views.HistoryCompareDetailView):
@@ -188,6 +230,8 @@ def revision(req, tool, info_id, version_id):
     version = shortcuts.get_object_or_404(
         reversion.models.Version, pk=version_id, object_id=info_id)
 
+    can_edit = False  # member_or_admin(tool, req.user)
+    can_delete = False
     can_revert = member_or_admin(tool, req.user)
     can_suppress = member_or_admin(tool, req.user)
 
@@ -271,6 +315,8 @@ def revision(req, tool, info_id, version_id):
                 'tool': tool,
                 'toolinfo': toolinfo,
                 'version': version,
+                'can_edit': can_edit,
+                'can_delete': can_delete,
                 'can_revert': can_revert,
                 'can_suppress': can_suppress,
             }

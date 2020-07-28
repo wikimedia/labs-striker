@@ -30,6 +30,11 @@
           </div>
           <div class="col-sm-3">
             <div class="btn-toolbar pull-right" role="toolbar">
+              {% if can_delete %}
+              <div class="btn-group" role="group">
+                  <a href="{% url 'tools:info_delete' tool=tool.name info_id=toolinfo.pk %}" class="btn btn-danger btn-sm">{% bootstrap_icon "trash" %} {% trans "delete" %}</a>
+              </div>
+              {% endif %}
               <div class="btn-group" role="group">
                 <a href="{% url 'tools:info_history' tool=tool.name info_id=toolinfo.pk %}" class="btn btn-default btn-sm">{% bootstrap_icon "time" %} {% trans "history" %}</a>
               </div>
