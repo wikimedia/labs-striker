@@ -33,16 +33,6 @@ from striker.labsauth import models
 logger = logging.getLogger(__name__)
 
 
-def tuple_to_unicode(t):
-    """Decode a tuple of bytes to a tuple of utf8 strings."""
-    return tuple([i.decode('utf-8') for i in t])
-
-
-def tuple_to_bytes(t):
-    """Encode a tuple of utf8 strings as a tuple of bytes."""
-    return tuple([i.encode('utf-8') for i in t])
-
-
 def oauth_from_session(session):
     """Get OAuth data from a user's session.
 
