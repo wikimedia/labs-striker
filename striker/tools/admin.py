@@ -50,3 +50,10 @@ class SoftwareLicenseAdmin(django.contrib.admin.ModelAdmin):
 class ToolInfoAdmin(reversion_compare.admin.CompareVersionAdmin):
     list_display = ('name', 'tool')
     ordering = ('name',)
+
+
+@django.contrib.admin.register(models.PhabricatorProject)
+class PhabricatorProjectAdmin(django.contrib.admin.ModelAdmin):
+    list_display = ('name', 'tool', 'phid')
+    list_filter = ('tool',)
+    ordering = ('name',)
