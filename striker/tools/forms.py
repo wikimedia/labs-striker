@@ -334,6 +334,7 @@ class ToolCreateForm(forms.Form):
             "this tool's documentation URL in directories like Hay's "
             "Directory and the admin tool."
         ),
+        required=False,
     )
 
     def __init__(self, *args, **kwargs):
