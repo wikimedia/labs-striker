@@ -349,7 +349,7 @@ class ToolInfo(models.Model):
     def __str__(self):
         return self.name
 
-    def toolinfo(self):
+    def toolinfo(self, request):
         if self.is_webservice:
             url = 'https://{}.toolforge.org/{}'.format(
                 self.tool,
@@ -357,6 +357,10 @@ class ToolInfo(models.Model):
             )
         else:
             url = self.docs
+            if not url:
+                url = request.build_absolute_uri(
+                    urls.reverse('tools:tool', args=[str(self.tool)])
+                )
 
         return collections.OrderedDict([
             ('name', self.name),
