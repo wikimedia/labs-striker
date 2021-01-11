@@ -15,7 +15,7 @@ set -x
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 STRIKER_DIR=$(dirname $(dirname $(readlink -f $0)))
-exec /usr/bin/env ${VENV}/bin/python ${STRIKER_DIR}/manage.py collectstatic -c --noinput \
+/usr/bin/env ${VENV}/bin/python ${STRIKER_DIR}/manage.py collectstatic -c --noinput \
     --ignore src \
     --ignore tests \
     --ignore *.json \
