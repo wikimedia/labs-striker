@@ -1,0 +1,214 @@
+---
+version: "3.9"
+services:
+  striker:
+    build:
+      context: .
+      dockerfile: .pipeline/local-python.Dockerfile
+      args:
+        LIVES_UID: ${LOCAL_UID:?run `make .env`}
+        LIVES_GID: ${LOCAL_GID:?run `make .env`}
+    image: "striker/striker"
+    restart: always
+    # Run container as local user to allow Linux mount writes
+    user: "${LOCAL_UID:?run `make .env`}:${LOCAL_GID:?run `make .env`}"
+    working_dir: /srv/app
+    command: >
+      /srv/dockerize/bin/dockerize
+      -wait tcp://mariadb:3306
+      -wait tcp://openldap:389
+      -wait tcp://keystone:5000
+      -timeout 300s
+      python3 ./manage.py runserver 0.0.0.0:8080
+    volumes:
+      - type: bind
+        source: .
+        target: /srv/app
+        consistency: cached
+    ports:
+      - "${STRIKER_HTTP_PORT:-8080}:8080"
+    networks:
+      default:
+        aliases:
+          - striker.local.wmftest.net
+    depends_on:
+      - mariadb
+      - openldap
+      - phabricator
+      - keystone
+      - sulwiki
+      - ldapwiki
+
+  mariadb:
+    image: docker.io/mariadb:10.4
+    restart: always
+    command:
+      - "--character-set-server=utf8mb4"
+      - "--collation-server=utf8mb4_unicode_ci"
+      - "--local-infile=0"
+      - "--max-allowed-packet=32M"
+      - "--innodb-buffer-pool-size=256MB"
+      - "--sql-mode=STRICT_ALL_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION"
+    environment:
+      MARIADB_INITDB_SKIP_TZINFO: 0
+      MARIADB_ROOT_PASSWORD: root
+    volumes:
+      - type: bind
+        source: ./contrib/docker/mariadb/docker-entrypoint-initdb.d
+        target: /docker-entrypoint-initdb.d
+        consistency: cached
+      - type: volume
+        source: mariadb
+        target: /var/lib/mysql
+        consistency: consistent
+    networks:
+      default:
+        aliases:
+          - mariadb.local.wmftest.net
+
+  openldap:
+    build:
+      context: contrib/docker/openldap
+    image: "striker/openldap"
+    restart: always
+    command:
+      - "--loglevel"
+      - "debug"
+    ports:
+      - "1389:389"
+    volumes:
+      - type: volume
+        source: openldap_ldap
+        target: /var/lib/ldap
+        consistency: consistent
+      - type: volume
+        source: openldap_slapd
+        target: /etc/ldap/slapd.d
+        consistency: consistent
+    networks:
+      default:
+        aliases:
+          - openldap.local.wmftest.net
+
+  phabricator:
+    # image: docker.io/bitnami/phabricator:2021
+    build:
+      context: contrib/docker/phabricator
+    image: "striker/phabricator"
+    restart: always
+    ports:
+      - "8081:8081"
+    environment:
+      PHABRICATOR_USERNAME: admin
+      PHABRICATOR_PASSWORD: docker-phabricator
+      PHABRICATOR_EMAIL: ldapadmin@local.wmftest.net
+      PHABRICATOR_FIRSTNAME: Admin
+      PHABRICATOR_LASTNAME: User
+      PHABRICATOR_HOST: phabricator.local.wmftest.net
+      MARIADB_HOST: mariadb
+      PHABRICATOR_DATABASE_ADMIN_USER: root
+      PHABRICATOR_DATABASE_ADMIN_PASSWORD: root
+      PHABRICATOR_ENABLE_HTTPS: "false"
+      PHABRICATOR_EXTERNAL_HTTP_PORT_NUMBER: 8081
+      APACHE_HTTP_PORT_NUMBER: 8081
+    volumes:
+      - type: bind
+        source: ./contrib/docker/phabricator/docker-entrypoint-init.d
+        target: /docker-entrypoint-init.d
+        consistency: cached
+      - type: volume
+        source: phabricator
+        target: /bitnami/phabricator
+        consistency: consistent
+    networks:
+      default:
+        aliases:
+          - phabricator.local.wmftest.net
+    depends_on:
+      - mariadb
+
+  keystone:
+    build:
+      context: contrib/docker/keystone
+    image: "striker/keystone"
+    restart: always
+    ports:
+      - "5000:5000"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      KEYSTONE_ADMIN_PASSWORD: admin
+      KEYSTONE_DB_HOST: mariadb
+      KEYSTONE_DB_NAME: keystone
+      KEYSTONE_DB_PASSWORD: keystone
+      KEYSTONE_DB_USER: keystone
+      KEYSTONE_DEBUG: "true"
+    networks:
+      default:
+        aliases:
+          - keystone.local.wmftest.net
+    depends_on:
+      - mariadb
+
+  sulwiki:
+    build:
+      context: contrib/docker/mediawiki
+    image: "striker/mediawiki"
+    restart: always
+    environment:
+      APACHE_PORT: 8082
+    ports:
+      - "8082:8082"
+    volumes:
+      - type: bind
+        source: ./contrib/docker/mediawiki/sulwiki/LocalSettings.php
+        target: /var/www/html/LocalSettings.php
+        consistency: cached
+      - type: volume
+        source: sulwiki_images
+        target: /var/www/html/images
+        consistency: consistent
+    networks:
+      default:
+        aliases:
+          - sulwiki.local.wmftest.net
+    depends_on:
+      - mariadb
+
+  ldapwiki:
+    build:
+      context: contrib/docker/mediawiki
+    image: "striker/mediawiki"
+    restart: always
+    environment:
+      APACHE_PORT: 8083
+    ports:
+      - "8083:8083"
+    volumes:
+      - type: bind
+        source: ./contrib/docker/mediawiki/ldapwiki/LocalSettings.php
+        target: /var/www/html/LocalSettings.php
+        consistency: cached
+      - type: volume
+        source: ldapwiki_images
+        target: /var/www/html/images
+        consistency: consistent
+    networks:
+      default:
+        aliases:
+          - ldapwiki.local.wmftest.net
+    depends_on:
+      - mariadb
+
+volumes:
+  mariadb:
+    driver: local
+  openldap_ldap:
+    driver: local
+  openldap_slapd:
+    driver: local
+  phabricator:
+    driver: local
+  sulwiki_images:
+    driver: local
+  ldapwiki_images:
+    driver: local

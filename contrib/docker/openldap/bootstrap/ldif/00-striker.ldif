@@ -1,0 +1,78 @@
+dn: ou=servicegroups,dc=wmftest,dc=net
+objectclass: organizationalUnit
+ou: servicegroups
+objectClass: top
+description: Tools
+
+dn: ou=people,ou=servicegroups,dc=wmftest,dc=net
+objectClass: organizationalUnit
+objectClass: top
+ou: people
+
+dn: ou=projects,dc=wmftest,dc=net
+objectClass: organizationalUnit
+objectClass: top
+description: OU for openstack projects and global groups
+ou: projects
+
+dn: uid=admin,ou=People,dc=wmftest,dc=net
+objectClass: person
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: ldapPublicKey
+objectClass: posixAccount
+objectClass: shadowAccount
+objectClass: top
+cn: Admin
+sn: Admin
+uid: admin
+mail: ldapadmin@local.wmftest.net
+userPassword: admin
+uidNumber: 1001
+gidNumber: 1001
+homeDirectory: /home/admin
+loginShell: /bin/bash
+
+dn: cn=wmf,ou=groups,dc=wmftest,dc=net
+objectClass: groupOfNames
+objectClass: posixGroup
+objectClass: top
+cn: wmf
+gidNumber: 5000
+member: uid=admin,ou=People,dc=wmftest,dc=net
+
+dn: cn=project-tools,ou=groups,dc=wmftest,dc=net
+objectClass: groupOfNames
+objectClass: posixGroup
+objectClass: top
+cn: project-tools
+gidNumber: 5001
+member: uid=admin,ou=People,dc=wmftest,dc=net
+
+dn: cn=tools,ou=projects,dc=wmftest,dc=net
+objectClass: extensibleObject
+objectClass: groupOfNames
+objectClass: top
+cn: tools
+member: uid=admin,ou=People,dc=wmftest,dc=net
+
+dn: ou=sudoers,cn=tools,ou=projects,dc=wmftest,dc=net
+objectClass: organizationalUnit
+objectClass: top
+ou: sudoers
+
+dn: cn=tools.admin,ou=servicegroups,dc=wmftest,dc=net
+objectClass: groupOfNames
+objectClass: posixGroup
+objectClass: top
+cn: tools.admin
+gidNumber: 5002
+member: uid=admin,ou=People,dc=wmftest,dc=net
+
+dn: cn=tools.example,ou=servicegroups,dc=wmftest,dc=net
+objectClass: groupOfNames
+objectClass: posixGroup
+objectClass: top
+cn: tools.example
+gidNumber: 5003
+member: uid=admin,ou=People,dc=wmftest,dc=net

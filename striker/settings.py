@@ -71,6 +71,7 @@ LOGGING = {
     'handlers': {
         'console': {
             'class': 'logging.StreamHandler',
+            'filters': ['request_id'],
             'formatter': 'line',
             'level': 'DEBUG',
         },

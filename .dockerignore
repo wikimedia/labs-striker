@@ -1,0 +1,23 @@
+# Exclude everything by default
+*
+
+# Conditionally include things we know we want in the container
+# Copy .git/refs/heads/* into the container
+!.git
+.git/*
+!.git/HEAD
+!.git/refs/heads/*
+!.pipeline
+!LICENSE
+!README.rst
+!contrib
+!docs
+docs/_build
+!manage.py
+!requirements.txt
+!setup.cfg
+!setup.py
+!static
+!striker
+!test-requirements.txt
+!tox.ini

@@ -2,6 +2,7 @@
 /*.egg
 /*.egg-info
 /.coverage
+/.env
 /.pc
 /.pybuild
 /.python-version
@@ -13,6 +14,7 @@
 /dist
 /docs/_build
 /staticfiles
+/striker.ini
 /striker/local_settings.py
 /tests/cover
 /vagrant_settings.py

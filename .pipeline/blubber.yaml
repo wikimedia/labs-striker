@@ -1,0 +1,74 @@
+version: v4
+
+# FIXME(bd808): find a python3 bullseye base image
+base: docker-registry.wikimedia.org/python3-buster:latest
+
+runs:
+  environment:
+    PYTHONBUFFERED: "1"
+    PYTHONDONTWRITEBYTECODE: "1"
+    PIP_NO_CACHE_DIR: "off"
+    PIP_DISABLE_PIP_VERSION_CHECK: "on"
+    DJANGO_SETTINGS_MODULE: "striker.settings"
+
+variants:
+  base-python:
+    apt:
+      packages:
+        - build-essential
+        - default-libmysqlclient-dev
+        - gettext
+        - git
+        - libldap2-dev
+        - libsasl2-dev
+        - python3-dev
+        - python3-pip
+    python:
+      version: python3
+      requirements:
+        - requirements.txt
+
+  dev-python:
+    includes:
+      - base-python
+    python:
+      requirements:
+        - requirements.txt
+        - test-requirements.txt
+    runs:
+      insecurely: true
+    copies:
+      - from: local
+        source: .
+        destination: .
+
+  local-python:
+    # Local development Python runtime container including special support for
+    # use with docker-compose.
+    includes:
+      - dev-python
+    copies:
+      - from: dockerize
+        source: /srv/dockerize
+        destination: /srv/dockerize
+
+  dockerize:
+    # Bulder container: downloads and unpacks the dockerize utility from
+    # <https://github.com/jwilder/dockerize> to /srv/dockerize
+    runs:
+      environment:
+        DOCKERIZE_VERSION: v0.6.1
+    lives:
+      in: /srv/dockerize/bin
+    apt:
+      packages:
+        - ca-certificates
+        - wget
+    builder:
+      command:
+        - /bin/bash
+        - -c
+        - >-
+          wget --no-verbose https://github.com/jwilder/dockerize/releases/download/${DOCKERIZE_VERSION}/dockerize-linux-amd64-${DOCKERIZE_VERSION}.tar.gz
+          && tar -C /srv/dockerize/bin -xzvf dockerize-linux-amd64-${DOCKERIZE_VERSION}.tar.gz
+          && rm dockerize-linux-amd64-${DOCKERIZE_VERSION}.tar.gz

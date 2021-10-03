@@ -1,0 +1,66 @@
+[DEFAULT]
+{% set admin_password = environ.KEYSTONE_ADMIN_PASSWORD|default('keystone') %}
+admin_token = {{ admin_password }}
+debug = {{ environ.KEYSTONE_DEBUG|default('false') }}
+log_file =
+
+[assignment]
+driver = sql
+
+[database]
+{% set db_user = environ.KEYSTONE_DB_USER|default('keystone') %}
+{% set db_host = environ.KEYSTONE_DB_HOST|default('localhost') %}
+{% set db_port = environ.KEYSTONE_DB_PORT|default('3306') %}
+{% set db_name = environ.KEYSTONE_DB_NAME|default('keystone') %}
+{% set db_pass = environ.KEYSTONE_DB_PASSWORD|default('insert-password-here') %}
+connection = mysql+pymysql://{{ db_user }}:{{ db_pass }}@{{ db_host }}:{{ db_port }}/{{ db_name }}
+connection_recycle_time = 60
+max_pool_size = 2
+
+[identity]
+driver = ldap
+
+[ldap]
+{% set base_dn = environ.KEYSTONE_BASE_DN|default('dc=wmftest,dc=net') %}
+url = {{ environ.KEYSTONE_LDAP_URL|default('ldap://openldap') }}
+user = {{ environ.KEYSTONE_ADMIN_DN|default('cn=admin,dc=wmftest,dc=net') }}
+password = {{ environ.KEYSTONE_ADMIN_PASSWORD|default('keystone') }}
+
+tree_dn = {{ base_dn }}
+
+user_tree_dn = ou=people,{{ base_dn }}
+user_objectclass = inetOrgPerson
+user_id_attribute = uid
+user_name_attribute = cn
+
+ser_allow_create = False
+user_allow_update = False
+user_allow_delete = False
+
+group_tree_dn = ou=groups,{{ base_dn }}
+group_objectclass = groupOfNames
+
+group_allow_create = False
+group_allow_update = False
+group_allow_delete = False
+
+[token]
+provider = fernet
+
+[policy]
+driver = rules
+
+[auth]
+methods = external,password,token
+
+[oslo_messaging_notifications]
+driver = wmfkeystonehooks
+
+[wmfhooks]
+admin_user = admin
+admin_pass = {{ admin_password }}
+auth_url = http://127.0.0.1:5000/v3
+ldap_base_dn = {{ base_dn }}
+ldap_group_base_dn = ou=groups,{{ base_dn }}
+ldap_user_base_dn = ou=people,{{ base_dn }}
+ldap_project_base_dn = ou=projects,{{ base_dn }}

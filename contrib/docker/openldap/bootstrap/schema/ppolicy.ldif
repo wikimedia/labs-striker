@@ -1,0 +1,14 @@
+dn: ou=ppolicies,dc=wmftest,dc=net
+objectClass: organizationalUnit
+objectClass: top
+ou: ppolicies
+
+dn: cn=disabled,ou=ppolicies,dc=wmftest,dc=net
+objectClass: organizationalRole
+objectClass: pwdPolicy
+objectclass: top
+cn: disabled
+pwdAttribute: userPassword
+pwdLockout: TRUE
+pwdMaxAge: 1
+

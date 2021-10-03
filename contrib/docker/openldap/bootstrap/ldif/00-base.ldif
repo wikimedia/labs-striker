@@ -1,0 +1,45 @@
+# Initialize LDAP tree
+#dn: dc=wmftest,dc=net
+#objectclass: dcObject
+#objectclass: organization
+#objectClass: top
+#dc: wmftest
+#o: wmftest
+#description: Docker tree
+
+dn: cn=admin,dc=wmftest,dc=net
+objectClass: organizationalRole
+cn: admin
+description: The superuser account
+
+dn: ou=groups,dc=wmftest,dc=net
+objectclass: organizationalUnit
+ou: groups
+description: Generic groups branch
+
+# Name needs to match up with acls in 00-security.ldif
+dn: cn=Administrators,ou=groups,dc=wmftest,dc=net
+objectClass: groupOfNames
+cn: Administrators
+description: Users with administrative privilege
+member: cn=writer,dc=wmftest,dc=net
+member: cn=admin,dc=wmftest,dc=net
+
+dn: ou=People,dc=wmftest,dc=net
+objectclass: organizationalUnit
+ou: People
+description: People branch
+
+dn: cn=proxyagent,dc=wmftest,dc=net
+objectclass: organizationalRole
+objectClass: simpleSecurityObject
+cn: proxyagent
+description: Account for reading LDAP data
+userPassword: readonly
+
+dn: cn=writer,dc=wmftest,dc=net
+objectclass: organizationalRole
+objectClass: simpleSecurityObject
+cn: writer
+description: Account for editing LDAP data
+userPassword: docker_writer
