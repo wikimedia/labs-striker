@@ -18,6 +18,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
 
+import json
 import logging
 import urllib.parse
 
@@ -138,9 +139,10 @@ class Client(object):
     def oathvalidate(self, username, totp):
         token = self.site.get_token('csrf', force=True)
         result = self.site.api(
-            'oathvalidate', formatversion=2,
+            'oathvalidate',
+            formatversion=2,
             user=username,
-            totp=totp,
+            data=json.dumps({'token': totp}),
             token=token
         )
         return result['oathvalidate']
