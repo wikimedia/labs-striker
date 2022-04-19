@@ -376,7 +376,7 @@ def json_v1(req):
         ensure_ascii=False, indent=2, separators=(',', ':'))
     return HttpResponse(enc.encode(
         [
-            info.toolinfo()
+            info.toolinfo(req)
             for info in ToolInfo.objects.all().order_by('name')
         ]),
         content_type="application/json; charset=utf8"
