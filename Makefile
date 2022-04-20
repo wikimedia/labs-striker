@@ -57,7 +57,7 @@ migrate:  ## Run `manage.py migrate`
 		python3 manage.py migrate
 .PHONY: migrate
 
-init_licenses:  ## Run `manage.py loaddata software_license.json`
+init_licenses:
 	docker-compose exec striker $(DOCKERIZE) \
 		-wait tcp://mariadb:3306 \
 		-wait tcp://keystone:5000 \
@@ -68,6 +68,14 @@ init_licenses:  ## Run `manage.py loaddata software_license.json`
 init: start migrate init_licenses  ## Initialize docker-compose stack
 	docker-compose restart striker
 .PHONY: init
+
+test:  ## Run test suite
+	docker-compose exec striker /bin/bash -c "\
+		set -eux; \
+		export -n PYTHONPATH PIP_FIND_LINKS PIP_WHEEL_DIR PIP_NO_INDEX; \
+		tox \
+	"
+.PHONY: test
 
 .env:  ## Generate a .env file for local development
 	./contrib/make_env.sh ./.env

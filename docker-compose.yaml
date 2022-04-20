@@ -20,6 +20,68 @@ services:
       -wait tcp://keystone:5000
       -timeout 300s
       python3 ./manage.py runserver 0.0.0.0:8080
+    environment:
+      - DJANGO_SECRET_KEY
+      - DJANGO_DEBUG
+      - DJANGO_ALLOWED_HOSTS
+      - LOGGING_HANDLERS
+      - LOGGING_LEVEL
+      - LOGGING_FILE_FILENAME
+      - LOGSTASH_HOST
+      - LOGSTASH_PORT
+      - DB_ENGINE
+      - DB_NAME
+      - DB_USER
+      - DB_PASSWORD
+      - DB_HOST
+      - DB_PORT
+      - LDAP_SERVER_URI
+      - LDAP_BIND_USER
+      - LDAP_BIND_PASSWORD
+      - LDAP_TLS
+      - LDAP_USER_SEARCH_BASE
+      - LDAP_USER_SEARCH_FILTER
+      - LDAP_BASE_DN
+      - STAFF_GROUP_DN
+      - SUPERUSER_GROUP_DN
+      - TOOLS_MAINTAINER_BASE_DN
+      - TOOLS_TOOL_BASE_DN
+      - TOOLS_TOOL_LABS_GROUP_NAME
+      - CACHE_BACKEND
+      - CACHE_LOCATION
+      - STATIC_ROOT
+      - REQUIRE_HTTPS
+      - SSL_CANONICAL_HOST
+      - USE_XFF_HEADER
+      - TRUSTED_PROXY_LIST
+      - REMEMBER_ME_TTL
+      - DEFAULT_GID
+      - DEFAULT_SHELL
+      - MIN_GID
+      - MAX_GID
+      - MIN_UID
+      - MAX_UID
+      - OAUTH_CONSUMER_KEY
+      - OAUTH_CONSUMER_SECRET
+      - OAUTH_MWURL
+      - PHABRICATOR_URL
+      - PHABRICATOR_USER
+      - PHABRICATOR_TOKEN
+      - PHABRICATOR_REPO_ADMIN_GROUP
+      - PHABRICATOR_PARENT_PROJECT
+      - WIKITECH_URL
+      - WIKITECH_USER
+      - WIKITECH_CONSUMER_TOKEN
+      - WIKITECH_CONSUMER_SECRET
+      - WIKITECH_ACCESS_TOKEN
+      - WIKITECH_ACCESS_SECRET
+      - OPENSTACK_URL
+      - OPENSTACK_USER
+      - OPENSTACK_PASSWORD
+      - OPENSTACK_PROJECT
+      - OPENSTACK_USER_ROLE
+      - OPENSTACK_ADMIN_ROLE
+      - FEATURE_ACCOUNT_CREATE
     volumes:
       - type: bind
         source: .

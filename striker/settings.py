@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2016 Wikimedia Foundation and contributors.
+# Copyright (c) 2022 Wikimedia Foundation and contributors.
 # All Rights Reserved.
 #
 # This file is part of Striker.
@@ -18,7 +18,6 @@
 # You should have received a copy of the GNU General Public License
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
 
-import configparser
 import ldap
 import logging
 import os
@@ -26,19 +25,14 @@ import sys
 
 import django_auth_ldap.config
 
+import environ
+
 
 STRIKER_DIR = os.path.dirname(os.path.abspath(__file__))
 BASE_DIR = os.path.dirname(STRIKER_DIR)
 
-# Read configuration settings from ini files
-# Based on example given at:
-# https://code.djangoproject.com/wiki/SplitSettings#ini-stylefilefordeployment
-ini = configparser.RawConfigParser(allow_no_value=True)
-ini.read([
-    os.path.join(STRIKER_DIR, 'striker.ini'),
-    os.path.join(BASE_DIR, 'striker.ini'),
-    '/etc/striker/striker.ini',
-])
+env = environ.Env()
+env.smart_cast = False
 
 # Hack so that we can guard things that will probably fail miserably in test
 # like contacting an external server
@@ -46,6 +40,8 @@ TEST_MODE = 'test' in sys.argv
 
 # == Logging ==
 logging.captureWarnings(True)
+LOGGING_HANDLERS = env.list("LOGGING_HANDLERS", default=["console"])
+LOGGING_LEVEL = env.str("LOGGING_LEVEL", default="WARNING")
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -77,15 +73,15 @@ LOGGING = {
         },
         'file': {
             'class': 'logging.FileHandler',
-            'filename': ini.get('logging', 'FILE_FILENAME'),
+            'filename': env.str("LOGGING_FILE_FILENAME", default="/dev/null"),
             'filters': ['request_id'],
             'formatter': 'line',
             'level': 'DEBUG',
          },
         'logstash': {
             'class': 'logstash.TCPLogstashHandler',
-            'host': ini.get('logging', 'LOGSTASH_HOST'),
-            'port': int(ini.get('logging', 'LOGSTASH_PORT')),
+            'host': env.str("LOGSTASH_HOST", default="127.0.0.1"),
+            'port': env.int("LOGSTASH_PORT", default=11514),
             'version': 1,
             'message_type': 'striker',
             'fqdn': False,
@@ -100,52 +96,51 @@ LOGGING = {
     },
     'loggers': {
         'django': {
-            'handlers': ini.get('logging', 'HANDLERS').split(),
-            'level': ini.get('logging', 'LEVEL'),
+            'handlers': LOGGING_HANDLERS,
+            'level': LOGGING_LEVEL,
             'propagate': False,
         },
         'django.request': {
-            'handlers': ini.get('logging', 'HANDLERS').split(),
-            'level': ini.get('logging', 'LEVEL'),
+            'handlers': LOGGING_HANDLERS,
+            'level': LOGGING_LEVEL,
             'propagate': False,
         },
         'django.security': {
-            'handlers': ini.get('logging', 'HANDLERS').split(),
-            'level': ini.get('logging', 'LEVEL'),
+            'handlers': LOGGING_HANDLERS,
+            'level': LOGGING_LEVEL,
             'propagate': False,
         },
         'django_auth_ldap': {
-            'handlers': ini.get('logging', 'HANDLERS').split(),
-            'level': ini.get('logging', 'LEVEL'),
+            'handlers': LOGGING_HANDLERS,
+            'level': LOGGING_LEVEL,
             'propagate': False,
         },
         'ldapdb': {
-            'handlers': ini.get('logging', 'HANDLERS').split(),
-            'level': ini.get('logging', 'LEVEL'),
+            'handlers': LOGGING_HANDLERS,
+            'level': LOGGING_LEVEL,
             'propagate': False,
         },
         'py.warnings': {
-            'handlers': ini.get('logging', 'HANDLERS').split(),
-            'level': ini.get('logging', 'LEVEL'),
+            'handlers': LOGGING_HANDLERS,
+            'level': LOGGING_LEVEL,
             'propagate': False,
         },
         'ratelimitbackend': {
-            'handlers': ini.get('logging', 'HANDLERS').split(),
-            'level': ini.get('logging', 'LEVEL'),
+            'handlers': LOGGING_HANDLERS,
+            'level': LOGGING_LEVEL,
             'propagate': False,
         },
     },
     'root': {
-        'handlers': ini.get('logging', 'HANDLERS').split(),
-        'level': ini.get('logging', 'LEVEL'),
+        'handlers': LOGGING_HANDLERS,
+        'level': LOGGING_LEVEL,
     },
 }
 
 # == Django settings ==
-SECRET_KEY = ini.get('secrets', 'SECRET_KEY')
-DEBUG = ini.getboolean('debug', 'DEBUG')
-ALLOWED_HOSTS = ini.get('hosts', 'ALLOWED_HOSTS').split()
-
+SECRET_KEY = env.str("DJANGO_SECRET_KEY")
+DEBUG = env.bool("DJANGO_DEBUG", default=False)
+ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS", default=["*"])
 INSTALLED_APPS = (
     'bootstrap3',
     'dal',
@@ -212,18 +207,18 @@ WSGI_APPLICATION = 'striker.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': ini.get('db', 'ENGINE'),
-        'NAME': ini.get('db', 'NAME'),
-        'USER': ini.get('db', 'USER'),
-        'PASSWORD': ini.get('db', 'PASSWORD'),
-        'HOST': ini.get('db', 'HOST'),
-        'PORT': ini.get('db', 'PORT'),
+        'ENGINE': env.str("DB_ENGINE", default="django.db.backends.sqlite3"),
+        'NAME': env.str("DB_NAME", default=":memory:"),
+        'USER': env.str("DB_USER", default=""),
+        'PASSWORD': env.str("DB_PASSWORD", default=""),
+        'HOST': env.str("DB_HOST", default=""),
+        'PORT': env.int("DB_PORT", default=0),
     },
     'ldap': {
         'ENGINE': 'ldapdb.backends.ldap',
-        'NAME': ini.get('ldap', 'SERVER_URI'),
-        'USER': ini.get('ldap', 'BIND_USER'),
-        'PASSWORD': ini.get('ldap', 'BIND_PASSWORD'),
+        'NAME': env.str("LDAP_SERVER_URI", default="ldap://127.0.0.1:389"),
+        'USER': env.str("LDAP_BIND_USER", default=""),
+        'PASSWORD': env.str("LDAP_BIND_PASSWORD", default=""),
     },
 }
 DATABASE_ROUTERS = [
@@ -248,8 +243,11 @@ if DATABASES['default']['ENGINE'] in \
 
 CACHES = {
     'default': {
-        'BACKEND': ini.get('cache', 'BACKEND'),
-        'LOCATION': ini.get('cache', 'LOCATION'),
+        'BACKEND': env.str(
+            "CACHE_BACKEND",
+            default="django.core.cache.backends.memcached.MemcachedCache",
+        ),
+        'LOCATION': env.str("CACHE_LOCATION", default="127.0.0.1:11211"),
         'KEY_PREFIX': 'striker',
         'VERSION': 1,
     }
@@ -264,11 +262,11 @@ USE_TZ = True
 LOGOUT_REDIRECT_URL = 'index'
 
 STATIC_URL = '/static/'
-STATIC_ROOT = ini.get('static', 'STATIC_ROOT')
-if STATIC_ROOT == 'default':
-    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_ROOT = env.str(
+    "STATIC_ROOT", default=os.path.join(BASE_DIR, "staticfiles")
+)
 STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'static'),
+    os.path.join(BASE_DIR, "static"),
 )
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
@@ -279,12 +277,14 @@ STATICFILES_STORAGE = \
 
 # Honor the 'X-Forwarded-Proto' header for request.is_secure()
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-SECURE_SSL_REDIRECT = ini.getboolean('https', 'REQUIRE_HTTPS')
-SECURE_SSL_HOST = ini.get('https', 'SSL_CANONICAL_HOST')
+SECURE_SSL_REDIRECT = env.bool("REQUIRE_HTTPS", default=False)
+SECURE_SSL_HOST = env.str(
+    "SSL_CANONICAL_HOST", default="toolsadmin.wikimedia.org"
+)
 
 # Should we be using X-Forwared-For headers?
-STRIKER_USE_XFF_HEADER = ini.get('xff', 'USE_XFF_HEADER')
-IPWARE_TRUSTED_PROXY_LIST = ini.get('xff', 'TRUSTED_PROXY_LIST').split()
+STRIKER_USE_XFF_HEADER = env.bool("USE_XFF_HEADER", default=False)
+IPWARE_TRUSTED_PROXY_LIST = env.list("TRUSTED_PROXY_LIST", default=[])
 
 # === Sessions ===
 # Cache session data in memcached but keep db persistance as backup
@@ -292,12 +292,12 @@ SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
 # Default session cookie TTL is until browser close. The "remember me" option
 # at login will change this.
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
-SESSION_COOKIE_SECURE = ini.getboolean('https', 'REQUIRE_HTTPS')
-REMEMBER_ME_TTL = int(ini.get('user_session', 'REMEMBER_ME_TTL'))
+SESSION_COOKIE_SECURE = env.bool("REQUIRE_HTTPS", default=False)
+REMEMBER_ME_TTL = env.int("REMEMBER_ME_TTL", default=1209600)  # 14 days
 
 # === CSRF ===
 CSRF_COOKIE_HTTPONLY = True
-CSRF_COOKIE_SECURE = ini.getboolean('https', 'REQUIRE_HTTPS')
+CSRF_COOKIE_SECURE = env.bool("REQUIRE_HTTPS", default=False)
 
 # === django.middleware.security.SecurityMiddleware flags ===
 SECURE_CONTENT_TYPE_NOSNIFF = True
@@ -339,12 +339,14 @@ BOOTSTRAP3 = {
 
 # == Authentication settings ==
 # LDAP Authentication
-AUTH_LDAP_SERVER_URI = ini.get('ldap', 'SERVER_URI')
-AUTH_LDAP_START_TLS = ini.getboolean('ldap', 'TLS')
+AUTH_LDAP_SERVER_URI = env.str(
+    "LDAP_SERVER_URI", default="ldap://127.0.0.1:389"
+)
+AUTH_LDAP_START_TLS = env.bool("LDAP_TLS", default=False)
 AUTH_LDAP_USER_SEARCH = django_auth_ldap.config.LDAPSearch(
-    ini.get('ldap', 'USER_SEARCH_BASE'),
+    env.str("LDAP_USER_SEARCH_BASE", default="ou=people,dc=wikimedia,dc=org"),
     ldap.SCOPE_ONELEVEL,
-    ini.get('ldap', 'USER_SEARCH_FILTER')
+    env.str("LDAP_USER_SEARCH_FILTER", default="(cn=%(user)s)"),
 )
 AUTH_LDAP_USER_QUERY_FIELD = 'ldapname'
 AUTH_LDAP_USER_ATTR_MAP = {
@@ -353,15 +355,21 @@ AUTH_LDAP_USER_ATTR_MAP = {
     'shellname': 'uid',
 }
 AUTH_LDAP_GROUP_SEARCH = django_auth_ldap.config.LDAPSearch(
-    ini.get('ldap', 'BASE_DN'),
+    env.str("LDAP_BASE_DN", default="dc=wikimedia,dc=org"),
     ldap.SCOPE_SUBTREE,
     '(objectClass=groupOfNames)'
 )
 AUTH_LDAP_GROUP_TYPE = django_auth_ldap.config.GroupOfNamesType()
 AUTH_LDAP_MIRROR_GROUPS = True
 AUTH_LDAP_USER_FLAGS_BY_GROUP = {
-    'is_staff': ini.get('ldap', 'STAFF_GROUP_DN'),
-    'is_superuser': ini.get('ldap', 'SUPERUSER_GROUP_DN'),
+    'is_staff': env.str(
+        "STAFF_GROUP_DN",
+        default="cn=tools.admin,ou=servicegroups,dc=wikimedia,dc=org",
+    ),
+    'is_superuser': env.str(
+        "SUPERUSER_GROUP_DN",
+        default="cn=tools.admin,ou=servicegroups,dc=wikimedia,dc=org",
+    ),
 }
 
 
@@ -375,60 +383,83 @@ AUTH_USER_MODEL = 'labsauth.LabsUser'
 LOGIN_URL = 'labsauth:login'
 LOGIN_REDIRECT_URL = '/'
 
-LABSAUTH_USER_BASE = ini.get('ldap', 'USER_SEARCH_BASE')
-LABSAUTH_GROUP_BASE = ini.get('ldap', 'BASE_DN')
+LABSAUTH_USER_BASE = env.str(
+    "LDAP_USER_SEARCH_BASE", default="ou=people,dc=wikimedia,dc=org"
+)
+LABSAUTH_GROUP_BASE = env.str("LDAP_BASE_DN", default="dc=wikimedia,dc=org")
 
-LABSAUTH_DEFAULT_GID = int(ini.get('ldap', 'DEFAULT_GID'))
-LABSAUTH_DEFAULT_SHELL = ini.get('ldap', 'DEFAULT_SHELL')
-LABSAUTH_MIN_GID = int(ini.get('ldap', 'MIN_GID'))
-LABSAUTH_MAX_GID = int(ini.get('ldap', 'MAX_GID'))
-LABSAUTH_MIN_UID = int(ini.get('ldap', 'MIN_UID'))
-LABSAUTH_MAX_UID = int(ini.get('ldap', 'MAX_UID'))
+LABSAUTH_DEFAULT_GID = env.int("DEFAULT_GID", default=500)
+LABSAUTH_DEFAULT_SHELL = env.str("DEFAULT_SHELL", default="/bin/bash")
+LABSAUTH_MIN_GID = env.int("MIN_GID", default=50000)
+LABSAUTH_MAX_GID = env.int("MAX_GID", default=59999)
+LABSAUTH_MIN_UID = env.int("MIN_UID", default=500)
+LABSAUTH_MAX_UID = env.int("MAX_UID", default=49999)
 
 # == OAuth settings ==
-OAUTH_CONSUMER_KEY = ini.get('oauth', 'CONSUMER_KEY')
-OAUTH_CONSUMER_SECRET = ini.get('oauth', 'CONSUMER_SECRET')
-OAUTH_MWURL = ini.get('oauth', 'MWURL')
+OAUTH_CONSUMER_KEY = env.str("OAUTH_CONSUMER_KEY")
+OAUTH_CONSUMER_SECRET = env.str("OAUTH_CONSUMER_SECRET")
+OAUTH_MWURL = env.str(
+    "OAUTH_MWURL", default="https://meta.wikimedia.org/w/index.php"
+)
 
 # == Phabricator settings ==
-PHABRICATOR_URL = ini.get('phabricator', 'SERVER_URL')
-PHABRICATOR_USER = ini.get('phabricator', 'USER')
-PHABRICATOR_TOKEN = ini.get('phabricator', 'TOKEN')
+PHABRICATOR_URL = env.str(
+    "PHABRICATOR_URL", default="https://phabricator.wikimedia.org"
+)
+PHABRICATOR_USER = env.str("PHABRICATOR_USER", default="StrikerBot")
+PHABRICATOR_TOKEN = env.str("PHABRICATOR_TOKEN")
 # phid of group granted Diffusion admin rights (i.e. #Repository-Admins)
-PHABRICATOR_REPO_ADMIN_GROUP = ini.get('phabricator', 'REPO_ADMIN_GROUP')
+PHABRICATOR_REPO_ADMIN_GROUP = env.str(
+    "PHABRICATOR_REPO_ADMIN_GROUP", default="PHID-PROJ-uew7bzww4e66466eglzw"
+)
 # phid of project that tool projects should be made under (i.e. #tools)
-PHABRICATOR_PARENT_PROJECT = ini.get('phabricator', 'PARENT_PROJECT')
+PHABRICATOR_PARENT_PROJECT = env.str(
+    "PHABRICATOR_PARENT_PROJECT", default="PHID-PROJ-zywtwi3xlva5ohkdndwb"
+)
 
 # == Wikitech settings ==
-WIKITECH_URL = ini.get('wikitech', 'SERVER_URL')
-WIKITECH_USER = ini.get('wikitech', 'USER')
-WIKITECH_CONSUMER_TOKEN = ini.get('wikitech', 'CONSUMER_TOKEN')
-WIKITECH_CONSUMER_SECRET = ini.get('wikitech', 'CONSUMER_SECRET')
-WIKITECH_ACCESS_TOKEN = ini.get('wikitech', 'ACCESS_TOKEN')
-WIKITECH_ACCESS_SECRET = ini.get('wikitech', 'ACCESS_SECRET')
+WIKITECH_URL = env.str(
+    "WIKITECH_URL", default="https://wikitech.wikimedia.org"
+)
+WIKITECH_USER = env.str("WIKITECH_USER", default="StrikerBot")
+WIKITECH_CONSUMER_TOKEN = env.str("WIKITECH_CONSUMER_TOKEN")
+WIKITECH_CONSUMER_SECRET = env.str("WIKITECH_CONSUMER_SECRET")
+WIKITECH_ACCESS_TOKEN = env.str("WIKITECH_ACCESS_TOKEN")
+WIKITECH_ACCESS_SECRET = env.str("WIKITECH_ACCESS_SECRET")
 
 # == Tools settings ==
-TOOLS_MAINTAINER_BASE_DN = ini.get('ldap', 'TOOLS_MAINTAINER_BASE_DN')
-TOOLS_TOOL_BASE_DN = ini.get('ldap', 'TOOLS_TOOL_BASE_DN')
-TOOLS_TOOL_LABS_GROUP_NAME = ini.get('ldap', 'TOOLS_TOOL_LABS_GROUP_NAME')
+TOOLS_MAINTAINER_BASE_DN = env.str(
+    "TOOLS_MAINTAINER_BASE_DN", default="ou=people,dc=wikimedia,dc=org"
+)
+TOOLS_TOOL_BASE_DN = env.str(
+    "TOOLS_TOOL_BASE_DN", default="ou=servicegroups,dc=wikimedia,dc=org"
+)
+TOOLS_TOOL_LABS_GROUP_NAME = env.str(
+    "TOOLS_TOOL_LABS_GROUP_NAME", default="project-tools"
+)
 
 # == Project settings ==
-PROJECTS_BASE_DN = 'ou=projects,{}'.format(ini.get('ldap', 'BASE_DN'))
+PROJECTS_BASE_DN = 'ou=projects,{}'.format(
+    env.str("LDAP_BASE_DN", default="dc=wikimedia,dc=org")
+)
 
 # == OATH settings ==
 OATHMIDDLEWARE_REDIRECT = 'labsauth:oath'
 
 # == OpenStack settings ==
-OPENSTACK_URL = ini.get('openstack', 'URL')
-OPENSTACK_USER = ini.get('openstack', 'USER')
-OPENSTACK_PASSWORD = ini.get('openstack', 'PASSWORD')
-OPENSTACK_PROJECT = ini.get('openstack', 'PROJECT')
-OPENSTACK_USER_ROLE = ini.get('openstack', 'USER_ROLE')
-OPENSTACK_ADMIN_ROLE = ini.get('openstack', 'ADMIN_ROLE')
+OPENSTACK_URL = env.str(
+    "OPENSTACK_URL",
+    default="https://openstack.eqiad1.wikimediacloud.org:25000/v3"
+)
+OPENSTACK_USER = env.str("OPENSTACK_USER", default="novaadmin")
+OPENSTACK_PASSWORD = env.str("OPENSTACK_PASSWORD")
+OPENSTACK_PROJECT = env.str("OPENSTACK_PROJECT", default="tools")
+OPENSTACK_USER_ROLE = env.str("OPENSTACK_USER_ROLE", default="user")
+OPENSTACK_ADMIN_ROLE = env.str("OPENSTACK_ADMIN_ROLE", default="projectadmin")
 
 # == Notifications ==
 NOTIFICATIONS_SOFT_DELETE = True
 NOTIFICATIONS_USE_JSONFIELD = True
 
 # == Feature flags ==
-FEATURE_ACCOUNT_CREATE = ini.getboolean('features', 'ACCOUNT_CREATE')
+FEATURE_ACCOUNT_CREATE = env.bool("FEATURE_ACCOUNT_CREATE", default=True)

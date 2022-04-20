@@ -1,2 +1,1 @@
--r ../requirements.txt
-sphinx  # BSD
+Sphinx<5,>=4.5.0  # BSD

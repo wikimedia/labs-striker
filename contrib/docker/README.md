@@ -53,7 +53,7 @@ http://sulwiki.local.wmftest.net:8082/wiki/Special:OAuthConsumerRegistration/pro
 
 * Application name: Phabricator
 * Application description: Phabricator login
-* OAuth "callback" URL: http://phabricator.local.wmftest.net:8081/auth/login/mediawiki:sulwiki/
+* OAuth "callback" URL: http://phabricator.local.wmftest.net:8081/auth/login/mediawiki:sulwiki.local.wmftest.net/
 * Check the 'Allow consumer to specify a callback in requests and use
   "callback" URL above as a required prefix.' checkbox
 * Types of grants being requested: "User identity verification only with
@@ -176,23 +176,15 @@ http://phabricator.local.wmftest.net:8081/auth/config/edit/3/
 ### Connect Phabricator admin user with sulwiki Admin account
 http://phabricator.local.wmftest.net:8081/auth/link/3/
 
-This might fail with cryptic errors and stack traces. If it does that is no
-big deal, but you may have a more difficult time testing features of Striker
-which involve searching for Phabricator users based on their SUL account
-information.
-
-FIXME: figure out why "Expected 'oauth_callback_confirmed' to be 'true'!" is
-still happening after fixing the vendor deps...
-
-### Create a "striker" bot account
+### Create a StrikerBot bot account
 http://phabricator.local.wmftest.net:8081/people/new/bot/
 
-* Username: striker
+* Username: StrikerBot
 * Real Name: Toolforge helper
 * Email: striker@local.wmftest.net
 
-### Generate a Conduit API token for "striker"
-http://phabricator.local.wmftest.net:8081/settings/user/striker/page/apitokens/
+### Generate a Conduit API token for StrikerBot
+http://phabricator.local.wmftest.net:8081/settings/user/StrikerBot/page/apitokens/
 
 Copy the API token for use later in configuring the Striker app
 
@@ -202,7 +194,7 @@ http://phabricator.local.wmftest.net:8081/project/edit/form/default/
 * Name: Repository-Admins
 * Icon: Group
 * Color: Violet
-* Initial Members: admin, striker
+* Initial Members: admin, StrikerBot
 * Editable By: Project Members
 * Joinable By: Administrators
 
@@ -238,18 +230,14 @@ Setup Striker
 -------------
 URL: http://striker.local.wmftest.net:8080/
 
-* Copy contrib/docker/striker.ini to the root of the project.
-* Add these settings to the `[oauth]` section:
-  * CONSUMER_KEY = <32 char consumer token>
-  * CONSUMER_SECRET = <40 char secret token>
-* Add these settings to the `[phabricator]` section:
-  * TOKEN = api-<28 chars>
-  * REPO_ADMIN_GROUP = PHID-PROJ-<20 chars>
-  * PARENT_PROJECT = PHID-PROJ-<20 chars>
-* Add these settings to the `[wikitech]` section:
-  * CONSUMER_TOKEN = <32 char consumer token>
-  * CONSUMER_SECRET = <40 char consumer secret>
-  * ACCESS_TOKEN = <32 char access token>
-  * ACCESS_SECRET = <40 char access secret>
-
-* Load the new settings: `docker-compose restart striker`
+* Edit your .env configuration file:
+  * OAUTH_CONSUMER_KEY = <32 char consumer token>
+  * OAUTH_CONSUMER_SECRET = <40 char secret token>
+  * PHABRICATOR_TOKEN = api-<28 chars>
+  * PHABRICATOR_REPO_ADMIN_GROUP = PHID-PROJ-<20 chars>
+  * PHABRICATOR_PARENT_PROJECT = PHID-PROJ-<20 chars>
+  * WIKITECH_CONSUMER_TOKEN = <32 char consumer token>
+  * WIKITECH_CONSUMER_SECRET = <40 char consumer secret>
+  * WIKITECH_ACCESS_TOKEN = <32 char access token>
+  * WIKITECH_ACCESS_SECRET = <40 char access secret>
+* Load the new settings: `make restart tail`
