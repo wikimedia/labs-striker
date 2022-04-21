@@ -42,6 +42,18 @@ variants:
         source: .
         destination: .
 
+  test-python:
+    # CI container: runs tox checks on Python code
+    includes:
+      - dev-python
+    entrypoint:
+      - /bin/bash
+      - -c
+      - >-
+        set -eux;
+        export -n PYTHONPATH PIP_FIND_LINKS PIP_WHEEL_DIR PIP_NO_INDEX;
+        tox
+
   local-python:
     # Local development Python runtime container including special support for
     # use with docker-compose.
@@ -72,3 +84,49 @@ variants:
           wget --no-verbose https://github.com/jwilder/dockerize/releases/download/${DOCKERIZE_VERSION}/dockerize-linux-amd64-${DOCKERIZE_VERSION}.tar.gz
           && tar -C /srv/dockerize/bin -xzvf dockerize-linux-amd64-${DOCKERIZE_VERSION}.tar.gz
           && rm dockerize-linux-amd64-${DOCKERIZE_VERSION}.tar.gz
+
+  prep:
+    # Builder container: compiles Django static assets
+    includes:
+      - base-python
+    runs:
+      environment:
+        DJANGO_SECRET_KEY: NOT_REALLY_A_SECRET_IN_PREP_BUILD
+        OAUTH_CONSUMER_KEY: DUMMY_VALUE_FOR_PREP_BUILD
+        OAUTH_CONSUMER_SECRET: DUMMY_VALUE_FOR_PREP_BUILD
+        PHABRICATOR_TOKEN: DUMMY_VALUE_FOR_PREP_BUILD
+        WIKITECH_CONSUMER_TOKEN: DUMMY_VALUE_FOR_PREP_BUILD
+        WIKITECH_CONSUMER_SECRET: DUMMY_VALUE_FOR_PREP_BUILD
+        WIKITECH_ACCESS_TOKEN: DUMMY_VALUE_FOR_PREP_BUILD
+        WIKITECH_ACCESS_SECRET: DUMMY_VALUE_FOR_PREP_BUILD
+        OPENSTACK_PASSWORD: DUMMY_VALUE_FOR_PREP_BUILD
+    builder:
+      requirements:
+        - from: local
+          source: .
+          destination: .
+      command:
+        - /bin/bash
+        - -c
+        - >-
+          set -eux;
+          ls -alh
+          && (python3 manage.py collectstatic -c --no-input --ignore src --ignore tests --ignore *.json --ignore Gruntfile.js
+          && cd /srv/app/staticfiles
+          && python3 -mjson.tool staticfiles.json > staticfiles.json.pretty
+          && mv staticfiles.json.pretty staticfiles.json)
+
+  production:
+    includes:
+      - base-python
+    copies:
+      - from: prep
+        source: /srv/app
+        destination: .
+    entrypoint:
+      - python3
+      - manage.py
+      - runserver
+      - --noreload
+      - --nostatic
+      - 0.0.0.0:8000

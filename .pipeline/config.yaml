@@ -1,0 +1,21 @@
+pipelines:
+  test:
+    blubberfile: blubber.yaml
+    stages:
+      - name: test-python
+        build: test-python
+        run:
+          env:
+            PIPELINE_RUNNING: '1'
+
+  publish:
+    blubberfile: blubber.yaml
+    stages:
+      - name: production
+        build: production
+        publish: &publish_with_tags
+          image:
+            id: '${.imageID}'
+            tags:
+              - latest
+              - '${setup.tag}'
