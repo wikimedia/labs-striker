@@ -1,25 +1,17 @@
 ---
-version: "3.9"
+version: "2.4"
 services:
   striker:
-    build:
-      context: .
-      dockerfile: .pipeline/local-python.Dockerfile
-      args:
-        LIVES_UID: ${LOCAL_UID:?run `make .env`}
-        LIVES_GID: ${LOCAL_GID:?run `make .env`}
-    image: "striker/striker"
+    image: docker-registry.wikimedia.org/wikimedia/labs-striker:latest
     restart: always
-    # Run container as local user to allow Linux mount writes
-    user: "${LOCAL_UID:?run `make .env`}:${LOCAL_GID:?run `make .env`}"
-    working_dir: /srv/app
-    command: >
-      /srv/dockerize/bin/dockerize
-      -wait tcp://mariadb:3306
-      -wait tcp://openldap:389
-      -wait tcp://keystone:5000
-      -timeout 300s
-      python3 ./manage.py runserver 0.0.0.0:8080
+    entrypoint:
+      - /bin/bash
+      - -c
+      - >-
+        set -eux;
+        python3 ./manage.py migrate
+        && python3 ./manage.py createinitialrevisions
+        && python3 ./manage.py runserver --noreload --nostatic 0.0.0.0:8000
     environment:
       - DJANGO_SECRET_KEY
       - DJANGO_DEBUG
@@ -82,13 +74,10 @@ services:
       - OPENSTACK_USER_ROLE
       - OPENSTACK_ADMIN_ROLE
       - FEATURE_ACCOUNT_CREATE
-    volumes:
-      - type: bind
-        source: .
-        target: /srv/app
-        consistency: cached
+    env_file:
+      - ./.env
     ports:
-      - "${STRIKER_HTTP_PORT:-8080}:8080"
+      - 8000:8000
     networks:
       default:
         aliases:
@@ -103,7 +92,7 @@ services:
 
   mariadb:
     build:
-      context: contrib/docker/mariadb
+      context: mariadb
     image: "striker/mariadb"
     restart: always
     volumes:
@@ -118,7 +107,7 @@ services:
 
   openldap:
     build:
-      context: contrib/docker/openldap
+      context: openldap
     image: "striker/openldap"
     restart: always
     command:
@@ -142,9 +131,12 @@ services:
 
   phabricator:
     build:
-      context: contrib/docker/phabricator
+      context: phabricator
     image: "striker/phabricator"
     restart: always
+    environment:
+      PHABRICATOR_HOST: phabricator-striker.wmcloud.org
+      PHABRICATOR_URI: https://phabricator-striker.wmcloud.org
     ports:
       - "8081:8081"
     volumes:
@@ -152,16 +144,12 @@ services:
         source: phabricator
         target: /bitnami/phabricator
         consistency: consistent
-    networks:
-      default:
-        aliases:
-          - phabricator.local.wmftest.net
     depends_on:
       - mariadb
 
   keystone:
     build:
-      context: contrib/docker/keystone
+      context: keystone
     image: "striker/keystone"
     restart: always
     ports:
@@ -175,51 +163,45 @@ services:
 
   sulwiki:
     build:
-      context: contrib/docker/mediawiki
+      context: mediawiki
     image: "striker/mediawiki"
     restart: always
     environment:
       APACHE_PORT: 8082
+      WG_SERVER: https://sulwiki-striker.wmcloud.org
     ports:
       - "8082:8082"
     volumes:
       - type: bind
-        source: ./contrib/docker/mediawiki/sulwiki/LocalSettings.php
+        source: ./mediawiki/sulwiki/LocalSettings.php
         target: /var/www/html/LocalSettings.php
         consistency: cached
       - type: volume
         source: sulwiki_images
         target: /var/www/html/images
         consistency: consistent
-    networks:
-      default:
-        aliases:
-          - sulwiki.local.wmftest.net
     depends_on:
       - mariadb
 
   ldapwiki:
     build:
-      context: contrib/docker/mediawiki
+      context: mediawiki
     image: "striker/mediawiki"
     restart: always
     environment:
       APACHE_PORT: 8083
+      WG_SERVER: https://ldapwiki-striker.wmcloud.org
     ports:
       - "8083:8083"
     volumes:
       - type: bind
-        source: ./contrib/docker/mediawiki/ldapwiki/LocalSettings.php
+        source: ./mediawiki/ldapwiki/LocalSettings.php
         target: /var/www/html/LocalSettings.php
         consistency: cached
       - type: volume
         source: ldapwiki_images
         target: /var/www/html/images
         consistency: consistent
-    networks:
-      default:
-        aliases:
-          - ldapwiki.local.wmftest.net
     depends_on:
       - mariadb
 

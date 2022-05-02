@@ -9,6 +9,7 @@
 /.tox
 /.venv
 /build
+/contrib/docker/.env
 /cover
 /db.sqlite3
 /dist

@@ -6,6 +6,7 @@ ENV PHABRICATOR_USERNAME=admin \
     PHABRICATOR_FIRSTNAME=Admin \
     PHABRICATOR_LASTNAME=User \
     PHABRICATOR_HOST=phabricator.local.wmftest.net \
+    PHABRICATOR_URI=http://phabricator.local.wmftest.net:8081 \
     MARIADB_HOST=mariadb \
     PHABRICATOR_DATABASE_ADMIN_USER=root \
     PHABRICATOR_DATABASE_ADMIN_PASSWORD=root \

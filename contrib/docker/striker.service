@@ -1,0 +1,15 @@
+[Unit]
+Description=Striker service with docker-compose
+After=docker.service
+Wants=network-online.target docker.socket
+Requires=docker.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+WorkingDirectory=/srv/striker/contrib/docker
+ExecStart=/usr/bin/docker-compose -f cloud-vps.yaml up --build --detach
+ExecStop=/usr/bin/docker-compose -f cloud-vps.yaml down
+
+[Install]
+WantedBy=local.target

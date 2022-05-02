@@ -1,6 +1,6 @@
 #!/bin/bash
 
-/opt/bitnami/phabricator/bin/config set phabricator.base-uri 'http://phabricator.local.wmftest.net:8081'
+/opt/bitnami/phabricator/bin/config set phabricator.base-uri $PHABRICATOR_URI
 /opt/bitnami/phabricator/bin/config set ui.header-color 'red'
 /opt/bitnami/phabricator/bin/config set ui.footer-items '[{"name":"Striker
 local dev stack"}]'

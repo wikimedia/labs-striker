@@ -15,6 +15,9 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 	exit;
 }
 
+function env( $name, $default = false ) {
+	return getenv( $name ) ?: $default;
+}
 
 ## Uncomment this to disable output compression
 # $wgDisableOutputCompression = true;
@@ -29,7 +32,8 @@ $wgSitename = "SULWiki";
 $wgScriptPath = "/w";
 
 ## The protocol and server name to use in fully-qualified URLs
-$wgServer = "http://sulwiki.local.wmftest.net:8082";
+$wgServer = env( "WG_SERVER", "http://sulwiki.local.wmftest.net:8082" );
+$wgCanonicalServer = $wgServer;
 
 ## The URL path to static resources (images, scripts, etc.)
 $wgResourceBasePath = $wgScriptPath;
