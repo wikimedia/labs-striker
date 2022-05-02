@@ -102,23 +102,11 @@ services:
       - ldapwiki
 
   mariadb:
-    image: docker.io/mariadb:10.4
+    build:
+      context: contrib/docker/mariadb
+    image: "striker/mariadb"
     restart: always
-    command:
-      - "--character-set-server=utf8mb4"
-      - "--collation-server=utf8mb4_unicode_ci"
-      - "--local-infile=0"
-      - "--max-allowed-packet=32M"
-      - "--innodb-buffer-pool-size=256MB"
-      - "--sql-mode=STRICT_ALL_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION"
-    environment:
-      MARIADB_INITDB_SKIP_TZINFO: 0
-      MARIADB_ROOT_PASSWORD: root
     volumes:
-      - type: bind
-        source: ./contrib/docker/mariadb/docker-entrypoint-initdb.d
-        target: /docker-entrypoint-initdb.d
-        consistency: cached
       - type: volume
         source: mariadb
         target: /var/lib/mysql
@@ -160,24 +148,7 @@ services:
     restart: always
     ports:
       - "8081:8081"
-    environment:
-      PHABRICATOR_USERNAME: admin
-      PHABRICATOR_PASSWORD: docker-phabricator
-      PHABRICATOR_EMAIL: ldapadmin@local.wmftest.net
-      PHABRICATOR_FIRSTNAME: Admin
-      PHABRICATOR_LASTNAME: User
-      PHABRICATOR_HOST: phabricator.local.wmftest.net
-      MARIADB_HOST: mariadb
-      PHABRICATOR_DATABASE_ADMIN_USER: root
-      PHABRICATOR_DATABASE_ADMIN_PASSWORD: root
-      PHABRICATOR_ENABLE_HTTPS: "false"
-      PHABRICATOR_EXTERNAL_HTTP_PORT_NUMBER: 8081
-      APACHE_HTTP_PORT_NUMBER: 8081
     volumes:
-      - type: bind
-        source: ./contrib/docker/phabricator/docker-entrypoint-init.d
-        target: /docker-entrypoint-init.d
-        consistency: cached
       - type: volume
         source: phabricator
         target: /bitnami/phabricator
@@ -196,14 +167,6 @@ services:
     restart: always
     ports:
       - "5000:5000"
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      KEYSTONE_ADMIN_PASSWORD: admin
-      KEYSTONE_DB_HOST: mariadb
-      KEYSTONE_DB_NAME: keystone
-      KEYSTONE_DB_PASSWORD: keystone
-      KEYSTONE_DB_USER: keystone
-      KEYSTONE_DEBUG: "true"
     networks:
       default:
         aliases:

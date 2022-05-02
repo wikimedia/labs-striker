@@ -14,3 +14,11 @@ RUN set -eux; \
 ENV KOLLA_CONFIG_STRATEGY=COPY_ONCE
 COPY config.json /var/lib/kolla/config_files/config.json
 COPY src /var/lib/kolla/config_files/src
+
+ENV MYSQL_ROOT_PASSWORD=root \
+    KEYSTONE_ADMIN_PASSWORD=admin \
+    KEYSTONE_DB_HOST=mariadb \
+    KEYSTONE_DB_NAME=keystone \
+    KEYSTONE_DB_PASSWORD=keystone \
+    KEYSTONE_DB_USER=keystone \
+    KEYSTONE_DEBUG="true"
