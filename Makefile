@@ -77,6 +77,14 @@ test:  ## Run test suite
 	"
 .PHONY: test
 
+shell:  ## Open a shell
+	docker-compose exec \
+		-e PIP_FIND_LINKS= \
+		-e PIP_NO_INDEX= \
+		-e PIP_WHEEL_DIR= \
+		striker /bin/bash
+.PHONY: shell
+
 .env:  ## Generate a .env file for local development
 	./contrib/make_env.sh ./.env
 

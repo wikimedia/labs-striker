@@ -1,1 +1,1 @@
-Sphinx<5,>=4.5.0  # BSD
+Sphinx==4.3.2  # BSD
