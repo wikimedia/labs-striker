@@ -7,7 +7,8 @@ Wikimedia Toolforge developers. A blacksmith's striker is an assistant whose
 job is to swing a large sledgehammer in forging operations at the direction of
 the blacksmith.
 
-Documentation for running Striker locally is available at https://wikitech.wikimedia.org/wiki/Toolsadmin.wikimedia.org.
+See contrib/docker/README.md for information on setting up a local development
+environment.
 
 License
 =======
