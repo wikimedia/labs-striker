@@ -20,7 +20,7 @@
 
 from django.conf import settings
 
-import ipware.ip
+import ipware
 
 
 class XForwaredForMiddleware(object):
@@ -32,9 +32,10 @@ class XForwaredForMiddleware(object):
         if settings.STRIKER_USE_XFF_HEADER:
             ip = None
             if settings.IPWARE_TRUSTED_PROXY_LIST:
-                ip = ipware.ip.get_trusted_ip(request)
-            else:
-                ip = ipware.ip.get_ip(request)
+                ip, _ = ipware.get_client_ip(
+                    request,
+                    proxy_trusted_ips=settings.IPWARE_TRUSTED_PROXY_LIST,
+                )
             if ip is not None:
                 request.META['REMOTE_ADDR'] = ip
         response = self.get_response(request)
