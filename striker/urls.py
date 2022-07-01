@@ -20,8 +20,10 @@
 
 from django.conf import settings
 from django.conf.urls.static import static
+from django.contrib.staticfiles.storage import staticfiles_storage
 from django.urls import include
 from django.urls import path
+from django.views.generic.base import RedirectView
 
 import notifications.urls
 import ratelimitbackend.admin
@@ -48,6 +50,16 @@ urlpatterns = [
     path('e400', striker.views.force_400, name='force_400'),
     path('e403', striker.views.force_403, name='force_403'),
     path('e500', striker.views.force_500, name='force_500'),
+    path(
+        "favicon.ico",
+        RedirectView.as_view(url=staticfiles_storage.url("img/favicon.ico")),
+        name="favicon",
+    ),
+    path(
+        "robots.txt",
+        RedirectView.as_view(url=staticfiles_storage.url("robots.txt")),
+        name="robots_txt",
+    ),
 
     path('alerts/', include(notifications.urls, namespace='notifications')),
     path('auth/', include(striker.labsauth.urls, namespace='labsauth')),
