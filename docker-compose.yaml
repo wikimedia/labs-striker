@@ -19,7 +19,7 @@ services:
       -wait tcp://openldap:389
       -wait tcp://keystone:5000
       -timeout 300s
-      python3 ./manage.py runserver 0.0.0.0:8080
+      python3 ./manage.py runserver --nostatic 0.0.0.0:8080
     environment:
       - DJANGO_SECRET_KEY
       - DJANGO_DEBUG

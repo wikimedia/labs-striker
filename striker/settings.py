@@ -165,6 +165,8 @@ INSTALLED_APPS = (
 
 MIDDLEWARE = (
     'log_request_id.middleware.RequestIDMiddleware',
+    'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'striker.middleware.XForwaredForMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -173,7 +175,6 @@ MIDDLEWARE = (
     'striker.labsauth.middleware.OathMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django.middleware.security.SecurityMiddleware',
     'striker.middleware.ReferrerPolicyMiddleware',
     'csp.middleware.CSPMiddleware',
     'ratelimitbackend.middleware.RateLimitMiddleware',
@@ -272,8 +273,12 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 )
-STATICFILES_STORAGE = \
-    'django.contrib.staticfiles.storage.ManifestStaticFilesStorage'
+# Tests should use django.contrib.staticfiles.storage.StaticFilesStorage.
+STATICFILES_STORAGE = env.str(
+    "STATICFILES_STORAGE",
+    default="whitenoise.storage.CompressedManifestStaticFilesStorage",
+)
+WHITENOISE_INDEX_FILE = True
 
 # Honor the 'X-Forwarded-Proto' header for request.is_secure()
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')

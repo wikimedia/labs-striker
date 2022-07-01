@@ -36,3 +36,4 @@ requests-oauthlib<2,>=1.3.1  # ISC
 six<2,>=1.16.0  # MIT
 sqlparse<0.5,>=0.4.2  # BSD
 sshpubkeys<4,>=3.3.1  # BSD
+whitenoise<7,>=6.2.0  # MIT
