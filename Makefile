@@ -85,6 +85,10 @@ shell:  ## Open a shell
 		striker /bin/bash
 .PHONY: shell
 
+gitlab:  ## Open a shell in gitlab container
+	docker-compose exec gitlab /bin/bash
+.PHONY: gitlab
+
 .env:  ## Generate a .env file for local development
 	./contrib/make_env.sh ./.env
 

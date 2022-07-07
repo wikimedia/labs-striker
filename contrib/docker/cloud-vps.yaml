@@ -205,6 +205,76 @@ services:
     depends_on:
       - mariadb
 
+  gitlab:
+    image: "gitlab/gitlab-ce:15.1.2-ce.0"
+    restart: always
+    environment:
+      GITLAB_OMNIBUS_CONFIG: |
+        external_url 'http://gitlab-striker.wmcloud.org'
+
+        gitlab_rails['gitlab_shell_ssh_port'] = 2222
+
+        gitlab_rails['ldap_enabled'] = true
+        gitlab_rails['prevent_ldap_sign_in'] = false
+        gitlab_rails['ldap_servers'] = {
+          'main' => {
+            'label' => 'LDAP',
+            'host' =>  'openldap.local.wmftest.net',
+            'port' => 389,
+            'uid' => 'uid',
+            'encryption' => 'plain',
+            'bind_dn' => 'cn=proxyagent,dc=wmftest,dc=net',
+            'password' => 'readonly',
+            'active_directory' => false,
+            'allow_username_or_email_login' => false,
+            'base' => 'ou=People,dc=wmftest,dc=net',
+            'attributes' => {
+              'username' => 'uid',
+              'email' => 'mail',
+              'name' => 'cn'
+            },
+            'lowercase_usernames' => false,
+          }
+        }
+
+        logging['svlogd_num'] = 1
+        logging['logrotate_rotate'] = 1
+        registry['log_level'] = 'warn'
+        gitlab_shell['log_level'] = 'WARN'
+        gitaly['logging_level'] = 'warn'
+
+        # Turn off some stuff that we don't need for Striker dev
+        monitoring_role['enable'] = false
+        prometheus['enable'] = false
+        alertmanager['enable'] = false
+        node_exporter['enable'] = false
+        redis_exporter['enable'] = false
+        postgres_exporter['enable'] = false
+        pgbouncer_exporter['enable'] = false
+        gitlab_exporter['enable'] = false
+        grafana['enable'] = false
+    ports:
+      - "8084:80"
+      - "2222:22"
+    volumes:
+      - type: volume
+        source: gitlab_config
+        target: /etc/gitlab
+        consistency: consistent
+      - type: volume
+        source: gitlab_logs
+        target: /var/log/gitlab
+        consistency: consistent
+      - type: volume
+        source: gitlab_data
+        target: /var/opt/gitlab
+        consistency: consistent
+    networks:
+      default:
+        aliases:
+          - gitlab.local.wmftest.net
+    shm_size: 256m
+
 volumes:
   mariadb:
     driver: local
@@ -217,4 +287,10 @@ volumes:
   sulwiki_images:
     driver: local
   ldapwiki_images:
+    driver: local
+  gitlab_config:
+    driver: local
+  gitlab_logs:
+    driver: local
+  gitlab_data:
     driver: local
