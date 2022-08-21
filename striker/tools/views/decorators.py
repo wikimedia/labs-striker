@@ -22,6 +22,7 @@ import functools
 
 from django import shortcuts
 from django import urls
+from django.conf import settings
 from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.exceptions import PermissionDenied
@@ -38,7 +39,9 @@ def inject_tool(f):
         if 'tool' in kwargs:
             name = kwargs['tool']
             try:
-                kwargs['tool'] = Tool.objects.get(cn='tools.{0}'.format(name))
+                kwargs['tool'] = Tool.objects.get(
+                    cn='{0}.{1}'.format(settings.OPENSTACK_PROJECT, name)
+                )
             except ObjectDoesNotExist:
                 req = args[0]
                 messages.error(

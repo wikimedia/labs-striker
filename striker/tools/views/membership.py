@@ -115,7 +115,9 @@ def apply(req):
                 request.save()
                 try:
                     notify.send(
-                        recipient=Group.objects.get(name='tools.admin'),
+                        recipient=Group.objects.get(
+                            name=settings.TOOLS_ADMIN_GROUP_NAME
+                        ),
                         sender=req.user,
                         verb=_('created'),
                         target=request,
@@ -220,7 +222,9 @@ def status(req, app_id):
                             level = 'warning'
                 else:
                     try:
-                        recipient = Group.objects.get(name='tools.admin')
+                        recipient = Group.objects.get(
+                            name=settings.TOOLS_ADMIN_GROUP_NAME
+                        )
                     except exceptions.ObjectDoesNotExist:
                         logger.exception(
                             'Have you logged in with an admin account yet?')

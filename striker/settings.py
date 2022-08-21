@@ -442,6 +442,10 @@ TOOLS_TOOL_BASE_DN = env.str(
 TOOLS_TOOL_LABS_GROUP_NAME = env.str(
     "TOOLS_TOOL_LABS_GROUP_NAME", default="project-tools"
 )
+TOOLS_ADMIN_GROUP_NAME = env.str(
+    "TOOLS_ADMIN_GROUP_NAME",
+    default="tools.admin",
+)
 
 # == Project settings ==
 PROJECTS_BASE_DN = 'ou=projects,{}'.format(

@@ -34,7 +34,7 @@ logger = logging.getLogger(__name__)
 
 
 def toolname_available(name):
-    toolname = 'tools.{0!s}'.format(name)
+    toolname = '{0}.{1!s}'.format(settings.OPENSTACK_PROJECT, name)
     try:
         Tool.objects.get(cn=toolname)
     except Tool.DoesNotExist:
@@ -58,7 +58,7 @@ def check_toolname_create(name):
 
 def create_tool(name, user):
     """Create a new tool account."""
-    group_name = 'tools.{}'.format(name)
+    group_name = '{}.{}'.format(settings.OPENSTACK_PROJECT, name)
     gid = get_next_gid()
 
     # Create group
@@ -113,7 +113,8 @@ def tools_admin(user):
     """Is the given user an administrator of the tools project?"""
     if user.is_anonymous:
         return False
-    return user.ldap_dn in Tool.objects.get(cn='tools.admin').members
+    admin_tool = Tool.objects.get(cn=settings.TOOLS_ADMIN_GROUP_NAME)
+    return user.ldap_dn in admin_tool.members
 
 
 def project_member(user):

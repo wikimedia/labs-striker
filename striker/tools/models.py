@@ -91,7 +91,7 @@ class Maintainer(ldapdb.models.Model):
 class ToolManager(models.Manager):
     def get_queryset(self):
         return super(ToolManager, self).get_queryset().filter(
-            cn__startswith='tools.')
+            cn__startswith='{0}.'.format(settings.OPENSTACK_PROJECT))
 
 
 class Tool(ldapdb.models.Model):
@@ -110,17 +110,17 @@ class Tool(ldapdb.models.Model):
 
     @property
     def name(self):
-        return self.cn[6:]
+        return self.cn[len(settings.OPENSTACK_PROJECT) + 1:]
 
     @name.setter
     def name(self, value):
-        self.cn = 'tools.{0!s}'.format(value)
+        self.cn = '{0}.{1!s}'.format(settings.OPENSTACK_PROJECT, value)
 
     def maintainer_ids(self):
         return [
             dn.split(',')[0].split('=')[1]
             for dn in self.members
-            if not dn.startswith('uid=tools.')
+            if not dn.startswith('uid={0}.'.format(settings.OPENSTACK_PROJECT))
         ]
 
     def maintainers(self):
@@ -130,7 +130,7 @@ class Tool(ldapdb.models.Model):
         return [
             dn.split(',')[0].split('=')[1]
             for dn in self.members
-            if dn.startswith('uid=tools.')
+            if dn.startswith('uid={0}.'.format(settings.OPENSTACK_PROJECT))
         ]
 
     def tool_members(self):
@@ -174,11 +174,11 @@ class ToolUser(ldapdb.models.Model):
 
     @property
     def name(self):
-        return self.cn[6:]
+        return self.cn[len(settings.OPENSTACK_PROJECT) + 1:]
 
     @name.setter
     def name(self, value):
-        self.cn = 'tools.{0!s}'.format(value)
+        self.cn = '{0}.{1!s}'.format(settings.OPENSTACK_PROJECT, value)
 
     def __str__(self):
         return self.name

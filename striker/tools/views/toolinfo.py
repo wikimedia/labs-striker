@@ -22,6 +22,7 @@ import logging
 
 from django import shortcuts
 from django import urls
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.serializers.json import DjangoJSONEncoder
@@ -213,7 +214,12 @@ class HistoryView(reversion_compare.views.HistoryCompareDetailView):
 
     def get_context_data(self, **kwargs):
         user = self.request.user
-        tool = Tool.objects.get(cn='tools.{0}'.format(kwargs['object'].tool))
+        tool = Tool.objects.get(
+            cn='{0}.{1}'.format(
+                settings.OPENSTACK_PROJECT,
+                kwargs['object'].tool,
+            )
+        )
 
         ctx = super(HistoryView, self).get_context_data(**kwargs)
         ctx['toolinfo'] = kwargs['object']
@@ -225,7 +231,11 @@ class HistoryView(reversion_compare.views.HistoryCompareDetailView):
 @inject_tool
 def revision(req, tool, info_id, version_id):
     """View/revert/suppress a particular version of a ToolInfo model."""
-    tool = shortcuts.get_object_or_404(Tool, cn='tools.{}'.format(tool))
+    tool = shortcuts.get_object_or_404(
+        Tool,
+        cn='{}.{}'.format(settings.OPENSTACK_PROJECT, tool)
+    )
+
     toolinfo = shortcuts.get_object_or_404(ToolInfo, pk=info_id, tool=tool)
     version = shortcuts.get_object_or_404(
         reversion.models.Version, pk=version_id, object_id=info_id)

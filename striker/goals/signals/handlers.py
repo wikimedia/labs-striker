@@ -62,7 +62,7 @@ def check_goal_tool(user):
     """Check LabsUser model for Tool maintainership."""
     groups = user.groups.values_list('name', flat=True)
     for g in groups:
-        if g.startswith('tools.'):
+        if g.startswith(settings.OPENSTACK_PROJECT + '.'):
             user.milestones.recordMilestone(GOALS['TOOL_MAINTAINER'])
             break
 
