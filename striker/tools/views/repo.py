@@ -22,7 +22,6 @@ import logging
 
 from django import shortcuts
 from django import urls
-from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
@@ -32,22 +31,21 @@ from django.utils.translation import ugettext_lazy as _
 
 from notifications.signals import notify
 
-from striker import phabricator
-from striker.labsauth.models import LabsUser
+from striker import gitlab
 from striker.tools.forms import RepoCreateForm
-from striker.tools.models import DiffusionRepo
+from striker.tools.models import GitlabRepo
 from striker.tools.utils import member_or_admin
 from striker.tools.views.decorators import inject_tool
 
 
 logger = logging.getLogger(__name__)
-phab = phabricator.Client.default_client()
+gitlab = gitlab.Client.default_client()
 
 
 @login_required
 @inject_tool
 def create(req, tool):
-    """Create a new Diffusion repo."""
+    """Create a new GitLab repo."""
     if not member_or_admin(tool, req.user):
         messages.error(
             req, _('You are not a member of {tool}').format(tool=tool.name))
@@ -58,48 +56,32 @@ def create(req, tool):
         if form.is_valid():
             name = form.cleaned_data['repo_name']
             # FIXME: error handling!
-            # * You can not select this edit policy, because you would no
-            #   longer be able to edit the object. (ERR-CONDUIT-CORE)
-            # Convert list of maintainers to list of phab users
-            maintainers = [m.cn for m in tool.maintainers()]
-            phab_maintainers = []
-            try:
-                phab_maintainers += [m['phid'] for m in phab.user_ldapquery(
-                    maintainers)]
-            except KeyError:
-                pass
-            try:
-                phab_maintainers += [
-                    m['phid'] for m in phab.user_mediawikiquery(
-                        list(LabsUser.objects.filter(
-                            ldapname__in=maintainers
-                        ).values_list('sulname', flat=True))
-                    )
-                ]
-            except KeyError:
-                pass
+            # Verify that at least one maintainer has a GitLab account setup
+            maintainers = [m.uid for m in tool.maintainers()]
+            gitlab_maintainers = gitlab.user_lookup(maintainers)
 
-            if phab_maintainers:
+            if gitlab_maintainers:
                 # Create repo
                 # FIXME: error handling!
-                repo = phab.create_repository(
-                    name,
-                    list(set(phab_maintainers))
-                )
+                repo = gitlab.create_repository(name, maintainers)
+
                 # Save a local association between the repo and the tool.
-                repo_model = DiffusionRepo(
-                    tool=tool.name, name=name, phid=repo['phid'],
-                    created_by=req.user)
+                repo_model = GitlabRepo(
+                    tool=tool.name,
+                    name=name,
+                    repo_id=repo['id'],
+                    created_by=req.user,
+                )
                 try:
                     repo_model.save()
                     try:
-                        maintainers = Group.objects.get(name=tool.cn)
+                        tool_group = Group.objects.get(name=tool.cn)
                     except ObjectDoesNotExist:
                         # Can't find group for the tool
                         pass
                     else:
                         notify.send(
-                            recipient=Group.objects.get(name=tool.cn),
+                            recipient=tool_group,
                             sender=req.user,
                             verb=_('created new repo'),
                             target=repo_model,
@@ -126,7 +108,7 @@ def create(req, tool):
                             id=req.id))
             else:
                 messages.error(
-                    req, 'No Phabricator accounts found for tool maintainers.')
+                    req, 'No GitLab accounts found for tool maintainers.')
 
     ctx = {
         'tool': tool,
@@ -139,40 +121,25 @@ def create(req, tool):
 def view(req, tool, repo):
     ctx = {
         'tool': tool,
-        'repo': repo,
         'repo_id': None,
-        'status': 'unknown',
+        'name': repo,
         'urls': [],
-        'policy': {'view': None, 'edit': None, 'push': None},
-        'phab_url': settings.PHABRICATOR_URL,
+        'web_url': None,
     }
     try:
-        repository = phab.get_repository(repo)
+        repository = gitlab.get_repository_by_name(repo)
         ctx['repo_id'] = repository['id']
-        ctx['status'] = repository['fields']['status']
         ctx['urls'] = [
-            u['fields']['uri']['display'] for u in
-            repository['attachments']['uris']['uris']
-            if u['fields']['display']['effective'] == 'always'
+            repository['http_url_to_repo'],
+            repository['ssh_url_to_repo'],
         ]
+        ctx['web_url'] = repository['web_url']
 
-        # Lookup policy details
-        policy = repository['fields']['policy']
-        policies = phab.get_policies(list(set(policy.values())))
-        ctx['policy']['view'] = policies[policy['view']]
-        ctx['policy']['edit'] = policies[policy['edit']]
-        ctx['policy']['push'] = policies[policy['diffusion.push']]
+        # FIXME: Lookup membership details & add to ctx
 
-        # Lookup phid details for custom rules
-        phids = []
-        for p in policies.values():
-            if p['type'] == 'custom':
-                for r in p['rules']:
-                    phids.extend(r['value'])
-        ctx['phids'] = phab.get_phids(list(set(phids)))
     except KeyError:
         pass
-    except phabricator.APIError as e:
+    except gitlab.APIError as e:
         logger.error(e)
 
     return shortcuts.render(req, 'tools/repo.html', ctx)

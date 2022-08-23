@@ -51,8 +51,15 @@ OPENSTACK_URL=http://keystone.local.wmftest.net:5000/v3
 OPENSTACK_USER=admin
 OPENSTACK_PASSWORD=admin
 
+GITLAB_URL=http://gitlab.local.wmftest.net:8084
+GITLAB_PROVIDER=ldapmain
+GITLAB_EXTERN_FORMAT="uid={},ou=people,dc=wmftest,dc=net"
+
 #####################################################################
 ## Values to set manually when following initial setup instructions
+
+GITLAB_ACCESS_TOKEN=
+GITLAB_REPO_NAMESPACE_ID=
 
 OAUTH_CONSUMER_KEY=
 OAUTH_CONSUMER_SECRET=

@@ -7,6 +7,7 @@ services. For development, you can use Docker to setup all the things.
 * Phabricator: http://phabricator.local.wmftest.net:8081/
 * SUL wiki (pretend its meta): http://sulwiki.local.wmftest.net:8082/
 * LDAP wiki (pretend its wikitech): http://ldapwiki.local.wmftest.net:8083/
+* GitLab: http://gitlab.local.wmftest.net:8084/
 
 The docker-compose and Dockerfile automation take care of the basic
 installation and configuration of the various software components needed to
@@ -226,11 +227,55 @@ http://phabricator.local.wmftest.net:8081/project/profile/2/
 * Click "View All"
 * Copy the PHID-PROJ- value from the URL.
 
+Setup GitLab
+------------
+* URL: http://gitlab.local.wmftest.net:8084/
+* USERNAME: root
+* PASSWORD: docker-gitlab
+
+### Create a StrikerBot bot account
+http://gitlab.local.wmftest.net:8084/users/sign_in
+
+* LDAP Username: strikerbot
+* Password: strikerbot-docker
+
+### Create API access token for StrikerBot
+http://gitlab.local.wmftest.net:8084/-/profile/personal_access_tokens
+
+* Token name: Striker API integration
+* Scopes: api
+
+Save the personal access token value for use later when we are setting up
+Striker.
+
+### Create public group "toolforge-repos"
+http://gitlab.local.wmftest.net:8084/groups/new#create-group-pane
+
+* Group name: toolforge-repos
+* Visiblity level: Public
+
+Save the Group ID for use later when we are setting up Striker.
+
+### Make StrikerBot bot account an administrator
+http://gitlab.local.wmftest.net:8084/admin/users/strikerbot/edit
+
+Only administrators are allowed to create local accounts for other LDAP users.
+The default "root" administrator account can be used to make StrikerBot an
+administrator.
+
+* Log out
+* Login as root / docker-gitlab
+* Visit http://gitlab.local.wmftest.net:8084/admin/users/strikerbot/edit
+* Access level: Administrator
+* "Save changes"
+
 Setup Striker
 -------------
 URL: http://striker.local.wmftest.net:8080/
 
 * Edit your .env configuration file:
+  * GITLAB_ACCESS_TOKEN = <20 char personal access token>
+  * GITLAB_REPO_NAMESPACE_ID = <integer>
   * OAUTH_CONSUMER_KEY = <32 char consumer token>
   * OAUTH_CONSUMER_SECRET = <40 char secret token>
   * PHABRICATOR_TOKEN = api-<28 chars>

@@ -28,6 +28,7 @@ from django.utils.translation import ugettext_lazy as _
 from dal import autocomplete
 from parsley.decorators import parsleyfy
 
+from striker import gitlab
 from striker import phabricator
 from striker.tools import utils
 from striker.tools.models import AccessRequest
@@ -38,6 +39,7 @@ from striker.tools.models import ToolInfoTag
 from striker.tools.models import ToolUser
 
 
+gitlab = gitlab.Client.default_client()
 phab = phabricator.Client.default_client()
 
 
@@ -49,7 +51,7 @@ class RepoCreateForm(forms.Form):
         )
         tool = kwargs.pop('tool')
         super(RepoCreateForm, self).__init__(*args, **kwargs)
-        default_name = 'tool-{0}'.format(tool.name)
+        default_name = tool.name
         self.fields['repo_name'] = forms.RegexField(
             label=_("Repository name"),
             regex=r'^{0}[-a-zA-Z0-9_]*$'.format(re.escape(default_name)),
@@ -61,8 +63,9 @@ class RepoCreateForm(forms.Form):
     def clean_repo_name(self):
         name = self.cleaned_data.get('repo_name')
         try:
-            phab.get_repository(name)
-            # If get_repository doesn't raise an exception then its a dup
+            gitlab.get_repository_by_name(name)
+            # If get_repository_by_name doesn't raise a KeyError then its
+            # a duplicate name (404 expected for new names)
             raise forms.ValidationError(
                 _('Repository "%(name)s" exists.'),
                 params={'name': name},

@@ -462,6 +462,17 @@ OPENSTACK_PROJECT = env.str("OPENSTACK_PROJECT", default="tools")
 OPENSTACK_USER_ROLE = env.str("OPENSTACK_USER_ROLE", default="user")
 OPENSTACK_ADMIN_ROLE = env.str("OPENSTACK_ADMIN_ROLE", default="projectadmin")
 
+# == GitLab settings ==
+GITLAB_URL = env.str("GITLAB_URL", default="https://gitlab.wikimedia.org")
+GITLAB_ACCESS_TOKEN = env.str("GITLAB_ACCESS_TOKEN")
+GITLAB_REPO_NAMESPACE_NAME = env.str(
+    "GITLAB_REPO_NAMESPACE_NAME",
+    default="toolforge-repos",
+)
+GITLAB_REPO_NAMESPACE_ID = env.int("GITLAB_REPO_NAMESPACE_ID", default=688)
+GITLAB_PROVIDER = env.str("GITLAB_PROVIDER", default="cas3")
+GITLAB_EXTERN_FORMAT = env.str("GITLAB_EXTERN_FORMAT", default="{}")
+
 # == Notifications ==
 NOTIFICATIONS_SOFT_DELETE = True
 NOTIFICATIONS_USE_JSONFIELD = True

@@ -228,6 +228,24 @@ class DiffusionRepo(models.Model):
             'tools:repo_view', args=[self.tool, self.name])
 
 
+class GitlabRepo(models.Model):
+    """Associate GitLab repos with Tools."""
+    tool = models.CharField(max_length=64)
+    name = models.CharField(max_length=255)
+    repo_id = models.PositiveIntegerField()
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL)
+    created_date = models.DateTimeField(
+        default=timezone.now, blank=True, editable=False)
+
+    def __str__(self):
+        return self.name
+
+    def get_absolute_url(self):
+        return urls.reverse(
+            'tools:repo_view', args=[self.tool, self.name])
+
+
 class AccessRequest(models.Model):
     """Request to join Tools project."""
     PENDING = 'p'
