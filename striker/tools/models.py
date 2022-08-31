@@ -19,10 +19,12 @@
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
 
 import collections
+import logging
 
 from django import urls
 from django.conf import settings
 from django.db import models
+from django.db import transaction
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 
@@ -30,6 +32,8 @@ from ldapdb.models import fields
 import ldapdb.models
 import reversion
 
+from striker import gitlab
+from striker import phabricator
 from striker.tools import cache
 
 
@@ -42,6 +46,11 @@ reversion.models.Version.add_to_class(
     'suppressed',
     models.BooleanField(blank=True, default=False, db_index=True)
 )
+
+
+logger = logging.getLogger(__name__)
+gitlab = gitlab.Client.default_client()
+phab = phabricator.Client.default_client()
 
 
 class MaintainerManager(models.Manager):
@@ -64,10 +73,11 @@ class MaintainerManager(models.Manager):
 class Maintainer(ldapdb.models.Model):
     """A tool maintainer."""
     base_dn = settings.TOOLS_MAINTAINER_BASE_DN
-    object_classes = ['posixAccount']
+    object_classes = ['inetOrgPerson', 'posixAccount']
 
     uid = fields.CharField(db_column='uid', primary_key=True)
     cn = fields.CharField(db_column='cn')
+    mail = fields.CharField(db_column='mail')
 
     objects = MaintainerManager()
 
@@ -219,13 +229,45 @@ class DiffusionRepo(models.Model):
         settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL)
     created_date = models.DateTimeField(
         default=timezone.now, blank=True, editable=False)
+    # Track migration to GitLab
+    gitlab = models.ForeignKey(
+        "GitlabRepo",
+        null=True,
+        on_delete=models.SET_NULL,
+        related_name="diffusion",
+    )
+    is_mirror = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name
 
-    def get_absolute_url(self):
-        return urls.reverse(
-            'tools:repo_view', args=[self.tool, self.name])
+    def convert_to_mirror(self):
+        """Convert this repo into a mirror of an associated gitlab repo."""
+        if not self.gitlab:
+            logger.warning(
+                "Diffusion repo %s has no GitLab sibling to mirror.",
+                self.name,
+            )
+            return False
+
+        if not self.gitlab.import_finished:
+            logger.info(
+                "Diffusion repo %s still pennding import in GitLab.",
+                self.name,
+            )
+            return False
+
+        gl_repo = gitlab.get_repository_by_id(self.gitlab.repo_id)
+        phab.repository_mirror(self.phid, gl_repo["http_url_to_repo"])
+        logger.info(
+            "Diffusion repo %s set to mirror %s",
+            self.name,
+            gl_repo["http_url_to_repo"],
+        )
+
+        self.is_mirror = True
+        self.save()
+        return True
 
 
 class GitlabRepo(models.Model):
@@ -244,6 +286,75 @@ class GitlabRepo(models.Model):
     def get_absolute_url(self):
         return urls.reverse(
             'tools:repo_view', args=[self.tool, self.name])
+
+    def _tool(self):
+        return Tool.objects.get(cn="tools.{0}".format(self.name))
+
+    @classmethod
+    def create_from_diffusion(cls, diff_repo):
+        """Create a new GitlabRepo based on the given DiffusionRepo."""
+        gl_name = diff_repo.name
+        if gl_name.startswith("tool-"):
+            gl_name = gl_name[6:]
+
+        old_repo = phab.get_repository(diff_repo.name)
+
+        # Find the first http(s) URL for the diffusion repo
+        src_url = next(iter([
+            u['fields']['uri']['display'] for u in
+            old_repo['attachments']['uris']['uris']
+            if u['fields']['display']['effective'] == 'always'
+            and u['fields']['uri']['display'].startswith('http')
+        ]), None)
+
+        # Create a new gitlab repo, no owners yet, clone from src_url
+        new_repo = gitlab.create_repository(gl_name, [], src_url)
+        new_repo.sync_maintainers_with_gitlab(True)
+
+        with transaction.atomic():
+            gl_repo = GitlabRepo(
+                tool=diff_repo.tool,
+                name=gl_name,
+                repo_id=new_repo['id'],
+                created_by=diff_repo.created_by,
+            )
+            gl_repo.save()
+
+            diff_repo.gitlab = gl_repo
+            diff_repo.save()
+        return gl_repo
+
+    def sync_maintainers_with_gitlab(self, invite_missing=False):
+        """Ensure that all maintainers have access to the repo."""
+        maintainer_ids = self._tool.maintainer_ids()
+        if invite_missing:
+            gitlab_maintainers = gitlab.user_lookup(maintainer_ids)
+            missing = Maintainer.objects.filter(
+                uid__in=list(
+                    set(maintainer_ids) - set(gitlab_maintainers.keys())
+                )
+            )
+            for user in missing:
+                gitlab.invite_user(self.repo_id, user)
+        gitlab.set_repository_owners(self.repo_id, maintainer_ids)
+
+    @property
+    def import_finished(self):
+        """Check on this repo's import status."""
+        r = gitlab.import_status(self.repo_id)
+        status = r["import_status"]
+        if status not in ["none", "finished"]:
+            logger.info("[Repo %s] import status: %s", self.name, status)
+            for err in r["failed_relations"]:
+                logger.error(
+                    "[Repo %s] %s: %s %s",
+                    self.name,
+                    err["relation_name"],
+                    err["exception_class"],
+                    err["exception_message"],
+                )
+            return False
+        return True
 
 
 class AccessRequest(models.Model):

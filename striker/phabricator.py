@@ -209,6 +209,50 @@ class Client(object):
         self._repository_hide_http_url(repo)
         return repo
 
+    def repository_admin_only(self, repo_phid):
+        """Set repository to be admin controlled only."""
+        # Empty owners list makes an admin only policy
+        admin_policy = self.create_repo_policy([])
+
+        self.post('diffusion.repository.edit', {
+            'objectIdentifier': repo_phid,
+            'transactions': [
+                {'type': 'policy.push', 'value': admin_policy},
+                {'type': 'edit', 'value': admin_policy},
+            ],
+        })
+        return self.get_repository_by_phid(repo_phid)
+
+    def repository_mirror(self, repo_phid, upstream_uri):
+        """Make a repo a mirror of an upstream."""
+        repo = self.get_repository_by_phid(repo_phid)
+        for uri in repo['attachments']['uris']['uris']:
+            if uri['fields']['io']['default'] == 'readwrite':
+                self.post('diffusion.uri.edit', {
+                    'objectIdentifier': uri['phid'],
+                    'transactions': [
+                        {'type': 'io', 'value': 'read'},
+                    ],
+                })
+        self.post('diffusion.uri.edit', {
+            'transactions': [
+                {'type': 'repository', 'value': repo_phid},
+                {'type': 'uri', 'value': upstream_uri},
+                {'type': 'io', 'value': 'observe'},
+                {'type': 'display', 'value': 'never'},
+            ],
+        })
+        self.post('diffusion.repository.edit', {
+            'objectIdentifier': repo_phid,
+            'transactions': [
+                {
+                    'type': 'description',
+                    'value': 'Diffusion mirror of {}'.format(upstream_uri),
+                },
+            ],
+        })
+        return self.get_repository_by_phid(repo_phid)
+
     def _repository_hide_http_url(self, repo):
         """Hide http URI if we also have an https URI."""
         https = self._repository_get_uri_with_scheme(repo, 'https://id')
@@ -236,21 +280,25 @@ class Client(object):
 
     def create_repo_policy(self, owners):
         """Create an edit policy for a diffusion repository."""
-        r = self.post('policy.create', {
-            'objectType': 'REPO',
-            'default': 'deny',
-            'policy': [
-                {
-                    'action': 'allow',
-                    'rule': 'PhabricatorProjectsPolicyRule',
-                    'value': [settings.PHABRICATOR_REPO_ADMIN_GROUP],
-                },
+        policy = [
+            {
+                'action': 'allow',
+                'rule': 'PhabricatorProjectsPolicyRule',
+                'value': [settings.PHABRICATOR_REPO_ADMIN_GROUP],
+            },
+        ]
+        if owners:
+            policy.append(
                 {
                     'action': 'allow',
                     'rule': 'PhabricatorUsersPolicyRule',
                     'value': owners,
                 }
-            ],
+            )
+        r = self.post('policy.create', {
+            'objectType': 'REPO',
+            'default': 'deny',
+            'policy': policy,
         })
         return r['phid']
 

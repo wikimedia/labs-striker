@@ -67,6 +67,10 @@ class Client(object):
         self.headers = {
             "PRIVATE-TOKEN": self.token,
             "Content-Type": "application/json",
+            "User-Agent": "Striker ({url}) python-requests/{vers}".format(
+                url="https://wikitech.wikimedia.org/wiki/Striker",
+                vers=requests.__version__,
+            ),
         }
 
     def http_request(self, verb, path, payload=None, params=None):
@@ -101,10 +105,10 @@ class Client(object):
     def user_lookup(self, uids):
         """Lookup GitHub user data for a list of LDAP uid values."""
         uids = list(filter(None, uids))
-        r = []
+        r = {}
         for uid in uids:
             try:
-                r.extend(self.get(
+                r[uid] = self.get(
                     "users",
                     {
                         "provider": settings.GITLAB_PROVIDER,
@@ -112,7 +116,7 @@ class Client(object):
                             uid
                         ),
                     }
-                ))
+                )
             except APIError:
                 logger.exception("Failed to lookup user '%s'", uid)
         return r
@@ -135,16 +139,49 @@ class Client(object):
                 raise KeyError('Repository {0} not found'.format(name))
             raise e
 
-    def create_repository(self, name, owners):
+    def create_repository(self, name, owners, import_url=None):
         """Create a new git repository."""
-        repo = self.post("projects/", {
+        payload = {
             "name": name,
             "namespace_id": self.repo_namespace_id,
             "visibility": "public",
-        })
+        }
+        if import_url is not None:
+            payload["import_url"] = import_url
+        repo = self.post("projects/", payload)
+
+        self.set_repository_owners(repo["id"], owners)
+
+        return self.get_repository_by_id(repo["id"])
+
+    def set_repository_owners(self, repo_id, owners):
+        """Make the given users owners of a repository."""
         owners = self.user_lookup(owners)
-        self.post("projects/{}/members".format(repo["id"]), {
-            "user_id": ",".join(str(o["id"]) for o in owners),
+        return self.post("projects/{}/members".format(repo_id), {
+            "user_id": ",".join(str(o["id"]) for o in owners.values()),
             "access_level": 50,  # Owner
         })
-        return self.get_repository_by_id(repo["id"])
+
+    def attach_user(self, user):
+        """Create a GitLab user account for a maintainer."""
+        return self.post("users", {
+            "provider": settings.GITLAB_PROVIDER,
+            "extern_uid": settings.GITLAB_EXTERN_FORMAT.format(user.uid),
+            "username": user.uid,
+            "name": user.cn,
+            "email": user.mail,
+            "force_random_password": True,
+            "note": "Created via API by Striker."
+        })
+
+    def invite_user(self, repo_id, user):
+        """Invite a user to be an owner in a gitlab project."""
+        return self.post("projects/{}/invitations".format(repo_id), {
+            "email": user.mail,
+            "access_level": 50,  # Owner
+            "invite_source": "Invited via API by Striker",
+        })
+
+    def import_status(self, repo_id):
+        """Check the import status of a repo."""
+        return self.get("projects/{}/import".format(repo_id))

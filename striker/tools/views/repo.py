@@ -57,7 +57,7 @@ def create(req, tool):
             name = form.cleaned_data['repo_name']
             # FIXME: error handling!
             # Verify that at least one maintainer has a GitLab account setup
-            maintainers = [m.uid for m in tool.maintainers()]
+            maintainers = tool.maintainer_ids()
             gitlab_maintainers = gitlab.user_lookup(maintainers)
 
             if gitlab_maintainers:
