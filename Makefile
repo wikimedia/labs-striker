@@ -89,6 +89,10 @@ gitlab:  ## Open a shell in gitlab container
 	docker-compose exec gitlab /bin/bash
 .PHONY: gitlab
 
+phabricator:  ## Open a shell in phabricator container
+	docker-compose exec phabricator /bin/bash
+.PHONY: phabricator
+
 .env:  ## Generate a .env file for local development
 	./contrib/make_env.sh ./.env
 
