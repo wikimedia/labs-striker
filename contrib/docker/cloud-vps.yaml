@@ -49,6 +49,12 @@ services:
       - REMEMBER_ME_TTL
       - DEFAULT_GID
       - DEFAULT_SHELL
+      - GITLAB_ACCESS_TOKEN
+      - GITLAB_EXTERN_FORMAT
+      - GITLAB_PROVIDER
+      - GITLAB_REPO_NAMESPACE_ID
+      - GITLAB_REPO_NAMESPACE_NAME
+      - GITLAB_URL
       - MIN_GID
       - MAX_GID
       - MIN_UID
@@ -236,6 +242,8 @@ services:
             'lowercase_usernames' => false,
           }
         }
+
+        gitlab_rails['initial_root_password'] = 'docker-gitlab'
 
         logging['svlogd_num'] = 1
         logging['logrotate_rotate'] = 1
