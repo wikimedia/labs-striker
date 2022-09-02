@@ -116,8 +116,8 @@ class Client(object):
                             uid
                         ),
                     }
-                )
-            except APIError:
+                )[0]
+            except (APIError, IndexError):
                 logger.exception("Failed to lookup user '%s'", uid)
         return r
 
