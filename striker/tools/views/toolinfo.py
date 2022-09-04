@@ -60,7 +60,7 @@ def create(req, tool):
         return shortcuts.redirect(tool.get_absolute_url())
 
     initial_values = {
-        'name': "toolforge.{}".format(tool.name),
+        'name': "toolforge-{}".format(tool.name),
         'author': req.user,
     }
     if ToolInfo.objects.filter(tool=tool.name).count():
@@ -386,7 +386,19 @@ def json_v1(req):
         ensure_ascii=False, indent=2, separators=(',', ':'))
     return HttpResponse(enc.encode(
         [
-            info.toolinfo(req)
+            info.toolinfo_v1(req)
+            for info in ToolInfo.objects.all().order_by('name')
+        ]),
+        content_type="application/json; charset=utf8"
+    )
+
+
+def json_v1_2(req):
+    enc = DjangoJSONEncoder(
+        ensure_ascii=False, indent=2, separators=(',', ':'))
+    return HttpResponse(enc.encode(
+        [
+            info.toolinfo_v1_2(req)
             for info in ToolInfo.objects.all().order_by('name')
         ]),
         content_type="application/json; charset=utf8"

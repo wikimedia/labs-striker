@@ -34,6 +34,7 @@ import reversion
 
 from striker import gitlab
 from striker import phabricator
+from striker.labsauth.models import LabsUser
 from striker.tools import cache
 
 
@@ -478,7 +479,7 @@ class ToolInfo(models.Model):
     def __str__(self):
         return self.name
 
-    def toolinfo(self, request):
+    def toolinfo_v1(self, request):
         if self.is_webservice:
             url = 'https://{}.toolforge.org/{}'.format(
                 self.tool,
@@ -500,3 +501,44 @@ class ToolInfo(models.Model):
             ('author', ", ".join(a.name for a in self.authors.all())),
             ('repository', self.repository),
         ])
+
+    def toolinfo_v1_2(self, request):
+        info = self.toolinfo_v1(request)
+
+        maintainers = {
+            u.get_full_name(): u
+            for u in LabsUser.objects.filter(
+                ldapname__in=list(
+                    Tool.objects.get(
+                        cn="{}.{}".format(
+                            settings.OPENSTACK_PROJECT,
+                            self.tool,
+                        )
+                    ).maintainers().values_list("cn", flat=True)
+                ),
+            )
+        }
+        info["author"] = [
+            {
+                "name": a.name,
+                "wiki_username": maintainers[a.name].sulname,
+                "developer_username": maintainers[a.name].ldapname,
+            }
+            if a.name in maintainers else
+            {"name": a.name}
+            for a in self.authors.all()
+        ]
+
+        info["license"] = self.license.slug
+        info["technology_used"] = "Toolforge"
+        if self.is_webservice:
+            info["tool_type"] = "web app"
+        if self.issues:
+            info["bugtracker_url"] = self.issues
+        if self.docs:
+            info["developer_docs_url"] = {
+                "url": self.docs,
+                "language": "en",  # FIXME: allow user to specify lang
+            }
+        info["_schema"] = "/toolinfo/1.2.2"
+        return info

@@ -73,6 +73,9 @@ urlpatterns = [
         'tags/autocomplete/',
         toolinfo.TagAutocomplete.as_view(), name='tags_autocomplete'),
     path('toolinfo/v1/toolinfo.json', toolinfo.json_v1, name='toolinfo'),
+    path(
+        'toolinfo/v1.2/toolinfo.json',
+        toolinfo.json_v1_2, name='toolinfo-1.2'),
     path('create', tool.create, name='tool_create'),
     path('api/', include(([
         path('autocomplete/', include([
