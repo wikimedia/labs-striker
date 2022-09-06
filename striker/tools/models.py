@@ -289,28 +289,30 @@ class GitlabRepo(models.Model):
             'tools:repo_view', args=[self.tool, self.name])
 
     def _tool(self):
-        return Tool.objects.get(cn="tools.{0}".format(self.name))
+        return Tool.objects.get(cn="{0}.{1}".format(
+            settings.OPENSTACK_PROJECT,
+            self.name
+        ))
 
     @classmethod
     def create_from_diffusion(cls, diff_repo):
         """Create a new GitlabRepo based on the given DiffusionRepo."""
         gl_name = diff_repo.name
         if gl_name.startswith("tool-"):
-            gl_name = gl_name[6:]
+            gl_name = gl_name[5:]
 
         old_repo = phab.get_repository(diff_repo.name)
 
-        # Find the first http(s) URL for the diffusion repo
+        # Find the first https URL for the diffusion repo.
         src_url = next(iter([
             u['fields']['uri']['display'] for u in
             old_repo['attachments']['uris']['uris']
             if u['fields']['display']['effective'] == 'always'
-            and u['fields']['uri']['display'].startswith('http')
+            and u['fields']['uri']['display'].startswith('https')
         ]), None)
 
         # Create a new gitlab repo, no owners yet, clone from src_url
         new_repo = gitlab.create_repository(gl_name, [], src_url)
-        new_repo.sync_maintainers_with_gitlab(True)
 
         with transaction.atomic():
             gl_repo = GitlabRepo(
@@ -319,6 +321,7 @@ class GitlabRepo(models.Model):
                 repo_id=new_repo['id'],
                 created_by=diff_repo.created_by,
             )
+            gl_repo.sync_maintainers_with_gitlab(True)
             gl_repo.save()
 
             diff_repo.gitlab = gl_repo
