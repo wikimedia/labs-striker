@@ -335,7 +335,7 @@ class GitlabRepo(models.Model):
 
     def sync_maintainers_with_gitlab(self, invite_missing=False):
         """Ensure that all maintainers have access to the repo."""
-        maintainer_ids = self._tool.maintainer_ids()
+        maintainer_ids = self._tool().maintainer_ids()
         if invite_missing:
             gitlab_maintainers = gitlab.user_lookup(maintainer_ids)
             missing = Maintainer.objects.filter(
