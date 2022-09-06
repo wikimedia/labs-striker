@@ -286,7 +286,12 @@ class GitlabRepo(models.Model):
 
     def get_absolute_url(self):
         return urls.reverse(
-            'tools:repo_view', args=[self.tool, self.name])
+            'tools:repo_view',
+            kwargs={
+                'tool': self.tool,
+                'repo': self.name,
+            }
+        )
 
     def _tool(self):
         return Tool.objects.get(cn="{0}.{1}".format(
