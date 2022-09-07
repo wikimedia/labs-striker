@@ -521,19 +521,28 @@ class ToolInfo(models.Model):
     def toolinfo_v1_2(self, request):
         info = self.toolinfo_v1(request)
 
-        maintainers = {
-            u.get_full_name(): u
-            for u in LabsUser.objects.filter(
-                ldapname__in=list(
-                    Tool.objects.get(
-                        cn="{}.{}".format(
-                            settings.OPENSTACK_PROJECT,
-                            self.tool,
+        try:
+            tool_cn = "{}.{}".format(settings.OPENSTACK_PROJECT, self.tool)
+            maintainers = {
+                u.get_full_name(): u
+                for u in LabsUser.objects.filter(
+                    ldapname__in=list(
+                        Tool.objects.get(cn=tool_cn).maintainers().values_list(
+                            "cn",
+                            flat=True,
                         )
-                    ).maintainers().values_list("cn", flat=True)
-                ),
+                    ),
+                )
+            }
+        except Tool.DoesNotExist:
+            logger.warning(
+                "Orphaned ToolInfo found: pk=%d; tool=%s; name=%s",
+                self.pk,
+                self.tool,
+                self.name,
             )
-        }
+            maintainers = {}
+
         info["author"] = [
             {
                 "name": a.name,
