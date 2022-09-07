@@ -50,7 +50,7 @@ reversion.models.Version.add_to_class(
 
 
 logger = logging.getLogger(__name__)
-gitlab = gitlab.Client.default_client()
+gitlab_client = gitlab.Client.default_client()
 phab = phabricator.Client.default_client()
 
 
@@ -258,7 +258,7 @@ class DiffusionRepo(models.Model):
             )
             return False
 
-        gl_repo = gitlab.get_repository_by_id(self.gitlab.repo_id)
+        gl_repo = gitlab_client.get_repository_by_id(self.gitlab.repo_id)
         phab.repository_mirror(self.phid, gl_repo["http_url_to_repo"])
         logger.info(
             "Diffusion repo %s set to mirror %s",
@@ -296,7 +296,7 @@ class GitlabRepo(models.Model):
     def _tool(self):
         return Tool.objects.get(cn="{0}.{1}".format(
             settings.OPENSTACK_PROJECT,
-            self.name
+            self.tool,
         ))
 
     @classmethod
@@ -317,7 +317,7 @@ class GitlabRepo(models.Model):
         ]), None)
 
         # Create a new gitlab repo, no owners yet, clone from src_url
-        new_repo = gitlab.create_repository(gl_name, [], src_url)
+        new_repo = gitlab_client.create_repository(gl_name, [], src_url)
 
         with transaction.atomic():
             gl_repo = GitlabRepo(
@@ -337,20 +337,28 @@ class GitlabRepo(models.Model):
         """Ensure that all maintainers have access to the repo."""
         maintainer_ids = self._tool().maintainer_ids()
         if invite_missing:
-            gitlab_maintainers = gitlab.user_lookup(maintainer_ids)
+            gitlab_maintainers = gitlab_client.user_lookup(maintainer_ids)
             missing = Maintainer.objects.filter(
                 uid__in=list(
                     set(maintainer_ids) - set(gitlab_maintainers.keys())
                 )
             )
             for user in missing:
-                gitlab.invite_user(self.repo_id, user)
-        gitlab.set_repository_owners(self.repo_id, maintainer_ids)
+                gitlab_client.invite_user(self.repo_id, user)
+        try:
+            gitlab_client.set_repository_owners(self.repo_id, maintainer_ids)
+
+        except gitlab.APIError:
+            logger.exception(
+                "Failure updating repo ownership for tool=%s, repo=%s",
+                self.tool,
+                self.name,
+            )
 
     @property
     def import_finished(self):
         """Check on this repo's import status."""
-        r = gitlab.import_status(self.repo_id)
+        r = gitlab_client.import_status(self.repo_id)
         status = r["import_status"]
         if status not in ["none", "finished"]:
             logger.info("[Repo %s] import status: %s", self.name, status)
