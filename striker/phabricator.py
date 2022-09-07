@@ -227,7 +227,7 @@ class Client(object):
         """Make a repo a mirror of an upstream."""
         repo = self.get_repository_by_phid(repo_phid)
         for uri in repo['attachments']['uris']['uris']:
-            if uri['fields']['io']['default'] == 'readwrite':
+            if uri['fields']['io']['raw'] == 'readwrite':
                 self.post('diffusion.uri.edit', {
                     'objectIdentifier': uri['phid'],
                     'transactions': [
@@ -252,6 +252,14 @@ class Client(object):
             ],
         })
         return self.get_repository_by_phid(repo_phid)
+
+    def repository_is_mirror(self, repo_phid):
+        """Is the given repo a mirror of some upstream?"""
+        repo = self.get_repository_by_phid(repo_phid)
+        for uri in repo['attachments']['uris']['uris']:
+            if uri['fields']['io']['raw'] == 'observe':
+                return True
+        return False
 
     def _repository_hide_http_url(self, repo):
         """Hide http URI if we also have an https URI."""
