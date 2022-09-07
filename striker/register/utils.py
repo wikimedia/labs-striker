@@ -26,21 +26,10 @@ from django.utils import translation
 from django.utils.translation import ugettext_lazy as _
 
 from striker import mediawiki
-from striker.labsauth.models import LabsUser
 from striker.labsauth.models import PosixAccount
 
 
 logger = logging.getLogger(__name__)
-
-
-def sul_available(name):
-    try:
-        # TODO: change to LdapUser once T148048 is done
-        LabsUser.objects.get(sulname=name)
-    except LabsUser.DoesNotExist:
-        return True
-    else:
-        return False
 
 
 @functools.lru_cache(maxsize=1)

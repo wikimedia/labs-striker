@@ -105,12 +105,24 @@ def index(req):
 @oauth_required
 def oauth(req):
     oauth = oauth_from_session(req.session)
-    if not utils.sul_available(oauth['username']):
+    try:
+        # TODO: change to LdapUser once T148048 is done
+        user = LabsUser.objects.get(sulname=oauth['username'])
+
         messages.error(
-            req, _('Wikimedia account is already in use.'))
+            req,
+            _(
+                'Wikimedia account in use by existing '
+                'Developer account %(user)s.'
+            ) % {
+                "user": user,
+            },
+        )
         return shortcuts.redirect(urls.reverse('register:index'))
-    return shortcuts.redirect(
-        urls.reverse('register:wizard', kwargs={'step': 'ldap'}))
+    except LabsUser.DoesNotExist:
+        # Expected case. OAuth identity has no Developer account
+        return shortcuts.redirect(
+            urls.reverse('register:wizard', kwargs={'step': 'ldap'}))
 
 
 @never_cache
