@@ -24,7 +24,7 @@ from striker.goals import models
 
 
 @django.contrib.admin.register(models.Milestone)
-class DiffusionRepoAdmin(django.contrib.admin.ModelAdmin):
+class MilestoneAdmin(django.contrib.admin.ModelAdmin):
     list_display = ('goal', 'name', 'user', 'completed_date')
     list_filter = ('completed_date', 'goal', 'user')
     ordering = ('-completed_date', 'user', 'goal')

@@ -57,3 +57,10 @@ class PhabricatorProjectAdmin(django.contrib.admin.ModelAdmin):
     list_display = ('name', 'tool', 'phid')
     list_filter = ('tool',)
     ordering = ('name',)
+
+
+@django.contrib.admin.register(models.GitlabRepo)
+class GitlabRepoAdmin(django.contrib.admin.ModelAdmin):
+    list_display = ("name", "tool", "repo_id")
+    list_filter = ("tool",)
+    ordering = ("name",)

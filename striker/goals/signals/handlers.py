@@ -82,8 +82,8 @@ def on_user_save(sender, instance, **kwargs):
     check_goal_sul(instance)
 
 
-@receiver(post_save, sender='tools.DiffusionRepo', dispatch_uid=__name__)
-def on_diffusion_save(sender, instance, **kwargs):
+@receiver(post_save, sender='tools.GitlabRepo', dispatch_uid=__name__)
+def on_gitlabrepo_save(sender, instance, **kwargs):
     instance.created_by.milestones.recordMilestone(GOALS['TOOL_GIT'])
 
 
