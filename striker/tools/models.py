@@ -306,7 +306,7 @@ class GitlabRepo(models.Model):
         if gl_name.startswith("tool-"):
             gl_name = gl_name[5:]
 
-        old_repo = phab.get_repository(diff_repo.name)
+        old_repo = phab.get_repository_by_phid(diff_repo.phid)
 
         # Find the first https URL for the diffusion repo.
         src_url = next(iter([
