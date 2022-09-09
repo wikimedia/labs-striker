@@ -34,7 +34,6 @@ import reversion
 
 from striker import gitlab
 from striker import phabricator
-from striker.labsauth.models import LabsUser
 from striker.tools import cache
 
 
@@ -495,6 +494,15 @@ class ToolInfo(models.Model):
     def __str__(self):
         return self.name
 
+    def get_tool(self):
+        try:
+            return Tool.objects.get(cn="{0}.{1}".format(
+                settings.OPENSTACK_PROJECT,
+                self.tool,
+            ))
+        except Tool.DoesNotExist:
+            return None
+
     def toolinfo_v1(self, request):
         if self.is_webservice:
             url = 'https://{}.toolforge.org/{}'.format(
@@ -521,41 +529,13 @@ class ToolInfo(models.Model):
     def toolinfo_v1_2(self, request):
         info = self.toolinfo_v1(request)
 
-        try:
-            tool_cn = "{}.{}".format(settings.OPENSTACK_PROJECT, self.tool)
-            maintainers = {
-                u.get_full_name(): u
-                for u in LabsUser.objects.filter(
-                    ldapname__in=list(
-                        Tool.objects.get(cn=tool_cn).maintainers().values_list(
-                            "cn",
-                            flat=True,
-                        )
-                    ),
-                )
-            }
-        except Tool.DoesNotExist:
-            logger.warning(
-                "Orphaned ToolInfo found: pk=%d; tool=%s; name=%s",
-                self.pk,
-                self.tool,
-                self.name,
-            )
-            maintainers = {}
-
-        info["author"] = [
-            {
-                "name": a.name,
-                "wiki_username": maintainers[a.name].sulname,
-                "developer_username": maintainers[a.name].ldapname,
-            }
-            if a.name in maintainers else
-            {"name": a.name}
-            for a in self.authors.all()
-        ]
+        # FIXME: more complete author is possible, but requires fetching
+        # maintainers from LDAP which was too slow the last time it was tried
+        # at production scale.
+        info["author"] = [{"name": a.name} for a in self.authors.all()]
 
         info["license"] = self.license.slug
-        info["technology_used"] = "Toolforge"
+        info["technology_used"] = ["Toolforge"]
         if self.is_webservice:
             info["tool_type"] = "web app"
         if self.issues:

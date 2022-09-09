@@ -400,6 +400,7 @@ def json_v1_2(req):
         [
             info.toolinfo_v1_2(req)
             for info in ToolInfo.objects.all().order_by('name')
+            if info.get_tool() is not None
         ]),
         content_type="application/json; charset=utf8"
     )
