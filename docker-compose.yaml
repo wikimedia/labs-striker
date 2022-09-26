@@ -4,7 +4,8 @@ services:
   striker:
     build:
       context: .
-      dockerfile: .pipeline/local-python.Dockerfile
+      dockerfile: .pipeline/blubber.yaml
+      target: local-python
       args:
         LIVES_UID: ${LOCAL_UID:?run `make .env`}
         LIVES_GID: ${LOCAL_GID:?run `make .env`}
