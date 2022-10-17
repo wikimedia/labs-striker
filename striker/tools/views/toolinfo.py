@@ -394,13 +394,25 @@ def json_v1(req):
 
 
 def json_v1_2(req):
+    # We can orphan toolinfo records because we do not have any easy way to
+    # enforce a cascading delete in Striker's database when a tool is deleted
+    # from LDAP. It is also too expensive to make 1:1 LDAP queries at runtime
+    # in production to check for each tool. Instead we will create a dict
+    # keyed by the name of each tool after the OpenStack project name is
+    # stripped off of the LDAP cn. We then lookup in that dict to see if there
+    # is still a tool owning a given toolinfo record before emitting it as
+    # a toolinfo record for external use.
+    valid_tools = {
+        name.split(".", 1)[1]: True
+        for name in Tool.objects.values_list("cn", flat=True)
+    }
     enc = DjangoJSONEncoder(
         ensure_ascii=False, indent=2, separators=(',', ':'))
-    return HttpResponse(enc.encode(
-        [
+    return HttpResponse(
+        enc.encode([
             info.toolinfo_v1_2(req)
             for info in ToolInfo.objects.all().order_by('name')
-            if info.get_tool() is not None
+            if valid_tools.get(info.tool, False)
         ]),
         content_type="application/json; charset=utf8"
     )
