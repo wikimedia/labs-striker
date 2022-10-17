@@ -32,6 +32,7 @@ from django.utils.translation import ugettext_lazy as _
 from notifications.signals import notify
 
 from striker import gitlab
+from striker import phabricator
 from striker.tools.forms import RepoCreateForm
 from striker.tools.models import GitlabRepo
 from striker.tools.utils import member_or_admin
@@ -40,6 +41,7 @@ from striker.tools.views.decorators import inject_tool
 
 logger = logging.getLogger(__name__)
 gitlab = gitlab.Client.default_client()
+phab = phabricator.Client.default_client()
 
 
 @login_required
@@ -64,6 +66,20 @@ def create(req, tool):
                 # Create repo
                 # FIXME: error handling!
                 repo = gitlab.create_repository(name, maintainers)
+
+                # T317345: Create Diffusion mirror of repo
+                try:
+                    # Empty maintainers list == administrators only ownership
+                    mirror = phab.create_repository("tool-{}".format(name), [])
+                    mirror = phab.repository_mirror(
+                        mirror["phid"],
+                        repo["http_url_to_repo"],
+                    )
+                except phabricator.APIError:
+                    logger.exception(
+                        "Failed to create Diffusion mirror for %s",
+                        repo["http_url_to_repo"],
+                    )
 
                 # Save a local association between the repo and the tool.
                 repo_model = GitlabRepo(
