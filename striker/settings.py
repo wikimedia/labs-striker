@@ -90,6 +90,7 @@ LOGGING = {
         },
         'cee': {
             'class': 'logging.StreamHandler',
+            'filters': ['request_id'],
             'formatter': 'cee',
             'level': 'DEBUG',
         },
