@@ -72,7 +72,7 @@
         </div>
         <div class="list-group">
           {% for repo in repos %}
-          <a class="list-group-item" href="{% url 'tools:repo_view' tool=tool.name repo=repo.name %}">{{ repo.name }}</a>
+          <a class="list-group-item" href="{% url 'tools:repo_view' tool=tool.name repo_id=repo.repo_id %}">{{ repo.name }}</a>
           {% endfor %}
         </div>
         {% if can_edit %}

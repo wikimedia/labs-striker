@@ -114,7 +114,7 @@ def create(req, tool):
                     return shortcuts.redirect(
                         urls.reverse('tools:repo_view', kwargs={
                             'tool': tool.name,
-                            'repo': name,
+                            'repo_id': repo_model.repo_id,
                         }))
                 except DatabaseError:
                     logger.exception('repo_model.save failed')
@@ -134,17 +134,17 @@ def create(req, tool):
 
 
 @inject_tool
-def view(req, tool, repo):
+def view(req, tool, repo_id):
     ctx = {
         'tool': tool,
-        'repo_id': None,
-        'name': repo,
+        'repo_id': repo_id,
+        'name': None,
         'urls': [],
         'web_url': None,
     }
     try:
-        repository = gitlab.get_repository_by_name(repo)
-        ctx['repo_id'] = repository['id']
+        repository = gitlab.get_repository_by_id(repo_id)
+        ctx['name'] = repository['name']
         ctx['urls'] = [
             repository['http_url_to_repo'],
             repository['ssh_url_to_repo'],
@@ -152,6 +152,12 @@ def view(req, tool, repo):
         ctx['web_url'] = repository['web_url']
 
         # FIXME: Lookup membership details & add to ctx
+
+        repo_model = GitlabRepo.objects.get(repo_id=repo_id)
+        if repo_model.name != repository['name']:
+            # Repo has been renamed on the GitLab side. Update local name.
+            repo_model.name = repository['name']
+            repo_model.save()
 
     except KeyError:
         pass

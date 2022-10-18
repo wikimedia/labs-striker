@@ -288,7 +288,7 @@ class GitlabRepo(models.Model):
             'tools:repo_view',
             kwargs={
                 'tool': self.tool,
-                'repo': self.name,
+                'repo_id': self.repo_id,
             }
         )
 

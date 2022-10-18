@@ -54,7 +54,7 @@ urlpatterns = [
         ])),
         path('repos/', include([
             path('create', repo.create, name='repo_create'),
-            path('id/<slug:repo>', repo.view, name='repo_view'),
+            path('id/<int:repo_id>', repo.view, name='repo_view'),
         ])),
         path('projects/', include([
             path('create', project.create, name='project_create'),
