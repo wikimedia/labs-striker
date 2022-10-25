@@ -6,9 +6,8 @@ ou: ppolicies
 dn: cn=disabled,ou=ppolicies,dc=wmftest,dc=net
 objectClass: organizationalRole
 objectClass: pwdPolicy
-objectclass: top
+objectClass: top
 cn: disabled
 pwdAttribute: userPassword
 pwdLockout: TRUE
 pwdMaxAge: 1
-

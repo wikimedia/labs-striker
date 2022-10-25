@@ -447,6 +447,10 @@ TOOLS_ADMIN_GROUP_NAME = env.str(
     "TOOLS_ADMIN_GROUP_NAME",
     default="tools.admin",
 )
+TOOLS_DISABLED_POLICY_ENTRY = env.str(
+    "TOOLS_DISABLED_POLICY_ENTRY",
+    default="cn=disabled,ou=ppolicies,dc=wikimedia,dc=org",
+)
 
 # == Project settings ==
 PROJECTS_BASE_DN = 'ou=projects,{}'.format(

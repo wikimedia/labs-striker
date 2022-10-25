@@ -69,6 +69,19 @@ cn: tools.admin
 gidNumber: 5002
 member: uid=admin,ou=People,dc=wmftest,dc=net
 
+dn: cn=tools.admin,ou=people,ou=servicegroups,dc=wmftest,dc=net
+objectClass: shadowAccount
+objectClass: posixAccount
+objectClass: person
+objectClass: top
+cn: tools.admin
+sn: tools.admin
+uid: tools.admin
+uidNumber: 5002
+gidNumber: 5002
+homeDirectory: /data/project/admin
+loginShell: /bin/bash
+
 dn: cn=tools.example,ou=servicegroups,dc=wmftest,dc=net
 objectClass: groupOfNames
 objectClass: posixGroup
@@ -76,3 +89,17 @@ objectClass: top
 cn: tools.example
 gidNumber: 5003
 member: uid=admin,ou=People,dc=wmftest,dc=net
+
+dn: cn=tools.example,ou=people,ou=servicegroups,dc=wmftest,dc=net
+objectClass: shadowAccount
+objectClass: posixAccount
+objectClass: person
+objectClass: top
+cn: tools.example
+sn: tools.example
+uid: tools.example
+uidNumber: 5003
+gidNumber: 5003
+homeDirectory: /data/project/example
+loginShell: /bin/bash
+

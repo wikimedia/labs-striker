@@ -35,6 +35,7 @@ STAFF_GROUP_DN=cn=tools.admin,ou=servicegroups,dc=wmftest,dc=net
 SUPERUSER_GROUP_DN=cn=tools.admin,ou=servicegroups,dc=wmftest,dc=net
 TOOLS_MAINTAINER_BASE_DN=ou=people,dc=wmftest,dc=net
 TOOLS_TOOL_BASE_DN=ou=servicegroups,dc=wmftest,dc=net
+TOOLS_DISABLED_POLICY_ENTRY=cn=disabled,ou=ppolicies,dc=wmftest,dc=net
 
 CACHE_BACKEND=django.core.cache.backends.locmem.LocMemCache
 CACHE_LOCATION=default-cache

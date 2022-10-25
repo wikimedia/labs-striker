@@ -19,6 +19,7 @@
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
 
 import collections
+import datetime
 import logging
 
 from django import urls
@@ -142,6 +143,21 @@ class Tool(ldapdb.models.Model):
         except ToolInfo.DoesNotExist:
             return None
 
+    def service_user(self):
+        return ToolUser.objects.get(uid=self.cn)
+
+    def disable(self, delete=False):
+        """Mark this tool as disabled."""
+        return self.service_user().disable(delete=delete)
+
+    def enable(self):
+        """Mark this tool as enabled."""
+        return self.service_user().enable()
+
+    def is_disabled(self):
+        """Has this tool been marked as disabled?"""
+        return self.service_user().is_disabled()
+
     def get_absolute_url(self):
         return urls.reverse(
             'tools:tool', args=[str(self.name)])
@@ -168,6 +184,8 @@ class ToolUser(ldapdb.models.Model):
     home_directory = fields.CharField(
         db_column='homeDirectory', max_length=200)
     login_shell = fields.CharField(db_column='loginShell', max_length=64)
+    locked_time = fields.DateTimeField(db_column='pwdAccountLockedTime')
+    password_policy = fields.CharField(db_column='pwdPolicySubentry')
 
     class Meta:
         managed = False
@@ -179,6 +197,27 @@ class ToolUser(ldapdb.models.Model):
     @name.setter
     def name(self, value):
         self.cn = '{0}.{1!s}'.format(settings.OPENSTACK_PROJECT, value)
+
+    def disable(self, delete=False):
+        """Mark this tool as disabled."""
+        self.login_shell = "/bin/disabledtoolshell"
+        self.password_policy = settings.TOOLS_DISABLED_POLICY_ENTRY
+        if delete:
+            self.locked_time = "000001010000Z"
+        else:
+            self.locked_time = datetime.datetime.now()
+        self.save()
+
+    def enable(self):
+        """Mark this tool as enabled."""
+        self.login_shell = "/bin/bash"
+        self.password_policy = None
+        self.locked_time = None
+        self.save()
+
+    def is_disabled(self):
+        """Has this tool been marked as disabled?"""
+        return self.password_policy == settings.TOOLS_DISABLED_POLICY_ENTRY
 
     def __str__(self):
         return self.name
