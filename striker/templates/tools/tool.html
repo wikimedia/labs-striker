@@ -26,11 +26,13 @@
         </div>
         <div class="panel-body">
           <p>{% blocktrans with since=locked_time|timesince %}This tool has been disabled for {{ since }}. Disabled tools are archived and deleted after 40 days.{% endblocktrans %}</p>
+          {% if can_delete %}
           <form method="post" action="{% url 'tools:enable' tool=tool.name %}" class="form form-inline">
             {% csrf_token %}
             <input type="hidden" name="name" value="{{ tool.name }}">
             <button class="btn btn-success pull-right" type="submit">{% bootstrap_icon "play-circle" %} {% trans "Re-enable tool" %}</button>
           </form>
+          {% endif %}
         </div>
       </div>
       {% endif %}
