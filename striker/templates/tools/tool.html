@@ -16,12 +16,30 @@
 <div class="container-fluid">
   <div class="row">
     <div class="col-sm-9 col-sm-push-3 panel-group">
+      {% if is_disabled %}
+      <div class="panel panel-danger">
+        <div class="panel-heading">
+          <h3 class="panel-title">
+            {% bootstrap_icon "off" %}
+            {% trans "Tool disabled" %}
+          </h3>
+        </div>
+        <div class="panel-body">
+          <p>{% blocktrans with since=locked_time|timesince %}This tool has been disabled for {{ since }}. Disabled tools are archived and deleted after 40 days.{% endblocktrans %}</p>
+          <form method="post" action="{% url 'tools:enable' tool=tool.name %}" class="form form-inline">
+            {% csrf_token %}
+            <input type="hidden" name="name" value="{{ tool.name }}">
+            <button class="btn btn-success pull-right" type="submit">{% bootstrap_icon "play-circle" %} {% trans "Re-enable tool" %}</button>
+          </form>
+        </div>
+      </div>
+      {% endif %}
       {% for info in toolinfo %}
       <div class="panel panel-info panel-pager">
         {% include "tools/info/revision/header.html" with toolinfo=info %}
         {% include "tools/info/revision/body.html" with toolinfo=info %}
       </div>
-      {% if forloop.last and can_edit %}
+      {% if forloop.last and not is_disabled and can_edit %}
       <div class="panel">
         <div class="panel-body text-right">
           <a href="{% url 'tools:info_create' tool=tool.name %}" class="btn btn-default btn-sm">{% bootstrap_icon "plus" %} {% trans "add toolinfo" %}</a>
@@ -39,7 +57,7 @@
         <div class="panel-body">
           {% blocktrans %}Creating a toolinfo description is required for new tools and recommended for all tools.{% endblocktrans %}
         </div>
-        {% if can_edit %}
+        {% if not is_disabled and can_edit %}
         <div class="panel-body text-right">
           <a href="{% url 'tools:info_create' tool=tool.name %}" class="btn btn-primary btn-sm">{% bootstrap_icon "plus" %} {% trans "add toolinfo" %}</a>
         </div>
@@ -60,7 +78,7 @@
           <li class="list-group-item">{{ maintainer.cn }}</li>
           {% endfor %}
         </ul>
-        {% if can_edit %}
+        {% if not is_disabled and can_edit %}
         <div class="list-group">
           <a class="list-group-item" href="{% url 'tools:maintainers' tool=tool.name %}">{% bootstrap_icon "edit" %} {% trans "manage maintainers" %}</a>
         </div>
@@ -75,7 +93,7 @@
           <a class="list-group-item" href="{% url 'tools:repo_view' tool=tool.name repo_id=repo.repo_id %}">{{ repo.name }}</a>
           {% endfor %}
         </div>
-        {% if can_edit %}
+        {% if not is_disabled and can_edit %}
         <div class="list-group">
           <a class="list-group-item" href="{% url 'tools:repo_create' tool=tool.name %}">{% bootstrap_icon "plus-sign" %} {% trans "create repository" %}</a>
         </div>
@@ -90,12 +108,21 @@
           <a class="list-group-item" href="{% url 'tools:project_view' tool=tool.name project=project.name %}">{{ project.name }}</a>
           {% endfor %}
         </div>
-        {% if can_edit %}
+        {% if not is_disabled and can_edit %}
         <div class="list-group">
           <a class="list-group-item" href="{% url 'tools:project_create' tool=tool.name %}">{% bootstrap_icon "plus-sign" %} {% trans "create project" %}</a>
         </div>
         {% endif %}
       </div>
+      {% if can_delete and not is_disabled %}
+      <div class="panel panel-default">
+        <form method="post" action="{% url 'tools:disable' tool=tool.name %}" class="form form-inline">
+          {% csrf_token %}
+          {% bootstrap_form disable_form %}
+          <button class="btn btn-danger btn-block" type="submit">{% bootstrap_icon "off" %} {% trans "Disable tool" %}</button>
+        </form>
+      </div>
+      {% endif %}
     </div>
   </div>
 </div>

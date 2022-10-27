@@ -21,6 +21,7 @@
 import re
 
 from django import forms
+from django.conf import settings
 from django.core import validators
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
@@ -34,6 +35,7 @@ from striker.tools import utils
 from striker.tools.models import AccessRequest
 from striker.tools.models import Maintainer
 from striker.tools.models import SoftwareLicense
+from striker.tools.models import Tool
 from striker.tools.models import ToolInfo
 from striker.tools.models import ToolInfoTag
 from striker.tools.models import ToolUser
@@ -398,3 +400,23 @@ class MaintainersForm(forms.Form):
         super(MaintainersForm, self).__init__(*args, **kwargs)
         self.fields['maintainers'].queryset = Maintainer.objects.all()
         self.fields['tools'].queryset = ToolUser.objects.all()
+
+
+class ToolDisableForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        tool = kwargs.pop('tool')
+        super(ToolDisableForm, self).__init__(*args, **kwargs)
+        self.fields['name'] = forms.CharField(
+            initial=tool,
+            widget=forms.HiddenInput(),
+            required=True,
+        )
+
+    def clean_name(self):
+        name = self.cleaned_data.get('name')
+        toolname = '{0}.{1!s}'.format(settings.OPENSTACK_PROJECT, name)
+        try:
+            Tool.objects.get(cn=toolname)
+        except Tool.DoesNotExist:
+            raise forms.ValidationError(_('Unknown tool'), code='unknown_tool')
+        return name

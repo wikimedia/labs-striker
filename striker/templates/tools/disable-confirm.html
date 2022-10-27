@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% load bootstrap3 %}
+{% load i18n %}
+
+{% block title %}{% trans "Disable tool?" %}{% endblock %}
+{% block content %}
+<div class="row">
+  <div class="col-sm-6 col-sm-offset-3">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">{% blocktrans with tool=request.POST.name %}Are you sure you want to disable {{ tool }}?{% endblocktrans %}</h3>
+      </div>
+      <div class="panel-body alert alert-warning" role="alert">
+        <p>{% blocktrans %}Disabling a tool will immediately stop any running jobs including webservices and prevent maintainers from logging in as the tool.{% endblocktrans %}</p>
+        <p>{% blocktrans %}After being disabled for 40 days the tool will be archived and deleted.{% endblocktrans %}</p>
+        <p>{% blocktrans %}Disabled tools can be re-enabled at any time prior to being archived and deleted.{% endblocktrans %}</p>
+      </div>
+      <div class="panel-body row">
+        <div class="col-sm-6">
+          <form method="post" action="{% url 'tools:disable' tool=request.POST.name %}" class="form form-inline">
+            {% csrf_token %}
+            <input type="hidden" name="__confirm__" value="1">
+            <input type="hidden" name="name" value="{{ request.POST.name }}">
+            <button class="btn btn-danger btn-block" type="submit">
+              {% bootstrap_icon "off" %} {% trans "Disable" %}
+            </button>
+          </form>
+        </div>
+        <div class="col-sm-6">
+          <a href="{% url 'tools:tool' tool=request.POST.name %}" class="btn btn-default btn-block">
+            {% trans "Cancel" %}
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{# vim:sw=2:ts=2:sts=2:et: #}

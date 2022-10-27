@@ -61,6 +61,8 @@ urlpatterns = [
             path('id/<slug:project>', project.view, name='project_view')
         ])),
         path('maintainers/', tool.maintainers, name='maintainers'),
+        path('disable/', tool.disable, name='disable'),
+        path('enable/', tool.enable, name='enable'),
     ])),
     path('membership/', include([
         path('', membership.membership, name='membership'),

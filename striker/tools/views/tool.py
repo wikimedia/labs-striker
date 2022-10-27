@@ -35,10 +35,12 @@ from notifications.signals import notify
 import reversion
 import reversion.models
 
+from striker import decorators
 from striker.labsauth.models import LabsUser
 from striker.tools import utils
 from striker.tools.forms import MaintainersForm
 from striker.tools.forms import ToolCreateForm
+from striker.tools.forms import ToolDisableForm
 from striker.tools.models import Author
 from striker.tools.models import GitlabRepo
 from striker.tools.models import PhabricatorProject
@@ -64,6 +66,9 @@ def view(req, tool):
         'can_delete': member_or_admin(tool, req.user),
         'can_revert': False,
         'can_suppress': False,
+        'is_disabled': tool.is_disabled(),
+        'locked_time': tool.service_user().locked_time,
+        'disable_form': ToolDisableForm(tool=tool.name),
     })
 
 
@@ -282,3 +287,94 @@ class ToolUserAutocomplete(autocomplete.Select2QuerySetView):
 
     def get_result_label(self, result):
         return result.name
+
+
+@login_required
+@inject_tool
+@decorators.confirm_required('tools/disable-confirm.html')
+def disable(req, tool):
+    """Disable a tool"""
+    if not member_or_admin(tool, req.user):
+        messages.error(
+            req, _('You are not a member of {tool}').format(tool=tool.name))
+        return shortcuts.redirect(tool.get_absolute_url())
+    if tool.is_disabled():
+        messages.error(
+            req,
+            _('{tool} is already in disabled state.').format(tool=tool.name),
+        )
+        return shortcuts.redirect(tool.get_absolute_url())
+    if req.method == 'POST':
+        form = ToolDisableForm(
+            req.POST or None,
+            req.FILES or None,
+            tool=tool.name,
+        )
+        if form.is_valid():
+            tool.disable()
+            try:
+                maintainers = Group.objects.get(name=tool.cn)
+            except ObjectDoesNotExist:
+                # Can't find group for the tool
+                pass
+            else:
+                notify.send(
+                    recipient=maintainers,
+                    sender=req.user,
+                    verb=_('disabled tool {}').format(tool.name),
+                    public=True,
+                    level='info',
+                    actions=[
+                        {
+                            'title': _('View tool'),
+                            'href': tool.get_absolute_url(),
+                        },
+                    ],
+                )
+        else:
+            messages.error(req, form.errors['name'][0])
+    return shortcuts.redirect(tool.get_absolute_url())
+
+
+@login_required
+@inject_tool
+def enable(req, tool):
+    """Enable a tool"""
+    if not member_or_admin(tool, req.user):
+        messages.error(
+            req, _('You are not a member of {tool}').format(tool=tool.name))
+        return shortcuts.redirect(tool.get_absolute_url())
+    if not tool.is_disabled():
+        messages.error(
+            req, _('{tool} is not in disabled state.').format(tool=tool.name))
+        return shortcuts.redirect(tool.get_absolute_url())
+    if req.method == 'POST':
+        form = ToolDisableForm(
+            req.POST or None,
+            req.FILES or None,
+            tool=tool.name,
+        )
+        if form.is_valid():
+            tool.enable()
+            try:
+                maintainers = Group.objects.get(name=tool.cn)
+            except ObjectDoesNotExist:
+                # Can't find group for the tool
+                pass
+            else:
+                notify.send(
+                    recipient=maintainers,
+                    sender=req.user,
+                    verb=_('re-enabled tool {}').format(tool.name),
+                    public=True,
+                    level='info',
+                    actions=[
+                        {
+                            'title': _('View tool'),
+                            'href': tool.get_absolute_url(),
+                        },
+                    ],
+                )
+        else:
+            messages.error(req, form.errors['name'][0])
+    return shortcuts.redirect(tool.get_absolute_url())
