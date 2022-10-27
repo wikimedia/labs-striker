@@ -58,6 +58,11 @@ def create(req, tool):
         messages.error(
             req, _('You are not a member of {tool}').format(tool=tool.name))
         return shortcuts.redirect(tool.get_absolute_url())
+    if tool.is_disabled():
+        messages.error(req, _('Tool is disabled.'))
+        return shortcuts.redirect(
+            urls.reverse('tools:tool', kwargs={'tool': tool.name})
+        )
 
     initial_values = {
         'name': "toolforge-{}".format(tool.name),

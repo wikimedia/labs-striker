@@ -52,6 +52,11 @@ def create(req, tool):
         messages.error(
             req, _('You are not a member of {tool}').format(tool=tool.name))
         return shortcuts.redirect(urls.reverse('tools:index'))
+    if tool.is_disabled():
+        messages.error(req, _('Tool is disabled.'))
+        return shortcuts.redirect(
+            urls.reverse('tools:tool', kwargs={'tool': tool.name})
+        )
 
     form = ProjectCreateForm(req.POST or None, req.FILES or None, tool=tool)
     if req.method == 'POST':
