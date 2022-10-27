@@ -44,7 +44,7 @@ status:  ## Show status of the docker-compose stack
 .PHONY: status
 
 tail:  ## Tail logs from the docker-compose stack
-	docker-compose logs -f
+	docker-compose logs --tail=1000 -f
 .PHONY: tail
 
 migrate:  ## Run `manage.py migrate`
