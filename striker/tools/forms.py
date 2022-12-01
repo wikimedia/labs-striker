@@ -238,9 +238,9 @@ class ToolInfoForm(forms.ModelForm):
             "issues": _("URL to this tool's issue tracker"),
             "docs": _("URL to this tool's documentation"),
             "is_webservice": _(
-                "If unchecked, the toolinfo record will link to "
-                "this tool's documentation URL in directories like Hay's "
-                "Directory and the admin tool."
+                "If unchecked: toolinfo record in Toolhub and other "
+                "directories will link to this tool's documentation URL. If "
+                "checked: toolinfo record will link to webservice URL. "
             ),
             "suburl": _(
                 "Leave path blank unless you are creating multiple "
@@ -335,9 +335,9 @@ class ToolCreateForm(forms.Form):
     is_webservice = forms.BooleanField(
         label=_("This is a webservice"),
         help_text=_(
-            "If unchecked, the toolinfo record will link to "
-            "this tool's documentation URL in directories like Hay's "
-            "Directory and the admin tool."
+            "If unchecked: toolinfo record in Toolhub and other "
+            "directories will link to this tool's documentation URL. If "
+            "checked: toolinfo record will link to webservice URL. "
         ),
         required=False,
     )
