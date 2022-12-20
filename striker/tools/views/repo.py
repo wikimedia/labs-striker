@@ -40,7 +40,7 @@ from striker.tools.views.decorators import inject_tool
 
 
 logger = logging.getLogger(__name__)
-gitlab = gitlab.Client.default_client()
+gitlab_client = gitlab.Client.default_client()
 phab = phabricator.Client.default_client()
 
 
@@ -65,12 +65,12 @@ def create(req, tool):
             # FIXME: error handling!
             # Verify that at least one maintainer has a GitLab account setup
             maintainers = tool.maintainer_ids()
-            gitlab_maintainers = gitlab.user_lookup(maintainers)
+            gitlab_maintainers = gitlab_client.user_lookup(maintainers)
 
             if gitlab_maintainers:
                 # Create repo
                 # FIXME: error handling!
-                repo = gitlab.create_repository(name, maintainers)
+                repo = gitlab_client.create_repository(name, maintainers)
 
                 # T317345: Create Diffusion mirror of repo
                 try:
@@ -148,7 +148,7 @@ def view(req, tool, repo_id):
         'web_url': None,
     }
     try:
-        repository = gitlab.get_repository_by_id(repo_id)
+        repository = gitlab_client.get_repository_by_id(repo_id)
         ctx['name'] = repository['name']
         ctx['urls'] = [
             repository['http_url_to_repo'],
