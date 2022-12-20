@@ -50,6 +50,13 @@ from striker.tools.views.decorators import inject_tool
 logger = logging.getLogger(__name__)
 
 
+class RollBackRevisionException(Exception):
+    """Flow control hack exception."""
+
+    def __init__(self, response):
+        self.response = response
+
+
 @login_required
 @inject_tool
 def create(req, tool):
@@ -298,7 +305,7 @@ def revision(req, tool, info_id, version_id):
                 if '_revert' in req.POST:
                     if not can_revert:
                         messages.error(req, _("Tool membership required"))
-                        raise reversion.views._RollBackRevisionView(None)
+                        raise RollBackRevisionException(None)
                     try:
                         with reversion.create_revision():
                             dt = version.revision.date_created.strftime(
@@ -324,7 +331,7 @@ def revision(req, tool, info_id, version_id):
                             _(
                                 "Error updating database. [req id: {id}]"
                             ).format(id=req.id))
-                        raise reversion.views._RollBackRevisionView(None)
+                        raise RollBackRevisionException(None)
 
             ctx = {
                 'tool': tool,
@@ -336,12 +343,12 @@ def revision(req, tool, info_id, version_id):
                 'can_suppress': can_suppress,
             }
             resp = shortcuts.render(req, 'tools/info/revision.html', ctx)
-            raise reversion.views._RollBackRevisionView(resp)
+            raise RollBackRevisionException(resp)
     except reversion.errors.RevertError:
         logger.exception('ToolInfo.revert failed')
         return shortcuts.redirect(history_url)
 
-    except reversion.views._RollBackRevisionView as ex:
+    except RollBackRevisionException as ex:
         if ex.response:
             return ex.response
         else:
