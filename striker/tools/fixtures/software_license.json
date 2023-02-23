@@ -371,4 +371,28 @@
         "model": "tools.softwarelicense",
         "pk": 31
     }
+    {
+        "fields": {
+            "family": "EUPL",
+            "name": "European Union Public Licence, version 1.2 only",
+            "osi_approved": true,
+            "recommended": false,
+            "slug": "EUPL-1.2-only",
+            "url": "https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12"
+        },
+        "model": "tools.softwarelicense",
+        "pk": 32
+    }
+    {
+        "fields": {
+            "family": "EUPL",
+            "name": "European Union Public Licence, version 1.2 or later",
+            "osi_approved": true,
+            "recommended": false,
+            "slug": "EUPL-1.2-or-later",
+            "url": "https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12"
+        },
+        "model": "tools.softwarelicense",
+        "pk": 33
+    }
 ]
