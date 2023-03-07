@@ -468,8 +468,8 @@ OPENSTACK_URL = env.str(
 OPENSTACK_USER = env.str("OPENSTACK_USER", default="novaadmin")
 OPENSTACK_PASSWORD = env.str("OPENSTACK_PASSWORD")
 OPENSTACK_PROJECT = env.str("OPENSTACK_PROJECT", default="tools")
-OPENSTACK_USER_ROLE = env.str("OPENSTACK_USER_ROLE", default="user")
-OPENSTACK_ADMIN_ROLE = env.str("OPENSTACK_ADMIN_ROLE", default="projectadmin")
+OPENSTACK_USER_ROLE = env.str("OPENSTACK_USER_ROLE", default="reader")
+OPENSTACK_ADMIN_ROLE = env.str("OPENSTACK_ADMIN_ROLE", default="member")
 
 # == GitLab settings ==
 GITLAB_URL = env.str("GITLAB_URL", default="https://gitlab.wikimedia.org")

@@ -22,8 +22,7 @@ runuser -u keystone -- openstack project create --or-show \
 runuser -u keystone -- openstack role create --or-show service
 runuser -u keystone -- openstack role create --or-show _member_
 runuser -u keystone -- openstack role create --or-show admin
-runuser -u keystone -- openstack role create --or-show observer
-runuser -u keystone -- openstack role create --or-show projectadmin
-runuser -u keystone -- openstack role create --or-show user
+runuser -u keystone -- openstack role create --or-show reader
+runuser -u keystone -- openstack role create --or-show member
 
 runuser -u keystone -- openstack role add --user admin --project tools admin
