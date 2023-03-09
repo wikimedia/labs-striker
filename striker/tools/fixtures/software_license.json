@@ -370,7 +370,7 @@
         },
         "model": "tools.softwarelicense",
         "pk": 31
-    }
+    },
     {
         "fields": {
             "family": "EUPL",
@@ -382,7 +382,7 @@
         },
         "model": "tools.softwarelicense",
         "pk": 32
-    }
+    },
     {
         "fields": {
             "family": "EUPL",
