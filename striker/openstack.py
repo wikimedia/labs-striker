@@ -105,14 +105,14 @@ class Client(object):
     def users_by_role(self, project=None):
         project = project or self.project
         keystone = self._client()
-        # Ignore novaadmin & novaobserver in all user lists
-        seen = ['novaadmin', 'novaobserver']
+        ignore_users = ['novaadmin', 'novaobserver']
         data = {}
         for role_name, role_id in self._roles().items():
             data[role_name] = [
-                r.user['id'] for r in keystone.role_assignments.list(
-                    project=project, role=role_id)
-                if r.user['id'] not in seen
+                r.user['id']
+                for r in keystone.role_assignments.list(
+                    project=project, role=role_id
+                )
+                if r.user['id'] not in ignore_users
             ]
-            seen += data[role_name]
         return data
