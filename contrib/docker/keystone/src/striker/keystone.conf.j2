@@ -30,6 +30,7 @@ tree_dn = {{ base_dn }}
 
 user_tree_dn = ou=people,{{ base_dn }}
 user_objectclass = inetOrgPerson
+user_filter = (!(pwdPolicySubentry=cn=disabled,ou=ppolicies,{{ base_dn }}))
 user_id_attribute = uid
 user_name_attribute = cn
 
