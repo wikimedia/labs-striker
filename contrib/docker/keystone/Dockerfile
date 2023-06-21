@@ -1,11 +1,12 @@
-ARG KEYSTONE_IMAGE_TAG=train
-FROM docker.io/kolla/ubuntu-binary-keystone:${KEYSTONE_IMAGE_TAG}
+ARG KEYSTONE_IMAGE_TAG=yoga
+FROM quay.io/openstack.kolla/ubuntu-binary-keystone:${KEYSTONE_IMAGE_TAG}
 
 RUN set -eux; \
     apt-get clean && apt-get update \
     && DEBIAN_FRONTEND=noninteractive \
     apt-get install --yes --no-install-recommends \
       python3-mwclient \
+      python3-neutronclient \
     && apt-get clean \
     && apt-get purge -y --auto-remove \
     -o APT::AutoRemove::RecommendsImportant=false \
