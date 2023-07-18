@@ -394,5 +394,17 @@
         },
         "model": "tools.softwarelicense",
         "pk": 33
+    },
+    {
+        "fields": {
+            "family": "EPL",
+            "name": "Eclipse Public License version 2.0",
+            "osi_approved": true,
+            "recommended": false,
+            "slug": "EPL-2.0",
+            "url": "https://opensource.org/license/epl-2-0"
+        },
+        "model": "tools.softwarelicense",
+        "pk": 34
     }
 ]
