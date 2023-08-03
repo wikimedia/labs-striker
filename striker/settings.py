@@ -479,8 +479,8 @@ GITLAB_REPO_NAMESPACE_NAME = env.str(
     default="toolforge-repos",
 )
 GITLAB_REPO_NAMESPACE_ID = env.int("GITLAB_REPO_NAMESPACE_ID", default=688)
-GITLAB_PROVIDER = env.str("GITLAB_PROVIDER", default="cas3")
-GITLAB_EXTERN_FORMAT = env.str("GITLAB_EXTERN_FORMAT", default="{}")
+GITLAB_PROVIDER = env.str("GITLAB_PROVIDER", default="openid_connect")
+GITLAB_EXTERN_FORMAT = env.str("GITLAB_EXTERN_FORMAT", default="{0.cn}")
 
 # == Notifications ==
 NOTIFICATIONS_SOFT_DELETE = True

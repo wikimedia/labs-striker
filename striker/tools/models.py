@@ -373,18 +373,18 @@ class GitlabRepo(models.Model):
 
     def sync_maintainers_with_gitlab(self, invite_missing=False):
         """Ensure that all maintainers have access to the repo."""
-        maintainer_ids = self._tool().maintainer_ids()
+        maintainers = self._tool().maintainers()
         if invite_missing:
-            gitlab_maintainers = gitlab_client.user_lookup(maintainer_ids)
-            missing = Maintainer.objects.filter(
-                uid__in=list(
-                    set(maintainer_ids) - set(gitlab_maintainers.keys())
-                )
-            )
-            for user in missing:
+            gitlab_maintainers = gitlab_client.user_lookup(maintainers)
+
+            maintainer_uids = {user.uid for user in maintainers}
+            github_uids = set(gitlab_maintainers.keys())
+            missing_uids = list(maintainer_uids - github_uids)
+
+            for user in Maintainer.objects.filter(uid__in=missing_uids):
                 gitlab_client.invite_user(self.repo_id, user)
         try:
-            gitlab_client.set_repository_owners(self.repo_id, maintainer_ids)
+            gitlab_client.set_repository_owners(self.repo_id, maintainers)
 
         except gitlab.APIError:
             logger.exception(

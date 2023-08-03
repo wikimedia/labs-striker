@@ -102,23 +102,23 @@ class Client(object):
         logger.debug("GET %s: %s", path, resp)
         return resp
 
-    def user_lookup(self, uids):
-        """Lookup GitHub user data for a list of LDAP uid values."""
-        uids = list(filter(None, uids))
+    def user_lookup(self, users):
+        """Lookup GitHub user data for a list of LdapUser objects."""
+        users = list(filter(None, users))
         r = {}
-        for uid in uids:
+        for user in users:
             try:
-                r[uid] = self.get(
+                r[user.uid] = self.get(
                     "users",
                     {
                         "provider": settings.GITLAB_PROVIDER,
                         "extern_uid": settings.GITLAB_EXTERN_FORMAT.format(
-                            uid
+                            user
                         ),
                     }
                 )[0]
             except (APIError, IndexError):
-                logger.exception("Failed to lookup user '%s'", uid)
+                logger.exception("Failed to lookup user '%s'", user.uid)
         return r
 
     def get_repository_by_id(self, repo_id):
@@ -166,7 +166,7 @@ class Client(object):
         """Create a GitLab user account for a maintainer."""
         return self.post("users", {
             "provider": settings.GITLAB_PROVIDER,
-            "extern_uid": settings.GITLAB_EXTERN_FORMAT.format(user.uid),
+            "extern_uid": settings.GITLAB_EXTERN_FORMAT.format(user),
             "username": user.uid,
             "name": user.cn,
             "email": user.mail,
