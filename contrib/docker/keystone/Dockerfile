@@ -1,5 +1,5 @@
-ARG KEYSTONE_IMAGE_TAG=yoga
-FROM quay.io/openstack.kolla/ubuntu-binary-keystone:${KEYSTONE_IMAGE_TAG}
+ARG KEYSTONE_IMAGE_TAG=2023.1-debian-bullseye
+FROM quay.io/openstack.kolla/keystone:${KEYSTONE_IMAGE_TAG}
 
 RUN set -eux; \
     apt-get clean && apt-get update \
