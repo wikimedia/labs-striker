@@ -249,6 +249,10 @@ class Client(object):
                     'type': 'description',
                     'value': 'Diffusion mirror of {}'.format(upstream_uri),
                 },
+                {
+                    'type': 'defaultBranch',
+                    'value': 'main',
+                },
             ],
         })
         return self.get_repository_by_phid(repo_phid)
