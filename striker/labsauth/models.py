@@ -207,10 +207,8 @@ class LdapUser(ldapdb.models.Model):
     object_classes = [
         'person',
         'inetOrgPerson',
-        'organizationalPerson',
         'ldapPublicKey',
         'posixAccount',
-        'shadowAccount',
     ]
 
     # posixAccount
