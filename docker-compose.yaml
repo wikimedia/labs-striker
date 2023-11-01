@@ -232,7 +232,7 @@ services:
       - mariadb
 
   gitlab:
-    image: "gitlab/gitlab-ce:15.11.7-ce.0"
+    image: "gitlab/gitlab-ce:16.3.6-ce.0"
     restart: always
     environment:
       GITLAB_OMNIBUS_CONFIG: |
@@ -269,7 +269,9 @@ services:
         logging['logrotate_rotate'] = 1
         registry['log_level'] = 'warn'
         gitlab_shell['log_level'] = 'WARN'
-        gitaly['logging_level'] = 'warn'
+        gitaly['configuration'] = {
+          logging_level: 'warn'
+        }
 
         # Turn off some stuff that we don't need for Striker dev
         monitoring_role['enable'] = false
@@ -280,7 +282,6 @@ services:
         postgres_exporter['enable'] = false
         pgbouncer_exporter['enable'] = false
         gitlab_exporter['enable'] = false
-        grafana['enable'] = false
     ports:
       - "8084:8084"
       - "2222:22"
