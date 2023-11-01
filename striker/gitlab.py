@@ -17,7 +17,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
-
+import json
 import logging
 import urllib.parse
 
@@ -74,9 +74,10 @@ class Client(object):
         }
 
     def http_request(self, verb, path, payload=None, params=None):
+        url = "{0}/api/v4/{1}".format(self.url, path)
         r = self.session.request(
             method=verb,
-            url="{0}/api/v4/{1}".format(self.url, path),
+            url=url,
             headers=self.headers,
             params=params,
             json=payload,
@@ -85,11 +86,15 @@ class Client(object):
             return r.json()
 
         err_msg = r.content
-        err_json = r.json()
-        if "message" in err_json:
-            err_msg = err_json["message"]
-        if "error" in err_json:
-            err_msg = err_json["error"]
+        try:
+            err_json = r.json()
+            if "message" in err_json:
+                err_msg = err_json["message"]
+            if "error" in err_json:
+                err_msg = err_json["error"]
+        except json.decoder.JSONDecodeError:
+            logger.exception(
+                "Failed to parse error message from %s: %s", url, err_msg)
         raise APIError(err_msg, r.status_code, r)
 
     def post(self, path, payload=None):
