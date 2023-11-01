@@ -20,6 +20,8 @@ this := $(word $(words $(MAKEFILE_LIST)),$(MAKEFILE_LIST))
 PROJECT_DIR := $(dir $(this))
 PIPELINE_DIR := $(PROJECT_DIR)/.pipeline
 DOCKERIZE := /srv/dockerize/bin/dockerize
+# Prefer Compose v2, but allow override on hosts that only have v1
+COMPOSE ?= docker compose
 
 help:
 	@echo "Make targets:"
@@ -29,26 +31,26 @@ help:
 .PHONY: help
 
 start: .env  ## Start the docker-compose stack
-	docker-compose up --build --detach
+	$(COMPOSE) up --build --detach
 .PHONY: start
 
 stop:  ## Stop the docker-compose stack
-	docker-compose stop
+	$(COMPOSE) stop
 .PHONY: stop
 
 restart: stop start  ## Restart the docker-compose stack
 .PHONY: restart
 
 status:  ## Show status of the docker-compose stack
-	docker-compose ps
+	$(COMPOSE) ps
 .PHONY: status
 
 tail:  ## Tail logs from the docker-compose stack
-	docker-compose logs --tail=1000 -f
+	$(COMPOSE) logs --tail=1000 -f
 .PHONY: tail
 
 migrate:  ## Run `manage.py migrate`
-	docker-compose exec striker $(DOCKERIZE) \
+	$(COMPOSE) exec striker $(DOCKERIZE) \
 		-wait tcp://mariadb:3306 \
 		-wait tcp://keystone:5000 \
 		-timeout 90s \
@@ -56,7 +58,7 @@ migrate:  ## Run `manage.py migrate`
 .PHONY: migrate
 
 init_licenses:
-	docker-compose exec striker $(DOCKERIZE) \
+	$(COMPOSE) exec striker $(DOCKERIZE) \
 		-wait tcp://mariadb:3306 \
 		-wait tcp://keystone:5000 \
 		-timeout 90s \
@@ -64,11 +66,11 @@ init_licenses:
 .PHONY: init_licenses
 
 init: start migrate init_licenses  ## Initialize docker-compose stack
-	docker-compose restart striker
+	$(COMPOSE) restart striker
 .PHONY: init
 
 test:  ## Run test suite
-	docker-compose exec striker /bin/bash -c "\
+	$(COMPOSE) exec striker /bin/bash -c "\
 		set -eux; \
 		export -n PYTHONPATH PIP_FIND_LINKS PIP_WHEEL_DIR PIP_NO_INDEX; \
 		tox \
@@ -76,7 +78,7 @@ test:  ## Run test suite
 .PHONY: test
 
 shell:  ## Open a shell
-	docker-compose exec \
+	$(COMPOSE) exec \
 		-e PIP_FIND_LINKS= \
 		-e PIP_NO_INDEX= \
 		-e PIP_WHEEL_DIR= \
@@ -84,11 +86,11 @@ shell:  ## Open a shell
 .PHONY: shell
 
 gitlab:  ## Open a shell in gitlab container
-	docker-compose exec gitlab /bin/bash
+	$(COMPOSE) exec gitlab /bin/bash
 .PHONY: gitlab
 
 phabricator:  ## Open a shell in phabricator container
-	docker-compose exec phabricator /bin/bash
+	$(COMPOSE) exec phabricator /bin/bash
 .PHONY: phabricator
 
 .env:  ## Generate a .env file for local development
