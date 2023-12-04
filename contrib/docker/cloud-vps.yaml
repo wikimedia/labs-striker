@@ -213,7 +213,7 @@ services:
       - mariadb
 
   gitlab:
-    image: "gitlab/gitlab-ce:16.3.6-ce.0"
+    image: "gitlab/gitlab-ce:16.6.1-ce.0"
     restart: always
     environment:
       GITLAB_OMNIBUS_CONFIG: |
