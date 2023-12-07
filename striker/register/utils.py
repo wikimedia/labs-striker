@@ -114,7 +114,7 @@ def check_username_create(name):
         'name': user['name'],
         'error': None,
     }
-    if user['missing'] and user['cancreate']:
+    if user.get('missing') and user.get('cancreate'):
         ret['ok'] = True
     elif 'userid' in user:
         ret['error'] = _('%(name)s is already in use.') % ret
