@@ -230,6 +230,7 @@ services:
           - ldapwiki.local.wmftest.net
     depends_on:
       - mariadb
+      - sulwiki
 
   gitlab:
     image: "gitlab/gitlab-ce:16.6.1-ce.0"
