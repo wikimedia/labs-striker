@@ -12,6 +12,9 @@ RUN set -eux; \
     -o APT::AutoRemove::RecommendsImportant=false \
     && rm -rf /var/lib/apt/lists/*
 
+# Workaround for Apache2+QEMU bug on Apple Silicon
+RUN echo "Mutex posixsem" >> /etc/apache2/apache2.conf
+
 ENV KOLLA_CONFIG_STRATEGY=COPY_ONCE
 COPY config.json /var/lib/kolla/config_files/config.json
 COPY src /var/lib/kolla/config_files/src

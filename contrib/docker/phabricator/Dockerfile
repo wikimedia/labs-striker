@@ -20,3 +20,7 @@ COPY docker-entrypoint-init.d /docker-entrypoint-init.d/
 USER root
 RUN git clone https://github.com/wikimedia/phabricator-extensions /srv/phabricator-extensions
 USER 1001
+
+# Apache config hack for Docker+Apple Silicon+AMD64 emulation
+# https://web.archive.org/web/20221205115651/https://github.com/bitnami/bitnami-docker-wordpress/issues/316
+RUN echo 'Mutex posixsem' >>/opt/bitnami/apache2/conf/httpd.conf
