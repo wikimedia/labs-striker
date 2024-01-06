@@ -24,7 +24,7 @@ RUN set -eux; \
     rm -rf /var/lib/apt/lists/*
 
 ENV MW_BRANCH=REL1_37 \
-    VENDOR_BRANCH=wmf/1.37.0-wmf.23 \
+    VENDOR_BRANCH=REL1_37 \
     GIT_ROOT=https://gerrit.wikimedia.org/r/mediawiki \
     MW_VENDOR_DIR=/var/www/html/vendor \
     MW_EXT_DIR=/var/www/html/extensions \
