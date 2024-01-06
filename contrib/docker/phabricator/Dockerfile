@@ -18,7 +18,7 @@ COPY docker-entrypoint-init.d /docker-entrypoint-init.d/
 
 # Add Wikimedia custom add-ons
 USER root
-RUN git clone https://github.com/wikimedia/phabricator-extensions /srv/phabricator-extensions
+RUN git clone https://gitlab.wikimedia.org/repos/phabricator/extensions /srv/phabricator-extensions
 USER 1001
 
 # Apache config hack for Docker+Apple Silicon+AMD64 emulation
