@@ -1,4 +1,4 @@
-# syntax=docker-registry.wikimedia.org/wikimedia/blubber-buildkit:2022-09-21-184314-publish-buildkit-gateway
+# syntax=docker-registry.wikimedia.org/repos/releng/blubber/buildkit:v0.21.1
 version: v4
 
 # FIXME(bd808): find a python3 bullseye base image
