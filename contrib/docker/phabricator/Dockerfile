@@ -1,4 +1,5 @@
-FROM docker.io/bitnami/phabricator:2021
+# FIXME(T340080): we need a new Phorge base image
+FROM quay.io/bd808/bitnami/phabricator:2021
 
 ENV PHABRICATOR_USERNAME=admin \
     PHABRICATOR_PASSWORD=docker-phabricator \
