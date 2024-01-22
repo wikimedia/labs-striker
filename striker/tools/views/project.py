@@ -89,6 +89,10 @@ def create(req, tool):
                     members=list(set(phab_maintainers)),
                     parent=settings.PHABRICATOR_PARENT_PROJECT,
                     description=form.cleaned_data['project_description'],
+                    repository=form.cleaned_data.get(
+                        'source_code_repository',
+                        None
+                    ),
                 )
 
                 # Save a local association between the project and the tool.

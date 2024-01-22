@@ -20,6 +20,7 @@
 
 import json
 import logging
+
 import requests
 
 from django.conf import settings
@@ -392,7 +393,15 @@ class Client(object):
             return r['data'][0]
         raise KeyError('Project {0} not found'.format(phid))
 
-    def create_project(self, name, *, members, parent, description):
+    def create_project(
+        self,
+        name,
+        *,
+        members,
+        parent,
+        description,
+        repository=None
+    ):
         """Creates a project with the given name"""
         r = self.post('project.edit', {
             'transactions': [
@@ -400,6 +409,10 @@ class Client(object):
                 {'type': 'parent', 'value': parent},
                 {'type': 'description', 'value': description},
                 {'type': 'members.add', 'value': members},
+                *(
+                    [{'type': 'custom.custom:repository', 'value': repository}]
+                    if repository else []
+                ),
             ],
         })
         obj = r['object']

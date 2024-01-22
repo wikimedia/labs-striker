@@ -126,6 +126,11 @@ class ProjectCreateForm(forms.Form):
                 )
                 self.fields['mark_as_toolinfo_issue_tracker'] = field
 
+            if toolinfo[0].repository:
+                self.fields['source_code_repository'].initial = (
+                    toolinfo[0].repository
+                )
+
         # This needs to be done manually since project_name is added
         # dynamically in the constructor, but needs to appear first.
         self.order_fields(['project_name', 'project_description'])
@@ -155,6 +160,15 @@ class ProjectCreateForm(forms.Form):
                 '#Good_practices_for_name_and_description'
             ),
         ),
+    )
+
+    source_code_repository = forms.URLField(
+        label=_('Source code repository'),
+        help_text=_(
+            'Optional: URL of the source code repository shown on the project '
+            'details page.'
+        ),
+        required=False,
     )
 
     def clean_project_name(self):
