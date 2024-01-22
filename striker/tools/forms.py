@@ -62,6 +62,19 @@ class RepoCreateForm(forms.Form):
             min_length=len(default_name),
             max_length=255)
 
+        toolinfo = tool.toolinfo().all()
+        if len(toolinfo) == 1 and not toolinfo[0].repository:
+            self.fields['mark_as_toolinfo_repository'] = forms.BooleanField(
+                label=_('Mark as source code repository in tool information'),
+                help_text=_(
+                    'If selected, the created repository will be marked as '
+                    'the source code repository in the tool information '
+                    'entry. Recommended if all of the tool code is in a '
+                    'single repository.'
+                ),
+                initial=True,
+            )
+
     def clean_repo_name(self):
         name = self.cleaned_data.get('repo_name')
         try:

@@ -20,6 +20,7 @@
 
 import logging
 
+import reversion
 from django import shortcuts
 from django import urls
 from django.contrib import messages
@@ -115,6 +116,21 @@ def create(req, tool):
                                 },
                             ],
                         )
+
+                    if form.cleaned_data.get(
+                        'mark_as_toolinfo_repository',
+                        False
+                    ):
+                        toolinfo = tool.toolinfo().get()
+                        with reversion.create_revision():
+                            reversion.set_user(req.user)
+                            reversion.set_comment(
+                                'set repository to created GitLab repository'
+                            )
+
+                            toolinfo.repository = repo['web_url']
+                            toolinfo.save()
+
                     # Redirect to repo view
                     return shortcuts.redirect(
                         urls.reverse('tools:repo_view', kwargs={
