@@ -30,6 +30,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db.utils import DatabaseError
 from django.utils.translation import ugettext_lazy as _
 
+import reversion
 from notifications.signals import notify
 
 from striker import phabricator
@@ -116,6 +117,22 @@ def create(req, tool):
                                 },
                             ],
                         )
+
+                    if form.cleaned_data.get(
+                        'mark_as_toolinfo_issue_tracker',
+                        False
+                    ):
+                        toolinfo = tool.toolinfo().get()
+                        with reversion.create_revision():
+                            reversion.set_user(req.user)
+                            reversion.set_comment(
+                                'set issue tracker to created Phabricator '
+                                'project'
+                            )
+
+                            toolinfo.issues = phab.make_project_url(project)
+                            toolinfo.save()
+
                     # Redirect to project view
                     return shortcuts.redirect(
                         urls.reverse('tools:tool', kwargs={
@@ -144,13 +161,14 @@ def view(req, tool, project):
         'tool': tool,
         'project': project,
         'slug': '',
-        'phab_url': settings.PHABRICATOR_URL,
+        'project_url': '',
     }
 
     try:
         project_data = phab.get_project(project)
         ctx['project'] = project_data['fields']['name']
         ctx['slug'] = project_data['fields']['slug']
+        ctx['project_url'] = phab.make_project_url(project_data)
     except KeyError:
         pass
     except phabricator.APIError as e:

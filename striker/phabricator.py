@@ -405,3 +405,12 @@ class Client(object):
         obj = r['object']
         repo = self.get_project_by_phid(obj['phid'])
         return repo
+
+    def make_project_url(self, project_data):
+        """Get the full URL to a Phabricator project.
+
+        :param project_data: Conduit provided project data
+        """
+        return '{}/tag/{}/'.format(
+            self.url, project_data['fields']['slug'],
+        )

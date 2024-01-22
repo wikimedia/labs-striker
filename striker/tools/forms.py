@@ -114,6 +114,18 @@ class ProjectCreateForm(forms.Form):
                     toolinfo[0].description
                 )
 
+            if not toolinfo[0].issues:
+                field = forms.BooleanField(
+                    label=_('Set issue tracker in toolinfo to this project'),
+                    help_text=_(
+                        'If selected, the created Phabricator project will be '
+                        'marked as the issue tracker in the toolinfo '
+                        'entry. (Recommended)'
+                    ),
+                    initial=True,
+                )
+                self.fields['mark_as_toolinfo_issue_tracker'] = field
+
         # This needs to be done manually since project_name is added
         # dynamically in the constructor, but needs to appear first.
         self.order_fields(['project_name', 'project_description'])
