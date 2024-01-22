@@ -16,4 +16,12 @@ local dev stack"}]'
 /opt/bitnami/phabricator/bin/config set auth.require-approval 'false'
 /opt/bitnami/phabricator/bin/config set policy.allow-public 'true'
 
+/opt/bitnami/phabricator/bin/config set projects.custom-field-definitions '{
+  "custom:repository": {
+    "name": "Source Repo",
+    "type": "link",
+    "caption": "Optional: Enter the URL of the source code repository for this project."
+  }
+}'
+
 /opt/bitnami/phabricator/bin/auth unlock
