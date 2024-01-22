@@ -85,8 +85,9 @@ def create(req, tool):
                 # Create project
                 project = phab.create_project(
                     name,
-                    list(set(phab_maintainers)),
-                    settings.PHABRICATOR_PARENT_PROJECT,
+                    members=list(set(phab_maintainers)),
+                    parent=settings.PHABRICATOR_PARENT_PROJECT,
+                    description=form.cleaned_data['project_description'],
                 )
 
                 # Save a local association between the project and the tool.

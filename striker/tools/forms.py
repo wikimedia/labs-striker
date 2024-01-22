@@ -91,7 +91,39 @@ class ProjectCreateForm(forms.Form):
             initial=default_name,
             help_text=NAME_ERR_MSG.format(prefix=default_name),
             min_length=len(default_name),
-            max_length=255)
+            max_length=255
+        )
+
+        # This needs to be done manually since project_name is added
+        # dynamically in the constructor, but needs to appear first.
+        self.order_fields(['project_name', 'project_description'])
+
+    project_description = forms.CharField(
+        label=_("Project description"),
+        widget=forms.Textarea(
+            attrs={
+                'placeholder': _(
+                    'The first sentence is important and will show up in the '
+                    '"Browse Project" results. Avoid "Project to keep track '
+                    'of..." or "This project tag is meant to collect tasks '
+                    'about..." etc. Go straight to the point.'
+                ),
+                'rows': 4,
+            },
+        ),
+        help_text=_(
+            'Phabricator is a public place. Describe the tool in a way that '
+            'allows anybody, also outside of the community, to clearly '
+            'understand what the project is about. '
+            '<a href="{project_details}">More details.</a>'
+        ).format(
+            project_details=(
+                'https://www.mediawiki.org/wiki/Phabricator/'
+                'Creating_and_renaming_projects'
+                '#Good_practices_for_name_and_description'
+            ),
+        ),
+    )
 
     def clean_project_name(self):
         name = self.cleaned_data.get('project_name')

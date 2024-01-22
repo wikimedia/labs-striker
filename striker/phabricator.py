@@ -392,12 +392,13 @@ class Client(object):
             return r['data'][0]
         raise KeyError('Project {0} not found'.format(phid))
 
-    def create_project(self, name, members, parent):
+    def create_project(self, name, *, members, parent, description):
         """Creates a project with the given name"""
         r = self.post('project.edit', {
             'transactions': [
                 {'type': 'name', 'value': name},
                 {'type': 'parent', 'value': parent},
+                {'type': 'description', 'value': description},
                 {'type': 'members.add', 'value': members},
             ],
         })
