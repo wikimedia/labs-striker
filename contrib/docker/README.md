@@ -209,7 +209,7 @@ http://phabricator.local.wmftest.net:8081/applications/edit/PhabricatorDiffusion
 ### Lookup PHID of "Repository-Admins" group
 http://phabricator.local.wmftest.net:8081/project/profile/1/
 
-* Click "View All"
+* Click "View All" in the "Recent Activity" pane
 * Copy the PHID-PROJ- value from the URL.
 
 ### Create a "Tools" project
@@ -224,7 +224,7 @@ http://phabricator.local.wmftest.net:8081/project/edit/form/default/
 ### Lookup PHID of "Tools" group
 http://phabricator.local.wmftest.net:8081/project/profile/2/
 
-* Click "View All"
+* Click "View All" in the "Recent Activity" pane
 * Copy the PHID-PROJ- value from the URL.
 
 Setup GitLab
