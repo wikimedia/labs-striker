@@ -94,6 +94,13 @@ class ProjectCreateForm(forms.Form):
             max_length=255
         )
 
+        toolinfo = tool.toolinfo().all()
+        if len(toolinfo) == 1:
+            if toolinfo[0].description:
+                self.fields['project_description'].initial = (
+                    toolinfo[0].description
+                )
+
         # This needs to be done manually since project_name is added
         # dynamically in the constructor, but needs to appear first.
         self.order_fields(['project_name', 'project_description'])
