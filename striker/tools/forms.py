@@ -65,12 +65,14 @@ class RepoCreateForm(forms.Form):
         toolinfo = tool.toolinfo().all()
         if len(toolinfo) == 1 and not toolinfo[0].repository:
             self.fields['mark_as_toolinfo_repository'] = forms.BooleanField(
-                label=_('Mark as source code repository in tool information'),
+                label=_(
+                    'Set source code repository in toolinfo to this repository'
+                ),
                 help_text=_(
                     'If selected, the created repository will be marked as '
-                    'the source code repository in the tool information '
-                    'entry. Recommended if all of the tool code is in a '
-                    'single repository.'
+                    'the source code repository in the toolinfo '
+                    'entry. (Recommended if all of the tool code is in a '
+                    'single repository.)'
                 ),
                 initial=True,
             )
