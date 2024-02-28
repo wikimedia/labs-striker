@@ -5,6 +5,6 @@
 
 {% block body %}
 <p>{% blocktrans %}Wikimedia VPS and Toolforge servers are accessed using <a href="https://en.wikipedia.org/wiki/Secure_Shell">SSH</a>. You need to upload an ssh public key to enable your SSH access.{% endblocktrans %}</p>
-<p class="text-muted">{% blocktrans %}See <a href="https://wikitech.wikimedia.org/wiki/Help:Tool_Labs/Access#Generating_and_uploading_an_SSH_key">the help documentation</a> for more information on how to generate and upload your public SSH key.{% endblocktrans %}</p>
+<p class="text-muted">{% blocktrans %}See <a href="https://wikitech.wikimedia.org/wiki/Help:Toolforge/Quickstart#Set_up_an_SSH_client_and_a_key">the help documentation</a> for more information on how to generate and upload your public SSH key.{% endblocktrans %}</p>
 <p><a href="{% url 'profile:ssh_keys' %}" class="btn btn-default">{% trans "Add public SSH key" %}</a></p>
 {% endblock %}
