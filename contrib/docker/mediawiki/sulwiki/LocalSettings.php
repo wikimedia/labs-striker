@@ -144,7 +144,6 @@ wfLoadExtension( 'InputBox' );
 wfLoadExtension( 'Interwiki' );
 wfLoadExtension( 'MultimediaViewer' );
 wfLoadExtension( 'ParserFunctions' );
-wfLoadExtension( 'Renameuser' );
 wfLoadExtension( 'Scribunto' );
 wfLoadExtension( 'SyntaxHighlight_GeSHi' );
 wfLoadExtension( 'TemplateData' );

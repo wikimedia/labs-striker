@@ -144,7 +144,6 @@ wfLoadExtension( 'InputBox' );
 wfLoadExtension( 'Interwiki' );
 wfLoadExtension( 'MultimediaViewer' );
 wfLoadExtension( 'ParserFunctions' );
-wfLoadExtension( 'Renameuser' );
 wfLoadExtension( 'Scribunto' );
 wfLoadExtension( 'SyntaxHighlight_GeSHi' );
 wfLoadExtension( 'TemplateData' );
@@ -255,7 +254,7 @@ $wgDebugLogGroups['ldap'] = "php://stderr";
 // Shortest password a user is allowed to login using. Notice that 1 is the
 // minimum so that when using a local domain, local users cannot login as
 // domain users (as domain user's passwords are not stored)
-$wgMinimalPasswordLength = 1;
+$wgPasswordPolicy['default']['MinimalPasswordLength'] = 1;
 
 wfLoadExtension( 'OpenStackManager' );
 $wgOpenStackManagerLDAPDomain = "ldap";
