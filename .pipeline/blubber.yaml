@@ -1,8 +1,7 @@
 # syntax=docker-registry.wikimedia.org/repos/releng/blubber/buildkit:v0.21.1
 version: v4
 
-# FIXME(bd808): find a python3 bullseye base image
-base: docker-registry.wikimedia.org/python3-buster:latest
+base: docker-registry.wikimedia.org/python3-bookworm:latest
 
 runs:
   environment:
@@ -22,6 +21,7 @@ variants:
         - git
         - libldap2-dev
         - libsasl2-dev
+        - pkgconf
         - python3-dev
         - python3-pip
     python:
