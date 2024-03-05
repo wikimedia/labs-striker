@@ -30,6 +30,7 @@ from django.views.decorators.http import require_POST
 
 import striker.labsauth.models
 import striker.tools.models
+from striker.goals import views as goal_views
 
 logger = logging.getLogger(__name__)
 
@@ -52,9 +53,8 @@ def index(req):
     ctx = {
         "tools_count": tools_count,
         "maintainers_count": maintainers_count,
-        "phab_url": settings.PHABRICATOR_URL,
-        "wikitech_url": settings.WIKITECH_URL,
     }
+    ctx.update(goal_views.get_goal_view_context())
     return shortcuts.render(req, "index.html", ctx)
 
 

@@ -33,7 +33,8 @@ from django.utils.translation import ugettext_lazy as _
 from notifications.signals import notify
 
 from striker import mediawiki, openstack
-from striker.tools import cache
+from striker.goals import views as goal_views
+from striker.tools import GOALS_REQUIRED_FOR_MEMBERSHIP_APPLICATION, cache
 from striker.tools.forms import (
     AccessRequestAdminForm,
     AccessRequestCommentForm,
@@ -123,9 +124,19 @@ def apply(req):
         messages.error(req, _("You are already a member of Toolforge"))
         return see_other(urls.reverse("tools:index"))
 
-    pending = AccessRequest.objects.filter(user=req.user, status=AccessRequest.PENDING)
+    pending = AccessRequest.objects.filter(user=req.user).exclude(
+        status__in=AccessRequest.CLOSED_STATUSES
+    )
     if pending:
         return see_other(urls.reverse("tools:membership_status", args=[pending[0].id]))
+
+    missing_milestones = set(GOALS_REQUIRED_FOR_MEMBERSHIP_APPLICATION) - set(
+        req.user.milestones.achieved(names=True)
+    )
+    if missing_milestones:
+        ctx = {"goals": missing_milestones}
+        ctx.update(goal_views.get_goal_view_context())
+        return shortcuts.render(req, "tools/membership/requirements.html", ctx)
 
     form = AccessRequestForm(req.POST or None, req.FILES or None)
     if req.method == "POST":

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2017 Wikimedia Foundation and contributors.
+# Copyright (c) 2024 Wikimedia Foundation and contributors.
 # All Rights Reserved.
 #
 # This file is part of Striker.
@@ -18,5 +18,11 @@
 # You should have received a copy of the GNU General Public License
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
 
-GOALS_REQUIRED_FOR_MEMBERSHIP_APPLICATION = ["ACCOUNT_SUL", "ACCOUNT_PHAB"]
-"""Goals which are required for users applying for Toolforge membership."""
+from django.conf import settings
+
+
+def get_goal_view_context():
+    """Get the context variables required on views which show goal popups."""
+    return {
+        "phab_url": settings.PHABRICATOR_URL,
+    }

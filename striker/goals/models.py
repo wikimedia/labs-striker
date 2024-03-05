@@ -71,7 +71,7 @@ class MilestoneManager(models.Manager):
             ret = {"percentage": percent}
         return ret
 
-    def allGoals(self, user=None):
+    def achieved(self, names, user=None):
         if user is not None:
             achieved = self.filter(user=user)
         elif hasattr(self, "core_filters") and "user" in self.core_filters:
@@ -80,6 +80,14 @@ class MilestoneManager(models.Manager):
             raise TypeError("user required unless called from RelatedManager")
 
         achieved = list(achieved.values_list("goal", flat=True).order_by("goal"))
+
+        if names:
+            achieved = [GOALS_BY_ID[id] for id in achieved]
+
+        return achieved
+
+    def allGoals(self, user=None):
+        achieved = self.achieved(names=False, user=user)
         percent = (len(achieved) / len(GOALS)) * 100
 
         goals = []
