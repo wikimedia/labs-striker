@@ -113,28 +113,6 @@ def apply(req):
                 request = form.save(commit=False)
                 request.user = req.user
                 request.save()
-                try:
-                    notify.send(
-                        recipient=Group.objects.get(
-                            name=settings.TOOLS_ADMIN_GROUP_NAME
-                        ),
-                        sender=req.user,
-                        verb=_('created'),
-                        target=request,
-                        public=False,
-                        description=request.reason,
-                        level='info',
-                        actions=[
-                            {
-                                'title': _('View request'),
-                                'href': request.get_absolute_url(),
-                            },
-                        ],
-                    )
-                except exceptions.ObjectDoesNotExist:
-                    logger.exception(
-                        'Notify failed. '
-                        'Have you logged in with an admin account yet?')
                 messages.info(
                     req, _("Toolforge membership request submitted"))
                 return shortcuts.redirect(urls.reverse('tools:index'))
