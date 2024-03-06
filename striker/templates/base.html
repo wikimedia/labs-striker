@@ -1,3 +1,4 @@
+{% load membership %}
 {% load bootstrap3 %}
 {% load i18n %}
 {% load notifications_tags %}
@@ -43,7 +44,12 @@
           <ul class="nav navbar-nav">
             {% url 'index' as index %}
             <li class="{% if request.path == index %}active{% endif %}"><a href="{{ index }}">{% bootstrap_icon "home" %} {% trans "Home" %}</a></li>
-            <li class="{% if '/tools/' in request.path %}active{% endif %}"><a href="{% url 'tools:index' %}">{% bootstrap_icon "wrench" %} {% trans "Tools" %}</a></li>
+            <li class="{% if '/tools/' in request.path and '/tools/membership/' not in request.path %}active{% endif %}"><a href="{% url 'tools:index' %}">{% bootstrap_icon "wrench" %} {% trans "Tools" %}</a></li>
+            {% if user|is_admin %}
+              <li class="{% if '/tools/membership/' in request.path %}active{% endif %}">
+                <a href="{% url 'tools:membership' %}">{% bootstrap_icon "user" %} {% trans "Membership" %}</a>
+              </li>
+            {% endif %}
           </ul>
           <ul class="nav navbar-nav navbar-right">
             {% if user.is_authenticated %}
