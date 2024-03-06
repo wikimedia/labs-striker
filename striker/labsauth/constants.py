@@ -21,6 +21,7 @@
 NEXT_PAGE = "striker.oauth.next_page"
 REQUEST_TOKEN_KEY = "striker.oauth.request_token"
 ACCESS_TOKEN_KEY = "striker.oauth.access_token"
+OAUTH_ID_KEY = "striker.oauth.id"
 OAUTH_USERNAME_KEY = "striker.oauth.username"
 OAUTH_EMAIL_KEY = "striker.oauth.email"
 OAUTH_REALNAME_KEY = "striker.oauth.realname"

@@ -124,12 +124,14 @@ def oauth_callback(req):
     )
     req.session[constants.ACCESS_TOKEN_KEY] = access_token
     sul_user = mwoauth.identify(settings.OAUTH_MWURL, consumer_token, access_token)
+    req.session[constants.OAUTH_ID_KEY] = sul_user["sub"]
     req.session[constants.OAUTH_USERNAME_KEY] = sul_user["username"]
     req.session[constants.OAUTH_EMAIL_KEY] = sul_user["email"]
     req.session[constants.OAUTH_REALNAME_KEY] = sul_user["realname"]
 
     if req.user.is_authenticated:
         req.user.set_accesstoken(access_token)
+        req.user.sulid = sul_user["sub"]
         req.user.sulname = sul_user["username"]
         req.user.sulemail = sul_user["email"]
         req.user.realname = sul_user["realname"]

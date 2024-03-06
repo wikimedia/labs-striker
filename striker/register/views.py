@@ -238,6 +238,7 @@ class AccountWizard(NamedUrlSessionWizardView):
 
         LabsUser.objects.create_from_ldap_user(
             ldap_user,
+            sulid=oauth["sulid"],
             sulname=oauth["username"],
             sulemail=oauth["email"],
             realname=oauth["realname"],

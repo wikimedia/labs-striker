@@ -34,7 +34,7 @@ class LabsUserAdmin(django.contrib.auth.admin.UserAdmin):
     fieldsets = (
         (None, {"fields": ("ldapname",)}),
         (_("LDAP info"), {"fields": ("ldapemail", "shellname")}),
-        (_("SUL info"), {"fields": ("sulname", "sulemail", "realname")}),
+        (_("SUL info"), {"fields": ("sulid", "sulname", "sulemail", "realname")}),
         (
             _("Phabricator info"),
             {"fields": ("phabname", "phid", "phabrealname", "phaburl", "phabimage")},
@@ -64,7 +64,14 @@ class LabsUserAdmin(django.contrib.auth.admin.UserAdmin):
     )
     form = striker.labsauth.forms.LabsUserChangeForm
     add_form = striker.labsauth.forms.LabsUserCreationForm
-    list_display = ("ldapname", "ldapemail", "shellname", "sulname", "is_staff")
+    list_display = (
+        "ldapname",
+        "ldapemail",
+        "shellname",
+        "sulid",
+        "sulname",
+        "is_staff",
+    )
     search_fields = ("ldapname", "ldapemail", "shellname", "sulname")
     ordering = ("ldapname",)
     filter_horizontal = ("groups",)
