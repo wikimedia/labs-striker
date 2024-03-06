@@ -21,6 +21,7 @@
 
 from django import template
 
+from striker.tools.models import AccessRequest
 from striker.tools.utils import tools_admin
 
 register = template.Library()
@@ -29,3 +30,9 @@ register = template.Library()
 @register.filter()
 def is_admin(user):
     return tools_admin(user)
+
+
+@register.simple_tag()
+def open_access_requests():
+    # This excludes FEEDBACK by design.
+    return AccessRequest.objects.filter(status=AccessRequest.PENDING).count()

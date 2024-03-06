@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load bootstrap3 %}
 {% load i18n %}
+{% load membership %}
 
 {% block title %}{% trans "Tools" %}{% endblock %}
 {% block content %}
@@ -41,7 +42,15 @@
       </div>
       <div class="panel panel-default">
         <ul class="nav nav-pills nav-stacked">
-          <li role="presentation"><a href="{% url 'tools:membership' %}">{% bootstrap_icon "user" %} {% trans "Membership requests" %}</a></li>
+          <li role="presentation">
+            <a href="{% url 'tools:membership' %}">
+              {% bootstrap_icon "user" %} {% trans "Membership requests" %}
+              {% open_access_requests as pending %}
+              {% if pending != 0 %}
+                <span class="badge">{{ pending }}</span>
+              {% endif %}
+            </a>
+          </li>
         </ul>
       </div>
     </div>

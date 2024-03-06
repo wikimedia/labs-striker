@@ -47,7 +47,13 @@
             <li class="{% if '/tools/' in request.path and '/tools/membership/' not in request.path %}active{% endif %}"><a href="{% url 'tools:index' %}">{% bootstrap_icon "wrench" %} {% trans "Tools" %}</a></li>
             {% if user|is_admin %}
               <li class="{% if '/tools/membership/' in request.path %}active{% endif %}">
-                <a href="{% url 'tools:membership' %}">{% bootstrap_icon "user" %} {% trans "Membership" %}</a>
+                <a href="{% url 'tools:membership' %}">
+                  {% bootstrap_icon "user" %} {% trans "Membership" %}
+                  {% open_access_requests as pending %}
+                  {% if pending != 0 %}
+                    <span class="badge">{{ pending }}</span>
+                  {% endif %}
+                </a>
               </li>
             {% endif %}
           </ul>
