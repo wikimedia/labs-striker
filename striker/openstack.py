@@ -93,13 +93,15 @@ class Client(object):
         project = project or self.project
         # We need global admin rights to change role assignments
         keystone = self._admin_client()
-        keystone.roles.grant(self.role(role), user=user, project=project)
+        keystone.roles.grant(self.role(role), user=user.shellname, project=project)
+        user.refresh_from_ldap()
 
     def revoke_role(self, role, user, project=None):
         project = project or self.project
         # We need global admin rights to change role assignments
         keystone = self._admin_client()
-        keystone.roles.revoke(role, user=user, project=project)
+        keystone.roles.revoke(role, user=user.shellname, project=project)
+        user.refresh_from_ldap()
 
     def users_by_role(self, project=None):
         project = project or self.project

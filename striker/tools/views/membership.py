@@ -191,10 +191,7 @@ def status(req, app_id):
                         request.status == AccessRequest.APPROVED
                         and not project_member(request.user)
                     ):
-                        openstack.grant_role(
-                            settings.OPENSTACK_USER_ROLE,
-                            request.user.shellname,
-                        )
+                        openstack.grant_role(settings.OPENSTACK_USER_ROLE, request.user)
                         mwapi = mediawiki.Client.default_client()
                         talk = mwapi.user_talk_page(request.user.sulname)
                         msg = "{}\n{}".format(talk.text(), WELCOME_MSG).strip()

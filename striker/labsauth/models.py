@@ -33,6 +33,7 @@ from django.contrib.auth.models import (
 from django.db import models
 from django.utils.crypto import salted_hmac
 from django.utils.translation import ugettext_lazy as _
+from django_auth_ldap.backend import LDAPBackend
 from ldapdb.models import fields as ldap_fields
 
 
@@ -161,6 +162,10 @@ class LabsUser(AbstractBaseUser, PermissionsMixin):
 
     def get_accesstoken(self):
         return mwoauth.AccessToken(self.oauthtoken, self.oauthsecret)
+
+    def refresh_from_ldap(self):
+        ldap_backend = LDAPBackend()
+        ldap_backend.populate_user(self.ldapname)
 
     @property
     def ldap_dn(self):
