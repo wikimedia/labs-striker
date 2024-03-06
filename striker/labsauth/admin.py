@@ -56,6 +56,7 @@ class LabsUserAdmin(django.contrib.auth.admin.UserAdmin):
     search_fields = ('ldapname', 'ldapemail', 'shellname', 'sulname')
     ordering = ('ldapname',)
     filter_horizontal = ('groups',)
+    readonly_fields = ('groups',)
 
 
 @django.contrib.admin.register(
