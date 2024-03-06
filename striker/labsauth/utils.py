@@ -84,9 +84,10 @@ def get_next_gid():
     )
 
 
-def add_ldap_user(username, shellname, passwd, email):
+def add_ldap_user(username, shellname, passwd, email, sul_id, sul_name):
     """Add a new user to LDAP."""
     u = models.LdapUser()
+    u.object_classes.append("wikimediaPerson")  # HACK
     u.uid = shellname
     u.cn = username
     u.uid_number = get_next_uid()
@@ -96,6 +97,8 @@ def add_ldap_user(username, shellname, passwd, email):
     u.password = passwd
     u.sn = username
     u.mail = email
+    u.sul_id = sul_id
+    u.sul_name = sul_name
     try:
         u.save()
     except ldap.CONSTRAINT_VIOLATION:

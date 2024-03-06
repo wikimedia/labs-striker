@@ -33,7 +33,7 @@ from django.utils.translation import gettext_lazy as _
 from django.views.decorators.cache import never_cache
 from formtools.wizard.views import NamedUrlSessionWizardView
 
-from striker.labsauth.models import LabsUser
+from striker.labsauth.models import LabsUser, LdapUser
 from striker.labsauth.utils import add_ldap_user, oauth_from_session
 from striker.register import forms, utils
 
@@ -107,23 +107,32 @@ def index(req):
 @oauth_required
 def oauth(req):
     oauth = oauth_from_session(req.session)
-    try:
-        # TODO: change to LdapUser once T148048 is done
-        user = LabsUser.objects.get(Q(sulname=oauth["username"]) | Q(sulid=oauth["id"]))
 
+    user_name = None
+    user = LabsUser.objects.filter(
+        Q(sulname=oauth["username"]) | Q(sulid=oauth["id"])
+    ).first()
+    if user:
+        user_name = user.ldapname
+
+    if not user_name:
+        ldap_user = LdapUser.objects.filter(
+            Q(sul_name=oauth["username"]) | Q(sul_id=oauth["id"])
+        ).first()
+        if ldap_user:
+            user_name = ldap_user.cn
+
+    if user_name:
         messages.error(
             req,
             _("Wikimedia account in use by existing Developer account %(user)s.")
             % {
-                "user": user,
+                "user": user_name,
             },
         )
         return shortcuts.redirect(urls.reverse("register:index"))
-    except LabsUser.DoesNotExist:
-        # Expected case. OAuth identity has no Developer account
-        return shortcuts.redirect(
-            urls.reverse("register:wizard", kwargs={"step": "ldap"})
-        )
+
+    return shortcuts.redirect(urls.reverse("register:wizard", kwargs={"step": "ldap"}))
 
 
 @never_cache
@@ -235,6 +244,8 @@ class AccountWizard(NamedUrlSessionWizardView):
             form_dict["shell"].cleaned_data["shellname"],
             form_dict["password"].cleaned_data["passwd"],
             form_dict["email"].cleaned_data["email"],
+            oauth["id"],
+            oauth["username"],
         )
 
         LabsUser.objects.create_from_ldap_user(

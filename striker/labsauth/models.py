@@ -216,6 +216,7 @@ class LdapUser(ldapdb.models.Model):
         "inetOrgPerson",
         "ldapPublicKey",
         "posixAccount",
+        # "wikimediaPerson",
     ]
 
     # posixAccount
@@ -232,6 +233,9 @@ class LdapUser(ldapdb.models.Model):
     mail = ldap_fields.CharField(db_column="mail")
     # ldapPublicKey
     ssh_keys = ldap_fields.ListField(db_column="sshPublicKey")
+    # wikimediaPerson
+    sul_id = ldap_fields.IntegerField(db_column="wikimediaGlobalAccountId")
+    sul_name = ldap_fields.CharField(db_column="wikimediaGlobalAccountName")
 
     class Meta:
         managed = False
