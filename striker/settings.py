@@ -377,6 +377,10 @@ AUTH_LDAP_USER_FLAGS_BY_GROUP = {
         default="cn=tools.admin,ou=servicegroups,dc=wikimedia,dc=org",
     ),
 }
+AUTH_LDAP_PASSWORD_RESET_URL = env.str(
+    "AUTH_LDAP_PASSWORD_RESET_URL",
+    "https://idm.wikimedia.org/wikimedia/password/"
+)
 
 
 AUTHENTICATION_BACKENDS = (

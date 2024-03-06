@@ -49,7 +49,11 @@ def login(req):
     resp = ratelimit_views.login(
         request=req,
         template_name='labsauth/login.html',
-        authentication_form=forms.LabsAuthenticationForm)
+        authentication_form=forms.LabsAuthenticationForm,
+        extra_context={
+            "password_reset_url": settings.AUTH_LDAP_PASSWORD_RESET_URL,
+        }
+    )
 
     if 'remember_me' in req.POST:
         req.session.set_expiry(settings.REMEMBER_ME_TTL)

@@ -20,6 +20,7 @@
   </form>
 </div>
 <div class="panel-footer">
+  <p><a href="{{ password_reset_url }}">{% trans "Forgot your password?" %}</a></p>
   <p>{% trans "Need a developer account?" %} <a href="{% url 'register:index' %}">{% trans "Sign Up" %}</a></p>
 </div>
 {% endblock %}

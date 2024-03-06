@@ -31,6 +31,7 @@ LDAP_BIND_USER=cn=writer,dc=wmftest,dc=net
 LDAP_BIND_PASSWORD=docker_writer
 LDAP_USER_SEARCH_BASE=ou=People,dc=wmftest,dc=net
 LDAP_BASE_DN=dc=wmftest,dc=net
+AUTH_LDAP_PASSWORD_RESET_URL=http://ldapwiki.local.wmftest.net:8083/wiki/Special:PasswordReset
 STAFF_GROUP_DN=cn=tools.admin,ou=servicegroups,dc=wmftest,dc=net
 SUPERUSER_GROUP_DN=cn=tools.admin,ou=servicegroups,dc=wmftest,dc=net
 TOOLS_MAINTAINER_BASE_DN=ou=people,dc=wmftest,dc=net
