@@ -250,6 +250,8 @@ class AccessRequestSearchForm(forms.Form):
         required=False,
     )
 
+    username = forms.CharField(required=False)
+
 
 @parsleyfy
 class ToolInfoForm(forms.ModelForm):

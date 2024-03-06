@@ -93,6 +93,9 @@ def membership(req):
             qs = qs.exclude(status__in=AccessRequest.CLOSED_STATUSES)
         elif status != AccessRequestSearchForm.STATUS_ALL:
             qs = qs.filter(status=status)
+        username = form.cleaned_data.get('username')
+        if username:
+            qs = qs.filter(user__ldapname=username)
 
         all_requests = qs.all()
         all_requests = all_requests.order_by(ctx['o'])
