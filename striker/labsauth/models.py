@@ -72,6 +72,7 @@ class LabsUser(AbstractBaseUser, PermissionsMixin):
         _("shellname"), max_length=32, unique=True, blank=True, null=True
     )
 
+    sulid = models.BigIntegerField(_("SUL user ID"), unique=True, blank=True, null=True)
     sulname = models.CharField(
         _("SUL username"), max_length=255, unique=True, blank=True, null=True
     )
