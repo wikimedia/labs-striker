@@ -26,8 +26,8 @@ from django.urls import path
 from django.views.generic.base import RedirectView
 
 import notifications.urls
-import ratelimitbackend.admin
 
+import striker.admin
 import striker.labsauth.urls
 import striker.profile.urls
 import striker.register.urls
@@ -40,9 +40,6 @@ handler400 = 'striker.views.bad_request'  # noqa
 handler403 = 'striker.views.permission_denied'  # noqa
 handler404 = 'striker.views.page_not_found'  # noqa
 handler500 = 'striker.views.server_error'  # noqa
-
-# ratelimitbackend does not autoregister admin modules
-ratelimitbackend.admin.autodiscover()
 
 urlpatterns = [
     path('', striker.views.index, name='index'),
@@ -67,5 +64,5 @@ urlpatterns = [
     path('register/', include(striker.register.urls, namespace='register')),
     path('tools/', include(striker.tools.urls, namespace='tools')),
 
-    path('contrib-admin/', ratelimitbackend.admin.site.urls),
+    path('contrib-admin/', striker.admin.site.urls),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
