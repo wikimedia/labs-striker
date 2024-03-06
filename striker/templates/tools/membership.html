@@ -17,6 +17,14 @@
   <div class="panel-heading">
     <h3 class="panel-title">{% bootstrap_icon "user" %} {% trans "Membership requests" %}</h3>
   </div>
+  <div class="panel-body">
+    <form method="get" action="{% url 'tools:membership' %}" class="form">
+      {% bootstrap_form form bound_css_class="" %}
+      {% buttons %}
+        <input class="btn btn-success" type="submit" value="{% trans "Search" %}" />
+      {% endbuttons %}
+    </form>
+  </div>
   <div class="table-responsive">
     <table class="table table-striped table-hover table-condensed table-bordered">
       <thead>
@@ -40,8 +48,8 @@
     </table>
   </div>
   <div class="panel-footer">
-    {% with "o="|add:o as sort  %}
-    {% bootstrap_pagination access_requests size="small" parameter_name="p" extra=sort %}
+    {% with form.data.urlencode|add:"&o="|add:o as extra %}
+    {% bootstrap_pagination access_requests size="small" parameter_name="p" extra=extra %}
     {% endwith %}
   </div>
 </div>

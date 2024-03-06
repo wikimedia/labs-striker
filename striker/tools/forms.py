@@ -236,6 +236,21 @@ class AccessRequestAdminForm(AccessRequestCommentForm):
         }
 
 
+class AccessRequestSearchForm(forms.Form):
+    STATUS_ALL = 'all'
+    STATUS_ALL_OPEN = 'open'
+    STATUS_OPTIONS = (
+        (STATUS_ALL, _('All requests')),
+        (STATUS_ALL_OPEN, _('All open requests')),
+    ) + AccessRequest.STATUS_CHOICES
+
+    status = forms.ChoiceField(
+        choices=STATUS_OPTIONS,
+        initial=STATUS_ALL,
+        required=False,
+    )
+
+
 @parsleyfy
 class ToolInfoForm(forms.ModelForm):
     comment = forms.CharField(

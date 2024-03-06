@@ -424,6 +424,7 @@ class AccessRequest(models.Model):
         (APPROVED, _('Approved')),
         (DECLINED, _('Declined')),
     )
+    CLOSED_STATUSES = (APPROVED, DECLINED)
 
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, related_name='requestor+', db_index=True,
@@ -448,7 +449,7 @@ class AccessRequest(models.Model):
             'tools:membership_status', args=[str(self.id)])
 
     def closed(self):
-        return self.status in [AccessRequest.APPROVED, AccessRequest.DECLINED]
+        return self.status in AccessRequest.CLOSED_STATUSES
 
     def open(self):
         return not self.closed()

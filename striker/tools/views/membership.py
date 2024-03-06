@@ -38,7 +38,7 @@ from notifications.signals import notify
 from striker import mediawiki
 from striker import openstack
 from striker.tools import cache
-from striker.tools.forms import AccessRequestAdminForm
+from striker.tools.forms import AccessRequestAdminForm, AccessRequestSearchForm
 from striker.tools.forms import AccessRequestCommentForm
 from striker.tools.forms import AccessRequestForm
 from striker.tools.models import AccessRequest
@@ -74,11 +74,29 @@ def membership(req):
             {'field': 'status', 'label': 'Status'},
         ],
     }
-    if tools_admin(req.user):
-        all_requests = AccessRequest.objects.all()
-    else:
-        all_requests = AccessRequest.objects.filter(suppressed=False)
-    all_requests = all_requests.order_by(ctx['o'])
+
+    all_requests = []
+
+    form = AccessRequestSearchForm(req.GET or {})
+    ctx['form'] = form
+
+    if form.is_valid():
+        qs = AccessRequest.objects.get_queryset()
+        if not tools_admin(req.user):
+            qs = qs.filter(suppressed=False)
+
+        status = (
+            form.cleaned_data.get('status')
+            or AccessRequestSearchForm.STATUS_ALL
+        )
+        if status == AccessRequestSearchForm.STATUS_ALL_OPEN:
+            qs = qs.exclude(status__in=AccessRequest.CLOSED_STATUSES)
+        elif status != AccessRequestSearchForm.STATUS_ALL:
+            qs = qs.filter(status=status)
+
+        all_requests = qs.all()
+        all_requests = all_requests.order_by(ctx['o'])
+
     pager = paginator.Paginator(all_requests, 25)
     page = req.GET.get('p', 1)
     try:
