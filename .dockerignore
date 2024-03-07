@@ -13,6 +13,7 @@
 !contrib
 !docs
 docs/_build
+!etc
 !manage.py
 !requirements.txt
 !setup.cfg

@@ -125,6 +125,9 @@ variants:
       - from: prep
         source: /srv/app
         destination: .
+      - from: local
+        source: ./etc/ldap
+        destination: /etc/ldap/
     entrypoint:
       - python3
       - manage.py
