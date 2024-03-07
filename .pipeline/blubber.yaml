@@ -1,4 +1,4 @@
-# syntax=docker-registry.wikimedia.org/repos/releng/blubber/buildkit:v0.21.1
+# syntax=docker-registry.wikimedia.org/repos/releng/blubber/buildkit:v0.22.0
 version: v4
 
 base: docker-registry.wikimedia.org/python3-bookworm:latest
@@ -26,18 +26,20 @@ variants:
         - python3-pip
     python:
       version: python3
+      poetry:
+        version: ==1.7.1
       requirements:
-        - requirements.txt
+        - pyproject.toml
+        - poetry.lock
 
   dev-python:
     includes:
       - base-python
-    python:
-      requirements:
-        - requirements.txt
-        - test-requirements.txt
     runs:
       insecurely: true
+    python:
+      poetry:
+        devel: true
     copies:
       - from: local
         source: .
@@ -46,7 +48,13 @@ variants:
   test-python:
     # CI container: runs tox checks on Python code
     includes:
-      - dev-python
+      - base-python
+    runs:
+      insecurely: true
+    copies:
+      - from: local
+        source: .
+        destination: .
     entrypoint:
       - /bin/bash
       - -c
@@ -113,7 +121,7 @@ variants:
         - >-
           set -eux;
           ls -alh
-          && (python3 manage.py collectstatic -c --no-input --ignore src --ignore tests --ignore *.json --ignore Gruntfile.js
+          && (poetry run python3 manage.py collectstatic -c --no-input --ignore src --ignore tests --ignore *.json --ignore Gruntfile.js
           && cd /srv/app/staticfiles
           && python3 -mjson.tool staticfiles.json > staticfiles.json.pretty
           && mv staticfiles.json.pretty staticfiles.json)
@@ -129,6 +137,8 @@ variants:
         source: ./etc/ldap
         destination: /etc/ldap/
     entrypoint:
+      - poetry
+      - run
       - python3
       - manage.py
       - runserver

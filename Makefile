@@ -54,7 +54,7 @@ migrate:  ## Run `manage.py migrate`
 		-wait tcp://mariadb:3306 \
 		-wait tcp://keystone:5000 \
 		-timeout 90s \
-		python3 manage.py migrate
+		poetry run python3 manage.py migrate
 .PHONY: migrate
 
 init_licenses:
@@ -62,7 +62,7 @@ init_licenses:
 		-wait tcp://mariadb:3306 \
 		-wait tcp://keystone:5000 \
 		-timeout 90s \
-		python3 manage.py loaddata software_license.json
+		poetry run python3 manage.py loaddata software_license.json
 .PHONY: init_licenses
 
 init: start migrate init_licenses  ## Initialize docker-compose stack

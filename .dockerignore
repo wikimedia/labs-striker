@@ -15,10 +15,10 @@
 docs/_build
 !etc
 !manage.py
+!poetry.lock
 !pyproject.toml
 !requirements.txt
 !setup.cfg
-!setup.py
 !static
 !striker
 !test-requirements.txt

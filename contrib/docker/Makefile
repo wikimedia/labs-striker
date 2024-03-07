@@ -56,17 +56,17 @@ tail:  ## Tail logs from the docker-compose stack
 
 migrate:  ## Run `manage.py migrate`
 	docker-compose -f cloud-vps.yaml exec striker \
-		python3 manage.py migrate
+		poetry run python3 manage.py migrate
 .PHONY: migrate
 
 init_licenses:
 	docker-compose -f cloud-vps.yaml exec striker \
-		python3 manage.py loaddata software_license.json
+		poetry run python3 manage.py loaddata software_license.json
 .PHONY: init_licenses
 
 createinitialrevisions: ## Run `manage.py createinitialrevisions`
 	docker-compose -f cloud-vps.yaml exec striker \
-		python3 manage.py createinitialrevisions
+		poetry run python3 manage.py createinitialrevisions
 .PHONY: createinitialrevisions
 
 init: start migrate init_licenses createinitialrevisions  ## Initialize docker-compose stack

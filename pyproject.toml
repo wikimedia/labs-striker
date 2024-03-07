@@ -1,2 +1,67 @@
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
 [tool.isort]
 profile = "black"
+
+[tool.poetry]
+name = "striker"
+version = "0.1.0"
+description = "Wikimedia Toolforge admin console"
+authors = ["Bryan Davis <bd808@wikimedia.org>", "Taavi Väänänen <hi@taavi.wtf>"]
+license = "GPL-3.0-or-later"
+readme = "README.rst"
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Web Environment",
+    "Framework :: Django",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Information Technology",
+    "Intended Audience :: System Administrators",
+    "Operating System :: OS Independent",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Topic :: Internet :: WWW/HTTP",
+]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+cffi = ">=1.15.0,<2"
+cryptography = ">=37.0.2,<38"
+diff-match-patch = ">=20200713"
+django = ">=2.2.28,<2.3"
+django-auth-ldap = ">=2.0.0,<3"
+django-autocomplete-light = ">=3.3.5,<4"
+django-bootstrap3 = ">=21.2,<22"
+django-csp = ">=3.7,<4"
+django-environ = ">=0.8.0,<0.9"
+django-formtools = ">=2.3,<3"
+django-ipware = ">=4.0.2,<5"
+django-ldapdb = {git = "https://github.com/django-ldapdb/django-ldapdb.git", rev = "d3a0b20eb53fd3e13c454499ca1771df7f8858b3"}
+django-log-request-id = ">=2.0.0,<3"
+django-notifications-hq = ">=1.7.0,<2"
+django-parsley = ">=0.7,<1"
+django-ratelimit-backend = ">=2.0,<3"
+django-reversion = ">=5.0.0,<6"
+django-reversion-compare = ">=0.15.0,<0.16.0"
+idna = ">=3.3,<4"
+mwclient = ">=0.10.1,<0.11"
+mwoauth = ">=0.3.7,<0.4"
+mysqlclient = ">=2.1.0,<3"
+oauthlib = ">=3.0.2,<4"
+pyasn1 = ">=0.4.8,<1"
+pycparser = ">=2.21,<3"
+pyjwt = ">=1.7.1,<2"
+pyldap = ">=3.0.0.post1,<4"
+python-keystoneclient = ">=4.4.0,<5"
+python-logstash = ">=0.4.8,<1"
+python-memcached = ">=1.59,<2"
+requests = ">=2.27.1,<3"
+requests-oauthlib = ">=1.3.1,<2"
+six = ">=1.16.0,<2"
+sqlparse = ">=0.4.2,<0.5"
+sshpubkeys = ">=3.3.1,<4"
+whitenoise = ">=6.2.0,<7"

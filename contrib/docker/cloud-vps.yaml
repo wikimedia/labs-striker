@@ -9,9 +9,9 @@ services:
       - -c
       - >-
         set -eux;
-        python3 ./manage.py migrate
-        && python3 ./manage.py createinitialrevisions
-        && python3 ./manage.py runserver --noreload --nostatic 0.0.0.0:8000
+        poetry run python3 ./manage.py migrate
+        && poetry run python3 ./manage.py createinitialrevisions
+        && poetry run python3 ./manage.py runserver --noreload --nostatic 0.0.0.0:8000
     environment:
       - DJANGO_SECRET_KEY
       - DJANGO_DEBUG
