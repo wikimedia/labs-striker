@@ -20,7 +20,6 @@
 
 import logging
 import os
-import sys
 
 import django_auth_ldap.config
 import environ
@@ -31,10 +30,6 @@ BASE_DIR = os.path.dirname(STRIKER_DIR)
 
 env = environ.Env()
 env.smart_cast = False
-
-# Hack so that we can guard things that will probably fail miserably in test
-# like contacting an external server
-TEST_MODE = "test" in sys.argv
 
 # == Logging ==
 logging.captureWarnings(True)

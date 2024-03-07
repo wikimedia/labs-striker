@@ -460,7 +460,7 @@ class MaintainerChoiceField(forms.ModelMultipleChoiceField):
 @parsleyfy
 class MaintainersForm(forms.Form):
     maintainers = MaintainerChoiceField(
-        queryset=Maintainer.objects.none(),
+        queryset=Maintainer.objects_no_os.none(),
         widget=autocomplete.ModelSelect2Multiple(
             url="tools:api:maintainer",
         ),

@@ -50,11 +50,14 @@ phab = phabricator.Client.default_client()
 
 
 class MaintainerManager(models.Manager):
+    def __init__(self, enable_openstack=True, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.enable_openstack = enable_openstack
+
     def _get_tool_users(self):
-        if settings.TEST_MODE:
-            # Hack to keep from trying to talk to openstack API from django
-            # test harness
+        if not self.enable_openstack:
             return []
+
         users = cache.get_openstack_users()
         return (
             users[settings.OPENSTACK_USER_ROLE] + users[settings.OPENSTACK_ADMIN_ROLE]
@@ -62,10 +65,7 @@ class MaintainerManager(models.Manager):
 
     def get_queryset(self):
         return (
-            super(MaintainerManager, self)
-            .get_queryset()
-            .filter(uid__in=self._get_tool_users())
-            .order_by("cn")
+            super().get_queryset().filter(uid__in=self._get_tool_users()).order_by("cn")
         )
 
 
@@ -80,6 +80,7 @@ class Maintainer(ldapdb.models.Model):
     mail = fields.CharField(db_column="mail")
 
     objects = MaintainerManager()
+    objects_no_os = MaintainerManager(enable_openstack=False)
 
     class Meta:
         managed = False
