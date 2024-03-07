@@ -19,14 +19,14 @@
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
 
 from django import shortcuts, urls
+from django.contrib.admin import AdminSite
 from django.contrib.admin import site as django_site
 from django.core.exceptions import PermissionDenied
 from django.utils.http import urlencode
 from django.views.decorators.cache import never_cache
-from ratelimitbackend.admin import RateLimitAdminSite
 
 
-class StrikerAdminSite(RateLimitAdminSite):
+class StrikerAdminSite(AdminSite):
     @never_cache
     def login(self, request, extra_context=None):
         if not request.user.is_authenticated:
