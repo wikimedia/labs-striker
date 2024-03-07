@@ -24,28 +24,26 @@ import logging
 
 import sshpubkeys
 
-
 logger = logging.getLogger(__name__)
 
 
 class SSHPublicKey(sshpubkeys.SSHKey):
     @property
     def type_name(self):
-        if self.key_type == b'ssh-dss':
-            return 'DSA'
-        elif self.key_type == b'ssh-rsa':
-            return 'RSA'
-        elif self.key_type.startswith(b'ecdsa-sha'):
-            return 'ECDSA'
-        elif self.key_type == b'ssh-ed25519':
-            return 'ED25519'
+        if self.key_type == b"ssh-dss":
+            return "DSA"
+        elif self.key_type == b"ssh-rsa":
+            return "RSA"
+        elif self.key_type.startswith(b"ecdsa-sha"):
+            return "ECDSA"
+        elif self.key_type == b"ssh-ed25519":
+            return "ED25519"
         else:
-            return self.key_type.decode('utf-8')
+            return self.key_type.decode("utf-8")
 
 
 def parse_ssh_key(pubkey):
-    key = SSHPublicKey(
-        pubkey, strict_mode=True, skip_option_parsing=True)
+    key = SSHPublicKey(pubkey, strict_mode=True, skip_option_parsing=True)
     try:
         key.parse()
     except sshpubkeys.InvalidKeyException as err:
@@ -59,8 +57,9 @@ def parse_ssh_key(pubkey):
 
 def invalid_key_hash(key):
     """Generate a hash for an invalid ssh public key."""
-    return 'INVALID:{}'.format(base64.b85encode(
-        hashlib.sha256(key.encode('utf-8')).digest()).decode('utf-8'))
+    return "INVALID:{}".format(
+        base64.b85encode(hashlib.sha256(key.encode("utf-8")).digest()).decode("utf-8")
+    )
 
 
 def ssh_keys_by_hash(user):

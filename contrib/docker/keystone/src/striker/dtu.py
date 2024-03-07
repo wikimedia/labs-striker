@@ -16,19 +16,21 @@ def parse_args():
     """Read cli args."""
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "-s", "--set",
+        "-s",
+        "--set",
         action="append",
         type=kvpair,
         default=[],
     )
     parser.add_argument(
-        "-o", "--output",
-        type=argparse.FileType('w'),
+        "-o",
+        "--output",
+        type=argparse.FileType("w"),
         default=sys.stdout,
     )
     parser.add_argument(
         "template",
-        type=argparse.FileType('r'),
+        type=argparse.FileType("r"),
         default=sys.stdin,
     )
     return parser.parse_args()

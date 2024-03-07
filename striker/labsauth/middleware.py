@@ -18,43 +18,45 @@
 # You should have received a copy of the GNU General Public License
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
 
-from django import shortcuts
-from django import urls
+from django import shortcuts, urls
 from django.conf import settings
 from django.contrib.auth import REDIRECT_FIELD_NAME
-from django.utils import functional
-from django.utils import http
+from django.utils import functional, http
 
 from striker.labsauth import constants
 
 
 class OathMiddleware(object):
     """Ensure that OATH account protection is enforced for configured users"""
+
     def __init__(self, get_response):
         self.get_response = get_response
 
     def __call__(self, request):
-        assert hasattr(request, 'user'), "AuthenticationMiddleware required"
+        assert hasattr(request, "user"), "AuthenticationMiddleware required"
 
         plain_user = request.user
         request.user = functional.SimpleLazyObject(
-            lambda: self.decorate_oath_user(request, plain_user))
+            lambda: self.decorate_oath_user(request, plain_user)
+        )
 
         if plain_user.is_authenticated:
             oath_path = urls.reverse(settings.OATHMIDDLEWARE_REDIRECT)
             request_path = request.path_info
             # Don't redirect if the user is already on the token entry page
             if request_path != oath_path:
-                oath_required = request.session.get(
-                        constants.OATH_REQUIRED, False)
+                oath_required = request.session.get(constants.OATH_REQUIRED, False)
                 if oath_required and not request.user.oath_verified():
                     # Redirect the user to the oath input form
                     return shortcuts.redirect(
-                        "%s?%s" % (
+                        "%s?%s"
+                        % (
                             oath_path,
-                            http.urlencode({
-                                REDIRECT_FIELD_NAME: request.get_full_path(),
-                            })
+                            http.urlencode(
+                                {
+                                    REDIRECT_FIELD_NAME: request.get_full_path(),
+                                }
+                            ),
                         )
                     )
         response = self.get_response(request)
@@ -62,8 +64,7 @@ class OathMiddleware(object):
 
     def decorate_oath_user(self, request, user):
         """Decorate the user with oath data."""
-        user._oath_required = request.session.get(
-            constants.OATH_REQUIRED, False)
+        user._oath_required = request.session.get(constants.OATH_REQUIRED, False)
         user._oath_time = None
 
         user.oath_time = lambda: user._oath_time
@@ -73,8 +74,8 @@ class OathMiddleware(object):
         if user.is_authenticated and user.oath_required():
             oath_data = request.session.get(constants.OATH_INFO)
             if oath_data is not None:
-                if oath_data['user'] != user.ldapname:
+                if oath_data["user"] != user.ldapname:
                     del request.session[constants.OATH_INFO]
                 else:
-                    user._oath_time = oath_data['time']
+                    user._oath_time = oath_data["time"]
         return user

@@ -1,4 +1,5 @@
 """Template tags relating to user Toolforge membership and admin status. """
+
 # -*- coding: utf-8 -*-
 #
 # Copyright (c) 2024 Wikimedia Foundation and contributors.

@@ -21,24 +21,25 @@
 import random
 import string
 
-from django.conf import settings
-from django.contrib.auth.models import AbstractBaseUser
-from django.contrib.auth.models import BaseUserManager
-from django.contrib.auth.models import PermissionsMixin
-from django.db import models
-from django.utils.crypto import salted_hmac
-from django.utils.translation import ugettext_lazy as _
-
-from ldapdb.models import fields as ldap_fields
 import ldap
 import ldapdb.models
 import mwoauth
+from django.conf import settings
+from django.contrib.auth.models import (
+    AbstractBaseUser,
+    BaseUserManager,
+    PermissionsMixin,
+)
+from django.db import models
+from django.utils.crypto import salted_hmac
+from django.utils.translation import ugettext_lazy as _
+from ldapdb.models import fields as ldap_fields
 
 
 class LabsUserManager(BaseUserManager):
     def create_user(self, username, **extra_fields):
         if not username:
-            raise ValueError('Users must have a valid username.')
+            raise ValueError("Users must have a valid username.")
         user = self.model(ldapname=username, **extra_fields)
         user.save()
         return user
@@ -57,57 +58,60 @@ class LabsUserManager(BaseUserManager):
 
 def make_authhash():
     """Make a random string."""
-    return ''.join(
-        random.SystemRandom().choice(string.printable) for _ in range(128))
+    return "".join(random.SystemRandom().choice(string.printable) for _ in range(128))
 
 
 class LabsUser(AbstractBaseUser, PermissionsMixin):
     """Custom user class that is a better match for a Wikimedia account."""
-    ldapname = models.CharField(
-        _('LDAP username'), max_length=255, unique=True)
-    ldapemail = models.EmailField(_('LDAP email address'), blank=True)
+
+    ldapname = models.CharField(_("LDAP username"), max_length=255, unique=True)
+    ldapemail = models.EmailField(_("LDAP email address"), blank=True)
     shellname = models.CharField(
-        _('shellname'), max_length=32, unique=True, blank=True, null=True)
+        _("shellname"), max_length=32, unique=True, blank=True, null=True
+    )
 
     sulname = models.CharField(
-        _('SUL username'), max_length=255, unique=True, blank=True, null=True)
-    sulemail = models.EmailField(_('SUL email address'), blank=True, null=True)
-    realname = models.CharField(
-        _('real name'), max_length=255, blank=True, null=True)
+        _("SUL username"), max_length=255, unique=True, blank=True, null=True
+    )
+    sulemail = models.EmailField(_("SUL email address"), blank=True, null=True)
+    realname = models.CharField(_("real name"), max_length=255, blank=True, null=True)
     oauthtoken = models.CharField(
-            _('OAuth token'), max_length=127, blank=True, null=True)
+        _("OAuth token"), max_length=127, blank=True, null=True
+    )
     oauthsecret = models.CharField(
-            _('OAuth secret'), max_length=127, blank=True, null=True)
+        _("OAuth secret"), max_length=127, blank=True, null=True
+    )
 
     phabname = models.CharField(
-        _('Phabricator username'), max_length=255, unique=True,
-        blank=True, null=True)
-    phid = models.CharField(
-        _('phid'), max_length=255, blank=True, null=True)
+        _("Phabricator username"), max_length=255, unique=True, blank=True, null=True
+    )
+    phid = models.CharField(_("phid"), max_length=255, blank=True, null=True)
     phabrealname = models.CharField(
-        _('Phabricator real name'), max_length=255, blank=True, null=True)
+        _("Phabricator real name"), max_length=255, blank=True, null=True
+    )
     phaburl = models.CharField(
-        _('Phabricator url'), max_length=255, blank=True, null=True)
-    phabimage = models.CharField(
-        _('image'), max_length=255, blank=True, null=True)
+        _("Phabricator url"), max_length=255, blank=True, null=True
+    )
+    phabimage = models.CharField(_("image"), max_length=255, blank=True, null=True)
 
     authhash = models.CharField(
-        _('authhash'), max_length=128, editable=False, default=make_authhash)
+        _("authhash"), max_length=128, editable=False, default=make_authhash
+    )
 
-    is_staff = models.BooleanField(_('staff status'), default=False)
-    is_active = models.BooleanField(_('active'), default=True)
+    is_staff = models.BooleanField(_("staff status"), default=False)
+    is_active = models.BooleanField(_("active"), default=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     objects = LabsUserManager()
 
-    USERNAME_FIELD = 'ldapname'
+    USERNAME_FIELD = "ldapname"
     REQUIRED_FIELDS = []
 
     class Meta:
-        verbose_name = _('user')
-        verbose_name_plural = _('users')
+        verbose_name = _("user")
+        verbose_name_plural = _("users")
 
     def set_password(self, raw_password):
         # Set password by directly manipulating the associated LDAP record.
@@ -140,10 +144,7 @@ class LabsUser(AbstractBaseUser, PermissionsMixin):
         return False
 
     def get_full_name(self):
-        return (self.realname or
-                self.phabrealname or
-                self.sulname or
-                self.ldapname)
+        return self.realname or self.phabrealname or self.sulname or self.ldapname
 
     def get_short_name(self):
         return self.sulname or self.ldapname
@@ -160,8 +161,7 @@ class LabsUser(AbstractBaseUser, PermissionsMixin):
 
     @property
     def ldap_dn(self):
-        return 'uid={0},{1}'.format(
-            self.shellname, settings.LABSAUTH_USER_BASE)
+        return "uid={0},{1}".format(self.shellname, settings.LABSAUTH_USER_BASE)
 
     @property
     def ldapuser(self):
@@ -170,64 +170,64 @@ class LabsUser(AbstractBaseUser, PermissionsMixin):
 
 class PosixGroup(ldapdb.models.Model):
     base_dn = settings.LABSAUTH_GROUP_BASE
-    object_classes = ['posixGroup']
+    object_classes = ["posixGroup"]
 
-    cn = ldap_fields.CharField(db_column='cn', primary_key=True)
-    gid_number = ldap_fields.IntegerField(db_column='gidNumber', unique=True)
-    members = ldap_fields.ListField(db_column='member')
+    cn = ldap_fields.CharField(db_column="cn", primary_key=True)
+    gid_number = ldap_fields.IntegerField(db_column="gidNumber", unique=True)
+    members = ldap_fields.ListField(db_column="member")
 
     class Meta:
         managed = False
 
     def __str__(self):
-        return 'cn=%s,%s' % (self.cn, self.base_dn)
+        return "cn=%s,%s" % (self.cn, self.base_dn)
 
 
 class PosixAccount(ldapdb.models.Model):
     base_dn = settings.LABSAUTH_USER_BASE
-    object_classes = ['posixAccount']
+    object_classes = ["posixAccount"]
 
-    uid = ldap_fields.CharField(db_column='uid', primary_key=True)
-    cn = ldap_fields.CharField(db_column='cn', unique=True)
-    uid_number = ldap_fields.IntegerField(db_column='uidNumber', unique=True)
-    gid_number = ldap_fields.IntegerField(db_column='gidNumber')
-    home_directory = ldap_fields.CharField(
-        db_column='homeDirectory', max_length=200)
+    uid = ldap_fields.CharField(db_column="uid", primary_key=True)
+    cn = ldap_fields.CharField(db_column="cn", unique=True)
+    uid_number = ldap_fields.IntegerField(db_column="uidNumber", unique=True)
+    gid_number = ldap_fields.IntegerField(db_column="gidNumber")
+    home_directory = ldap_fields.CharField(db_column="homeDirectory", max_length=200)
 
     class Meta:
         managed = False
 
     def __str__(self):
-        return 'uid=%s,%s' % (self.uid, self.base_dn)
+        return "uid=%s,%s" % (self.uid, self.base_dn)
 
 
 class LdapUser(ldapdb.models.Model):
     """Equivalent of OpenStackNovaUser"""
+
     base_dn = settings.LABSAUTH_USER_BASE
     object_classes = [
-        'person',
-        'inetOrgPerson',
-        'ldapPublicKey',
-        'posixAccount',
+        "person",
+        "inetOrgPerson",
+        "ldapPublicKey",
+        "posixAccount",
     ]
 
     # posixAccount
-    uid = ldap_fields.CharField(db_column='uid', primary_key=True)
-    cn = ldap_fields.CharField(db_column='cn', unique=True)
-    uid_number = ldap_fields.IntegerField(db_column='uidNumber', unique=True)
-    gid_number = ldap_fields.IntegerField(db_column='gidNumber')
-    home_dir = ldap_fields.CharField(db_column='homeDirectory')
-    login_shell = ldap_fields.CharField(db_column='loginShell')
-    password = ldap_fields.CharField(db_column='userPassword')
+    uid = ldap_fields.CharField(db_column="uid", primary_key=True)
+    cn = ldap_fields.CharField(db_column="cn", unique=True)
+    uid_number = ldap_fields.IntegerField(db_column="uidNumber", unique=True)
+    gid_number = ldap_fields.IntegerField(db_column="gidNumber")
+    home_dir = ldap_fields.CharField(db_column="homeDirectory")
+    login_shell = ldap_fields.CharField(db_column="loginShell")
+    password = ldap_fields.CharField(db_column="userPassword")
     # person
-    sn = ldap_fields.CharField(db_column='sn', unique=True)
+    sn = ldap_fields.CharField(db_column="sn", unique=True)
     # inetOrgPerson
-    mail = ldap_fields.CharField(db_column='mail')
+    mail = ldap_fields.CharField(db_column="mail")
     # ldapPublicKey
-    ssh_keys = ldap_fields.ListField(db_column='sshPublicKey')
+    ssh_keys = ldap_fields.ListField(db_column="sshPublicKey")
 
     class Meta:
         managed = False
 
     def __str__(self):
-        return 'uid=%s,%s' % (self.uid, self.base_dn)
+        return "uid=%s,%s" % (self.uid, self.base_dn)

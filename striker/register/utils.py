@@ -28,7 +28,6 @@ from django.utils.translation import ugettext_lazy as _
 from striker import mediawiki
 from striker.labsauth.models import PosixAccount
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -45,14 +44,14 @@ def get_username_invalid_regex():
     """
     return re.compile(
         # Any char that is not in $wgLegalTitleChars
-        r'[^'
-        r''' %!"$&'()*,\-./0-9:;=?@A-Z\^_`a-z~'''
-        '\x80-\xFF'
-        r'+]'
+        r"[^"
+        r""" %!"$&'()*,\-./0-9:;=?@A-Z\^_`a-z~"""
+        "\x80-\xFF"
+        r"+]"
         # URL percent encoding sequences
-        r'|%[0-9A-Fa-f]{2}'
+        r"|%[0-9A-Fa-f]{2}"
         # XML/HTML entities
-        '|&([A-Za-z0-9\x80-\xff]+|#([0-9]+|x[0-9A-Fa-f]+));'
+        "|&([A-Za-z0-9\x80-\xff]+|#([0-9]+|x[0-9A-Fa-f]+));"
     )
 
 
@@ -61,9 +60,9 @@ def username_valid(name):
 
     Valid usernames are not necessarily available or even creatable.
     """
-    if re.search(r'^\s', name):
+    if re.search(r"^\s", name):
         return False
-    if re.search(r'\s$', name):
+    if re.search(r"\s$", name):
         return False
     if get_username_invalid_regex().search(name):
         return False
@@ -110,23 +109,24 @@ def check_username_create(name):
     # 'titleblacklist-forbidden-new-account', 'params': ['
     # ^(User:)?puppet$ <newaccountonly>', 'Puppet'], 'type': 'error'}]}]
     ret = {
-        'ok': False,
-        'name': user['name'],
-        'error': None,
+        "ok": False,
+        "name": user["name"],
+        "error": None,
     }
-    if user.get('missing') and user.get('cancreate'):
-        ret['ok'] = True
-    elif 'userid' in user:
-        ret['error'] = _('%(name)s is already in use.') % ret
-    elif 'cancreateerror' in user:
+    if user.get("missing") and user.get("cancreate"):
+        ret["ok"] = True
+    elif "userid" in user:
+        ret["error"] = _("%(name)s is already in use.") % ret
+    elif "cancreateerror" in user:
         try:
-            ret['error'] = mwapi.get_message(
-                    user['cancreateerror'][0]['message'],
-                    *user['cancreateerror'][0]['params'],
-                    lang=translation.get_language().split('-')[0])
+            ret["error"] = mwapi.get_message(
+                user["cancreateerror"][0]["message"],
+                *user["cancreateerror"][0]["params"],
+                lang=translation.get_language().split("-")[0]
+            )
         except Exception:
-            logger.exception('Failed to get expanded message for %s', user)
-            ret['error'] = user['cancreateerror'][0]['message']
+            logger.exception("Failed to get expanded message for %s", user)
+            ret["error"] = user["cancreateerror"][0]["message"]
     return ret
 
 
@@ -138,6 +138,6 @@ def check_ip_blocked_from_create(ip):
     mwapi = mediawiki.Client.default_client()
     res = mwapi.query_blocks_ip(ip)
     for block in res:
-        if block['nocreate']:
-            return block['reason']
+        if block["nocreate"]:
+            return block["reason"]
     return False

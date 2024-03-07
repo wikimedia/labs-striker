@@ -19,11 +19,11 @@
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
 
 GOALS = {
-    'ACCOUNT_SUL': 101,
-    'ACCOUNT_PHAB': 102,
-    'ACCOUNT_SSH': 103,
-    'TOOL_MEMBER': 201,
-    'TOOL_MAINTAINER': 202,
-    'TOOL_GIT': 203,
+    "ACCOUNT_SUL": 101,
+    "ACCOUNT_PHAB": 102,
+    "ACCOUNT_SSH": 103,
+    "TOOL_MEMBER": 201,
+    "TOOL_MAINTAINER": 202,
+    "TOOL_GIT": 203,
 }
 GOALS_BY_ID = {v: k for k, v in GOALS.items()}

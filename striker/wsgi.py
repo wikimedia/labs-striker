@@ -33,10 +33,10 @@ def bootstrap_env(wsgi_env, start_resp):
     global application
     for key in wsgi_env.keys():
         # Pass DJANGO_* env vars to the application
-        if key.startswith('DJANGO_'):
+        if key.startswith("DJANGO_"):
             os.environ[key] = wsgi_env[key]
 
-    if os.environ.get('DJANGO_DEBUG', '').upper() == 'TRUE':
+    if os.environ.get("DJANGO_DEBUG", "").upper() == "TRUE":
         striker.monitor.start()
 
     # Replace self in global scope with Django's handler
@@ -45,5 +45,5 @@ def bootstrap_env(wsgi_env, start_resp):
     return application(wsgi_env, start_resp)
 
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'striker.settings')
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "striker.settings")
 application = bootstrap_env

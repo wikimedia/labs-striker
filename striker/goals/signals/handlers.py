@@ -28,42 +28,41 @@ from django.dispatch import receiver
 from striker.goals import GOALS
 from striker.labsauth.models import LabsUser
 
-
 logger = logging.getLogger(__name__)
 
 
 def check_goal_phab(user):
     """Check LabsUser model for Phabricator data."""
     if user.phabname is not None:
-        user.milestones.recordMilestone(GOALS['ACCOUNT_PHAB'])
+        user.milestones.recordMilestone(GOALS["ACCOUNT_PHAB"])
 
 
 def check_goal_sul(user):
     """Check LabsUser model for SUL data."""
     if user.oauthtoken is not None:
-        user.milestones.recordMilestone(GOALS['ACCOUNT_SUL'])
+        user.milestones.recordMilestone(GOALS["ACCOUNT_SUL"])
 
 
 def check_goal_ssh(ldap):
     """Check LdapUser model for SSH data."""
     if ldap.ssh_keys:
         user = LabsUser.objects.get(ldapname=ldap.cn)
-        user.milestones.recordMilestone(GOALS['ACCOUNT_SSH'])
+        user.milestones.recordMilestone(GOALS["ACCOUNT_SSH"])
 
 
 def check_goal_member(user):
     """Check LabsUser model for Toolforge membership."""
-    groups = user.groups.values_list('name', flat=True)
+    groups = user.groups.values_list("name", flat=True)
     if settings.TOOLS_TOOL_LABS_GROUP_NAME in groups:
-        user.milestones.recordMilestone(GOALS['TOOL_MEMBER'])
+        user.milestones.recordMilestone(GOALS["TOOL_MEMBER"])
 
 
 def check_goal_tool(user):
     """Check LabsUser model for Tool maintainership."""
-    groups = user.groups.values_list('name', flat=True)
+    groups = user.groups.values_list("name", flat=True)
     for g in groups:
-        if g.startswith(settings.OPENSTACK_PROJECT + '.'):
-            user.milestones.recordMilestone(GOALS['TOOL_MAINTAINER'])
+        if g.startswith(settings.OPENSTACK_PROJECT + "."):
+            user.milestones.recordMilestone(GOALS["TOOL_MAINTAINER"])
             break
 
 
@@ -82,11 +81,11 @@ def on_user_save(sender, instance, **kwargs):
     check_goal_sul(instance)
 
 
-@receiver(post_save, sender='tools.GitlabRepo', dispatch_uid=__name__)
+@receiver(post_save, sender="tools.GitlabRepo", dispatch_uid=__name__)
 def on_gitlabrepo_save(sender, instance, **kwargs):
-    instance.created_by.milestones.recordMilestone(GOALS['TOOL_GIT'])
+    instance.created_by.milestones.recordMilestone(GOALS["TOOL_GIT"])
 
 
-@receiver(post_save, sender='labsauth.LdapUser',  dispatch_uid=__name__)
+@receiver(post_save, sender="labsauth.LdapUser", dispatch_uid=__name__)
 def on_ldapuser_save(sender, instance, **kwargs):
     check_goal_ssh(instance)

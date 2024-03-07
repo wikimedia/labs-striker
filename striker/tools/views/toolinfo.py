@@ -20,8 +20,11 @@
 
 import logging
 
-from django import shortcuts
-from django import urls
+import reversion
+import reversion.models
+import reversion_compare.views
+from dal import autocomplete
+from django import shortcuts, urls
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -32,20 +35,10 @@ from django.http import HttpResponse
 from django.utils.text import slugify
 from django.utils.translation import ugettext_lazy as _
 
-from dal import autocomplete
-import reversion
-import reversion.models
-import reversion_compare.views
-
-from striker.tools.forms import ToolInfoForm
-from striker.tools.forms import ToolInfoPublicForm
-from striker.tools.models import Author
-from striker.tools.models import Tool
-from striker.tools.models import ToolInfo
-from striker.tools.models import ToolInfoTag
+from striker.tools.forms import ToolInfoForm, ToolInfoPublicForm
+from striker.tools.models import Author, Tool, ToolInfo, ToolInfoTag
 from striker.tools.utils import member_or_admin
 from striker.tools.views.decorators import inject_tool
-
 
 logger = logging.getLogger(__name__)
 
@@ -62,52 +55,52 @@ class RollBackRevisionException(Exception):
 def create(req, tool):
     """Create a ToolInfo record."""
     if not member_or_admin(tool, req.user):
-        messages.error(
-            req, _('You are not a member of {tool}').format(tool=tool.name))
+        messages.error(req, _("You are not a member of {tool}").format(tool=tool.name))
         return shortcuts.redirect(tool.get_absolute_url())
     if tool.is_disabled():
-        messages.error(req, _('Tool is disabled.'))
+        messages.error(req, _("Tool is disabled."))
         return shortcuts.redirect(
-            urls.reverse('tools:tool', kwargs={'tool': tool.name})
+            urls.reverse("tools:tool", kwargs={"tool": tool.name})
         )
 
     initial_values = {
-        'name': "toolforge-{}".format(tool.name),
-        'author': req.user,
+        "name": "toolforge-{}".format(tool.name),
+        "author": req.user,
     }
     if ToolInfo.objects.filter(tool=tool.name).count():
-        initial_values['name'] = '{}-'.format(initial_values['name'])
-    form = ToolInfoForm(
-        req.POST or None, req.FILES or None, initial=initial_values)
-    if req.method == 'POST':
+        initial_values["name"] = "{}-".format(initial_values["name"])
+    form = ToolInfoForm(req.POST or None, req.FILES or None, initial=initial_values)
+    if req.method == "POST":
         if form.is_valid():
             try:
                 with reversion.create_revision():
                     reversion.set_user(req.user)
-                    reversion.set_comment(form.cleaned_data['comment'])
+                    reversion.set_comment(form.cleaned_data["comment"])
                     toolinfo = form.save(commit=False)
                     toolinfo.tool = tool.name
                     toolinfo.save()
                     form.save_m2m()
                     reversion.add_to_revision(toolinfo)
-                messages.info(
-                    req, _("Toolinfo {} created".format(toolinfo.title)))
+                messages.info(req, _("Toolinfo {} created".format(toolinfo.title)))
                 return shortcuts.redirect(
-                    urls.reverse('tools:info_read', kwargs={
-                        'tool': tool.name,
-                        'info_id': toolinfo.pk,
-                    }))
+                    urls.reverse(
+                        "tools:info_read",
+                        kwargs={
+                            "tool": tool.name,
+                            "info_id": toolinfo.pk,
+                        },
+                    )
+                )
             except DatabaseError:
-                logger.exception('ToolInfo.save failed')
+                logger.exception("ToolInfo.save failed")
                 messages.error(
-                    req,
-                    _("Error updating database. [req id: {id}]").format(
-                        id=req.id))
+                    req, _("Error updating database. [req id: {id}]").format(id=req.id)
+                )
     ctx = {
-        'tool': tool,
-        'form': form,
+        "tool": tool,
+        "form": form,
     }
-    return shortcuts.render(req, 'tools/info/create.html', ctx)
+    return shortcuts.render(req, "tools/info/create.html", ctx)
 
 
 @inject_tool
@@ -115,14 +108,14 @@ def read(req, tool, info_id):
     """View a ToolInfo record."""
     toolinfo = shortcuts.get_object_or_404(ToolInfo, pk=info_id, tool=tool)
     ctx = {
-        'tool': tool,
-        'toolinfo': toolinfo,
-        'can_edit': member_or_admin(tool, req.user),
-        'can_delete': member_or_admin(tool, req.user),
-        'can_revert': False,
-        'can_suppress': False,
+        "tool": tool,
+        "toolinfo": toolinfo,
+        "can_edit": member_or_admin(tool, req.user),
+        "can_delete": member_or_admin(tool, req.user),
+        "can_revert": False,
+        "can_suppress": False,
     }
-    return shortcuts.render(req, 'tools/info/read.html', ctx)
+    return shortcuts.render(req, "tools/info/read.html", ctx)
 
 
 @login_required
@@ -131,43 +124,45 @@ def edit(req, tool, info_id):
     """Edit a ToolInfo record."""
     toolinfo = shortcuts.get_object_or_404(ToolInfo, pk=info_id, tool=tool)
     if member_or_admin(tool, req.user):
-        form = ToolInfoForm(
-            req.POST or None, req.FILES or None, instance=toolinfo)
+        form = ToolInfoForm(req.POST or None, req.FILES or None, instance=toolinfo)
     else:
         form = ToolInfoPublicForm(
-            req.POST or None, req.FILES or None, instance=toolinfo)
+            req.POST or None, req.FILES or None, instance=toolinfo
+        )
 
-    if req.method == 'POST':
+    if req.method == "POST":
         if form.is_valid():
             try:
                 with reversion.create_revision():
                     reversion.set_user(req.user)
-                    reversion.set_comment(form.cleaned_data['comment'])
+                    reversion.set_comment(form.cleaned_data["comment"])
                     toolinfo = form.save()
                     reversion.add_to_revision(toolinfo)
-                messages.info(
-                    req, _("Toolinfo {} updated".format(toolinfo.title)))
+                messages.info(req, _("Toolinfo {} updated".format(toolinfo.title)))
                 return shortcuts.redirect(
-                    urls.reverse('tools:info_read', kwargs={
-                        'tool': tool.name,
-                        'info_id': toolinfo.pk,
-                    }))
+                    urls.reverse(
+                        "tools:info_read",
+                        kwargs={
+                            "tool": tool.name,
+                            "info_id": toolinfo.pk,
+                        },
+                    )
+                )
             except DatabaseError:
-                logger.exception('ToolInfo.save failed')
+                logger.exception("ToolInfo.save failed")
                 messages.error(
-                    req,
-                    _("Error updating database. [req id: {id}]").format(
-                        id=req.id))
+                    req, _("Error updating database. [req id: {id}]").format(id=req.id)
+                )
     ctx = {
-        'tool': tool,
-        'toolinfo': toolinfo,
-        'form': form,
-        'can_edit': False,
-        'can_delete': member_or_admin(tool, req.user),
-        'can_revert': False,
-        'can_suppress': False,
+        "tool": tool,
+        "toolinfo": toolinfo,
+        "form": form,
+        "can_edit": False,
+        "can_delete": member_or_admin(tool, req.user),
+        "can_revert": False,
+        "can_suppress": False,
     }
-    return shortcuts.render(req, 'tools/info/update.html', ctx)
+    return shortcuts.render(req, "tools/info/update.html", ctx)
 
 
 @login_required
@@ -175,51 +170,48 @@ def edit(req, tool, info_id):
 def delete(req, tool, info_id):
     """Delete a toolinfo record."""
     toolinfo = shortcuts.get_object_or_404(ToolInfo, pk=info_id, tool=tool)
-    if req.method == 'POST' and "__confirm__" in req.POST:
+    if req.method == "POST" and "__confirm__" in req.POST:
         if member_or_admin(tool, req.user):
             try:
                 title = toolinfo.title
                 toolinfo.delete()
-                messages.info(
-                    req, _("Toolinfo {title} deleted").format(title=title))
+                messages.info(req, _("Toolinfo {title} deleted").format(title=title))
             except DatabaseError:
                 logger.exception("Toolinfo.delete failed")
                 messages.error(
-                    req,
-                    _("Error updating database. [req id: {id}]").format(
-                        id=req.id)
+                    req, _("Error updating database. [req id: {id}]").format(id=req.id)
                 )
         else:
             messages.error(
-                req,
-                _("You are not allowed to delete this toolinfo record."))
+                req, _("You are not allowed to delete this toolinfo record.")
+            )
     else:
         ctx = {
-            'tool': tool,
-            'toolinfo': toolinfo,
+            "tool": tool,
+            "toolinfo": toolinfo,
         }
-        return shortcuts.render(req, 'tools/info/delete.html', ctx)
+        return shortcuts.render(req, "tools/info/delete.html", ctx)
     return shortcuts.redirect(tool.get_absolute_url())
 
 
 class HistoryView(reversion_compare.views.HistoryCompareDetailView):
     model = ToolInfo
-    pk_url_kwarg = 'info_id'
-    template_name = 'tools/info/history.html'
+    pk_url_kwarg = "info_id"
+    template_name = "tools/info/history.html"
 
     def get_queryset(self):
         qs = super(HistoryView, self).get_queryset()
-        return qs.filter(tool=self.kwargs['tool'])
+        return qs.filter(tool=self.kwargs["tool"])
 
     def _get_action_list(self):
         actions = super(HistoryView, self)._get_action_list()
         for action in actions:
-            action['url'] = urls.reverse(
-                'tools:info_revision',
+            action["url"] = urls.reverse(
+                "tools:info_revision",
                 kwargs={
-                    'tool': self.kwargs['tool'],
-                    'info_id': self.kwargs['info_id'],
-                    'version_id': action['version'].pk,
+                    "tool": self.kwargs["tool"],
+                    "info_id": self.kwargs["info_id"],
+                    "version_id": action["version"].pk,
                 },
             )
         return actions
@@ -227,16 +219,16 @@ class HistoryView(reversion_compare.views.HistoryCompareDetailView):
     def get_context_data(self, **kwargs):
         user = self.request.user
         tool = Tool.objects.get(
-            cn='{0}.{1}'.format(
+            cn="{0}.{1}".format(
                 settings.OPENSTACK_PROJECT,
-                kwargs['object'].tool,
+                kwargs["object"].tool,
             )
         )
 
         ctx = super(HistoryView, self).get_context_data(**kwargs)
-        ctx['toolinfo'] = kwargs['object']
-        ctx['tool'] = tool
-        ctx['show_suppressed'] = member_or_admin(tool, user)
+        ctx["toolinfo"] = kwargs["object"]
+        ctx["tool"] = tool
+        ctx["show_suppressed"] = member_or_admin(tool, user)
         return ctx
 
 
@@ -244,13 +236,13 @@ class HistoryView(reversion_compare.views.HistoryCompareDetailView):
 def revision(req, tool, info_id, version_id):
     """View/revert/suppress a particular version of a ToolInfo model."""
     tool = shortcuts.get_object_or_404(
-        Tool,
-        cn='{}.{}'.format(settings.OPENSTACK_PROJECT, tool)
+        Tool, cn="{}.{}".format(settings.OPENSTACK_PROJECT, tool)
     )
 
     toolinfo = shortcuts.get_object_or_404(ToolInfo, pk=info_id, tool=tool)
     version = shortcuts.get_object_or_404(
-        reversion.models.Version, pk=version_id, object_id=info_id)
+        reversion.models.Version, pk=version_id, object_id=info_id
+    )
 
     can_edit = False  # member_or_admin(tool, req.user)
     can_delete = False
@@ -258,19 +250,17 @@ def revision(req, tool, info_id, version_id):
     can_suppress = member_or_admin(tool, req.user)
 
     history_url = urls.reverse(
-        'tools:info_history',
+        "tools:info_history",
         kwargs={
-            'tool': tool.name,
-            'info_id': info_id,
-        })
+            "tool": tool.name,
+            "info_id": info_id,
+        },
+    )
 
-    if req.method == 'POST' and (
-            '_hide' in req.POST or
-            '_show' in req.POST
-    ):
+    if req.method == "POST" and ("_hide" in req.POST or "_show" in req.POST):
         if can_suppress:
             try:
-                version.suppressed = '_hide' in req.POST
+                version.suppressed = "_hide" in req.POST
                 version.save()
                 if version.suppressed:
                     msg = _("Revision {id} hidden")
@@ -278,11 +268,10 @@ def revision(req, tool, info_id, version_id):
                     msg = _("Revision {id} shown")
                 messages.info(req, msg.format(id=version_id))
             except DatabaseError:
-                logger.exception('Revision.suppress failed')
+                logger.exception("Revision.suppress failed")
                 messages.error(
-                    req,
-                    _("Error updating database. [req id: {id}]").format(
-                        id=req.id))
+                    req, _("Error updating database. [req id: {id}]").format(id=req.id)
+                )
         else:
             messages.error(req, _("Tool membership required"))
         return shortcuts.redirect(history_url)
@@ -298,54 +287,59 @@ def revision(req, tool, info_id, version_id):
         with transaction.atomic(using=version.db):
             version.revision.revert()
             # Fetch the toolinfo again now that it hav been reverted
-            toolinfo = shortcuts.get_object_or_404(
-                ToolInfo, pk=info_id, tool=tool.name)
+            toolinfo = shortcuts.get_object_or_404(ToolInfo, pk=info_id, tool=tool.name)
 
-            if req.method == 'POST':
-                if '_revert' in req.POST:
+            if req.method == "POST":
+                if "_revert" in req.POST:
                     if not can_revert:
                         messages.error(req, _("Tool membership required"))
                         raise RollBackRevisionException(None)
                     try:
                         with reversion.create_revision():
                             dt = version.revision.date_created.strftime(
-                                '%Y-%m-%dT%H:%M:%S%z')
+                                "%Y-%m-%dT%H:%M:%S%z"
+                            )
                             reversion.set_user(req.user)
                             reversion.set_comment(
-                                '{} reverted to version saved on {}'.format(
-                                    req.user,
-                                    dt))
+                                "{} reverted to version saved on {}".format(
+                                    req.user, dt
+                                )
+                            )
                             toolinfo.save()
                             messages.info(
                                 req,
-                                _("Toolinfo {} reverted to {}".format(
-                                    toolinfo.title,
-                                    dt)))
+                                _(
+                                    "Toolinfo {} reverted to {}".format(
+                                        toolinfo.title, dt
+                                    )
+                                ),
+                            )
                             # Return instead of raise so transactions are
                             # committed
                             return shortcuts.redirect(history_url)
                     except DatabaseError:
-                        logger.exception('ToolInfo.revert failed')
+                        logger.exception("ToolInfo.revert failed")
                         messages.error(
                             req,
-                            _(
-                                "Error updating database. [req id: {id}]"
-                            ).format(id=req.id))
+                            _("Error updating database. [req id: {id}]").format(
+                                id=req.id
+                            ),
+                        )
                         raise RollBackRevisionException(None)
 
             ctx = {
-                'tool': tool,
-                'toolinfo': toolinfo,
-                'version': version,
-                'can_edit': can_edit,
-                'can_delete': can_delete,
-                'can_revert': can_revert,
-                'can_suppress': can_suppress,
+                "tool": tool,
+                "toolinfo": toolinfo,
+                "version": version,
+                "can_edit": can_edit,
+                "can_delete": can_delete,
+                "can_revert": can_revert,
+                "can_suppress": can_suppress,
             }
-            resp = shortcuts.render(req, 'tools/info/revision.html', ctx)
+            resp = shortcuts.render(req, "tools/info/revision.html", ctx)
             raise RollBackRevisionException(resp)
     except reversion.errors.RevertError:
-        logger.exception('ToolInfo.revert failed')
+        logger.exception("ToolInfo.revert failed")
         return shortcuts.redirect(history_url)
 
     except RollBackRevisionException as ex:
@@ -356,7 +350,7 @@ def revision(req, tool, info_id, version_id):
 
 
 class TagAutocomplete(autocomplete.Select2QuerySetView):
-    create_field = 'name'
+    create_field = "name"
 
     def get_queryset(self):
         if not self.request.user.is_authenticated:
@@ -364,7 +358,7 @@ class TagAutocomplete(autocomplete.Select2QuerySetView):
         qs = ToolInfoTag.objects.all()
         if self.q:
             qs = qs.filter(name__icontains=self.q)
-        qs.order_by('name')
+        qs.order_by("name")
         return qs
 
     def has_add_permission(self, request):
@@ -375,7 +369,7 @@ class TagAutocomplete(autocomplete.Select2QuerySetView):
 
 
 class AuthorAutocomplete(autocomplete.Select2QuerySetView):
-    create_field = 'name'
+    create_field = "name"
 
     def get_queryset(self):
         if not self.request.user.is_authenticated:
@@ -383,7 +377,7 @@ class AuthorAutocomplete(autocomplete.Select2QuerySetView):
         qs = Author.objects.all()
         if self.q:
             qs = qs.filter(name__icontains=self.q)
-        qs.order_by('name')
+        qs.order_by("name")
         return qs
 
     def has_add_permission(self, request):
@@ -394,14 +388,12 @@ class AuthorAutocomplete(autocomplete.Select2QuerySetView):
 
 
 def json_v1(req):
-    enc = DjangoJSONEncoder(
-        ensure_ascii=False, indent=2, separators=(',', ':'))
-    return HttpResponse(enc.encode(
-        [
-            info.toolinfo_v1(req)
-            for info in ToolInfo.objects.all().order_by('name')
-        ]),
-        content_type="application/json; charset=utf8"
+    enc = DjangoJSONEncoder(ensure_ascii=False, indent=2, separators=(",", ":"))
+    return HttpResponse(
+        enc.encode(
+            [info.toolinfo_v1(req) for info in ToolInfo.objects.all().order_by("name")]
+        ),
+        content_type="application/json; charset=utf8",
     )
 
 
@@ -418,13 +410,14 @@ def json_v1_2(req):
         name.split(".", 1)[1]: True
         for name in Tool.objects.values_list("cn", flat=True)
     }
-    enc = DjangoJSONEncoder(
-        ensure_ascii=False, indent=2, separators=(',', ':'))
+    enc = DjangoJSONEncoder(ensure_ascii=False, indent=2, separators=(",", ":"))
     return HttpResponse(
-        enc.encode([
-            info.toolinfo_v1_2(req)
-            for info in ToolInfo.objects.all().order_by('name')
-            if valid_tools.get(info.tool, False)
-        ]),
-        content_type="application/json; charset=utf8"
+        enc.encode(
+            [
+                info.toolinfo_v1_2(req)
+                for info in ToolInfo.objects.all().order_by("name")
+                if valid_tools.get(info.tool, False)
+            ]
+        ),
+        content_type="application/json; charset=utf8",
     )

@@ -17,32 +17,32 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from glob import glob
 from distutils.core import setup
+from glob import glob
 
 setup(
-    name='Striker',
-    version='0.1',
-    description='Wikimedia Toolforge Dashboard',
-    author='Wikimedia Foundation',
-    license='GPLv3+',
-    url='https://www.toolforge.org/',
-    packages=['striker'],
-    package_dir={'striker': 'striker'},
+    name="Striker",
+    version="0.1",
+    description="Wikimedia Toolforge Dashboard",
+    author="Wikimedia Foundation",
+    license="GPLv3+",
+    url="https://www.toolforge.org/",
+    packages=["striker"],
+    package_dir={"striker": "striker"},
     classifiers=[
-        'Development Status :: 4 - Beta',
-        'Environment :: Web Environment',
-        'Framework :: Django',
-        'Intended Audience :: Developers',
-        'Intended Audience :: Information Technology',
-        'Intended Audience :: System Administrators',
-        'License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)',
-        'Operating System :: OS Independent',
-        'Operating System :: POSIX :: Linux',
-        'Programming Language :: Python',
-        'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.4',
-        'Programming Language :: Python :: 3 :: Only',
-        'Topic :: Internet :: WWW/HTTP',
-    ]
+        "Development Status :: 4 - Beta",
+        "Environment :: Web Environment",
+        "Framework :: Django",
+        "Intended Audience :: Developers",
+        "Intended Audience :: Information Technology",
+        "Intended Audience :: System Administrators",
+        "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
+        "Operating System :: OS Independent",
+        "Operating System :: POSIX :: Linux",
+        "Programming Language :: Python",
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.4",
+        "Programming Language :: Python :: 3 :: Only",
+        "Topic :: Internet :: WWW/HTTP",
+    ],
 )

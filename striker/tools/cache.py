@@ -22,8 +22,7 @@ from django.core.cache import cache
 
 from striker import openstack
 
-
-OPENSTACK_USERS_CACHE_KEY = 'openstack_users_by_role'
+OPENSTACK_USERS_CACHE_KEY = "openstack_users_by_role"
 
 
 def get_openstack_users():

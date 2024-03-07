@@ -26,6 +26,6 @@ class CustomLdapRouter(ldapdb.router.Router):
     their 4c9b4fb commit."""
 
     def allow_migrate(self, db, app_label, model_name=None, **hints):
-        if 'model' in hints and ldapdb.router.is_ldap_model(hints['model']):
+        if "model" in hints and ldapdb.router.is_ldap_model(hints["model"]):
             return False
         return None

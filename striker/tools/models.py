@@ -22,21 +22,17 @@ import collections
 import datetime
 import logging
 
-from django import urls
-from django.conf import settings
-from django.db import models
-from django.db import transaction
-from django.utils import timezone
-from django.utils.translation import ugettext_lazy as _
-
-from ldapdb.models import fields
 import ldapdb.models
 import reversion
+from django import urls
+from django.conf import settings
+from django.db import models, transaction
+from django.utils import timezone
+from django.utils.translation import ugettext_lazy as _
+from ldapdb.models import fields
 
-from striker import gitlab
-from striker import phabricator
+from striker import gitlab, phabricator
 from striker.tools import cache
-
 
 # Inspiration from https://stackoverflow.com/a/24668215/8171
 #
@@ -44,8 +40,7 @@ from striker.tools import cache
 # This this will be used to allow suppression of malicious changes by an
 # admin.
 reversion.models.Version.add_to_class(
-    'suppressed',
-    models.BooleanField(blank=True, default=False, db_index=True)
+    "suppressed", models.BooleanField(blank=True, default=False, db_index=True)
 )
 
 
@@ -62,23 +57,27 @@ class MaintainerManager(models.Manager):
             return []
         users = cache.get_openstack_users()
         return (
-            users[settings.OPENSTACK_USER_ROLE] +
-            users[settings.OPENSTACK_ADMIN_ROLE]
+            users[settings.OPENSTACK_USER_ROLE] + users[settings.OPENSTACK_ADMIN_ROLE]
         )
 
     def get_queryset(self):
-        return super(MaintainerManager, self).get_queryset().filter(
-            uid__in=self._get_tool_users()).order_by('cn')
+        return (
+            super(MaintainerManager, self)
+            .get_queryset()
+            .filter(uid__in=self._get_tool_users())
+            .order_by("cn")
+        )
 
 
 class Maintainer(ldapdb.models.Model):
     """A tool maintainer."""
-    base_dn = settings.TOOLS_MAINTAINER_BASE_DN
-    object_classes = ['inetOrgPerson', 'posixAccount']
 
-    uid = fields.CharField(db_column='uid', primary_key=True)
-    cn = fields.CharField(db_column='cn')
-    mail = fields.CharField(db_column='mail')
+    base_dn = settings.TOOLS_MAINTAINER_BASE_DN
+    object_classes = ["inetOrgPerson", "posixAccount"]
+
+    uid = fields.CharField(db_column="uid", primary_key=True)
+    cn = fields.CharField(db_column="cn")
+    mail = fields.CharField(db_column="mail")
 
     objects = MaintainerManager()
 
@@ -91,37 +90,41 @@ class Maintainer(ldapdb.models.Model):
 
 class ToolManager(models.Manager):
     def get_queryset(self):
-        return super(ToolManager, self).get_queryset().filter(
-            cn__startswith='{0}.'.format(settings.OPENSTACK_PROJECT))
+        return (
+            super(ToolManager, self)
+            .get_queryset()
+            .filter(cn__startswith="{0}.".format(settings.OPENSTACK_PROJECT))
+        )
 
 
 class Tool(ldapdb.models.Model):
     """A tool is a specially named LDAP group."""
+
     base_dn = settings.TOOLS_TOOL_BASE_DN
-    object_classes = ['posixGroup', 'groupOfNames']
+    object_classes = ["posixGroup", "groupOfNames"]
 
     objects = ToolManager()
 
-    cn = fields.CharField(db_column='cn', max_length=200, primary_key=True)
-    gid_number = fields.IntegerField(db_column='gidNumber', unique=True)
-    members = fields.ListField(db_column='member')
+    cn = fields.CharField(db_column="cn", max_length=200, primary_key=True)
+    gid_number = fields.IntegerField(db_column="gidNumber", unique=True)
+    members = fields.ListField(db_column="member")
 
     class Meta:
         managed = False
 
     @property
     def name(self):
-        return self.cn[len(settings.OPENSTACK_PROJECT) + 1:]
+        return self.cn[len(settings.OPENSTACK_PROJECT) + 1 :]
 
     @name.setter
     def name(self, value):
-        self.cn = '{0}.{1!s}'.format(settings.OPENSTACK_PROJECT, value)
+        self.cn = "{0}.{1!s}".format(settings.OPENSTACK_PROJECT, value)
 
     def maintainer_ids(self):
         return [
-            dn.split(',')[0].split('=')[1]
+            dn.split(",")[0].split("=")[1]
             for dn in self.members
-            if not dn.startswith('uid={0}.'.format(settings.OPENSTACK_PROJECT))
+            if not dn.startswith("uid={0}.".format(settings.OPENSTACK_PROJECT))
         ]
 
     def maintainers(self):
@@ -129,9 +132,9 @@ class Tool(ldapdb.models.Model):
 
     def tool_member_ids(self):
         return [
-            dn.split(',')[0].split('=')[1]
+            dn.split(",")[0].split("=")[1]
             for dn in self.members
-            if dn.startswith('uid={0}.'.format(settings.OPENSTACK_PROJECT))
+            if dn.startswith("uid={0}.".format(settings.OPENSTACK_PROJECT))
         ]
 
     def tool_members(self):
@@ -159,8 +162,7 @@ class Tool(ldapdb.models.Model):
         return self.service_user().is_disabled()
 
     def get_absolute_url(self):
-        return urls.reverse(
-            'tools:tool', args=[str(self.name)])
+        return urls.reverse("tools:tool", args=[str(self.name)])
 
     def __str__(self):
         return self.name
@@ -168,35 +170,30 @@ class Tool(ldapdb.models.Model):
 
 class ToolUser(ldapdb.models.Model):
     """Posix account that a tool runs as."""
-    base_dn = 'ou=people,{}'.format(settings.TOOLS_TOOL_BASE_DN)
-    object_classes = [
-        'shadowAccount',
-        'posixAccount',
-        'person',
-        'top'
-    ]
 
-    uid = fields.CharField(db_column='uid', primary_key=True)
-    cn = fields.CharField(db_column='cn', unique=True)
-    sn = fields.CharField(db_column='sn', unique=True)
-    uid_number = fields.IntegerField(db_column='uidNumber', unique=True)
-    gid_number = fields.IntegerField(db_column='gidNumber')
-    home_directory = fields.CharField(
-        db_column='homeDirectory', max_length=200)
-    login_shell = fields.CharField(db_column='loginShell', max_length=64)
-    locked_time = fields.DateTimeField(db_column='pwdAccountLockedTime')
-    password_policy = fields.CharField(db_column='pwdPolicySubentry')
+    base_dn = "ou=people,{}".format(settings.TOOLS_TOOL_BASE_DN)
+    object_classes = ["shadowAccount", "posixAccount", "person", "top"]
+
+    uid = fields.CharField(db_column="uid", primary_key=True)
+    cn = fields.CharField(db_column="cn", unique=True)
+    sn = fields.CharField(db_column="sn", unique=True)
+    uid_number = fields.IntegerField(db_column="uidNumber", unique=True)
+    gid_number = fields.IntegerField(db_column="gidNumber")
+    home_directory = fields.CharField(db_column="homeDirectory", max_length=200)
+    login_shell = fields.CharField(db_column="loginShell", max_length=64)
+    locked_time = fields.DateTimeField(db_column="pwdAccountLockedTime")
+    password_policy = fields.CharField(db_column="pwdPolicySubentry")
 
     class Meta:
         managed = False
 
     @property
     def name(self):
-        return self.cn[len(settings.OPENSTACK_PROJECT) + 1:]
+        return self.cn[len(settings.OPENSTACK_PROJECT) + 1 :]
 
     @name.setter
     def name(self, value):
-        self.cn = '{0}.{1!s}'.format(settings.OPENSTACK_PROJECT, value)
+        self.cn = "{0}.{1!s}".format(settings.OPENSTACK_PROJECT, value)
 
     def disable(self, delete=False):
         """Mark this tool as disabled."""
@@ -224,50 +221,55 @@ class ToolUser(ldapdb.models.Model):
 
 
 class SudoRole(ldapdb.models.Model):
-    base_dn = 'ou=sudoers,cn=tools,{}'.format(settings.PROJECTS_BASE_DN)
-    object_classes = ['sudoRole']
+    base_dn = "ou=sudoers,cn=tools,{}".format(settings.PROJECTS_BASE_DN)
+    object_classes = ["sudoRole"]
 
-    cn = fields.CharField(db_column='cn', primary_key=True)
-    users = fields.ListField(db_column='sudoUser')
-    hosts = fields.ListField(db_column='sudoHost')
-    commands = fields.ListField(db_column='sudoCommand')
-    options = fields.ListField(db_column='sudoOption')
-    runas_users = fields.ListField(db_column='sudoRunAsUser')
+    cn = fields.CharField(db_column="cn", primary_key=True)
+    users = fields.ListField(db_column="sudoUser")
+    hosts = fields.ListField(db_column="sudoHost")
+    commands = fields.ListField(db_column="sudoCommand")
+    options = fields.ListField(db_column="sudoOption")
+    runas_users = fields.ListField(db_column="sudoRunAsUser")
 
     class Meta:
         managed = False
 
     def __str__(self):
-        return 'cn=%s,%s' % (self.cn, self.base_dn)
+        return "cn=%s,%s" % (self.cn, self.base_dn)
 
 
 class PhabricatorProject(models.Model):
     """Associate phabricator projects with Tools."""
+
     tool = models.CharField(max_length=64)
     name = models.CharField(max_length=255)
     phid = models.CharField(max_length=64)
     created_by = models.ForeignKey(
-        settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL)
+        settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL
+    )
     created_date = models.DateTimeField(
-        default=timezone.now, blank=True, editable=False)
+        default=timezone.now, blank=True, editable=False
+    )
 
     def __str__(self):
         return self.name
 
     def get_absolute_url(self):
-        return urls.reverse(
-            'tools:project_view', args=[self.tool, self.name])
+        return urls.reverse("tools:project_view", args=[self.tool, self.name])
 
 
 class DiffusionRepo(models.Model):
     """Associate diffusion repos with Tools."""
+
     tool = models.CharField(max_length=64)
     name = models.CharField(max_length=255)
     phid = models.CharField(max_length=64)
     created_by = models.ForeignKey(
-        settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL)
+        settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL
+    )
     created_date = models.DateTimeField(
-        default=timezone.now, blank=True, editable=False)
+        default=timezone.now, blank=True, editable=False
+    )
     # Track migration to GitLab
     gitlab = models.ForeignKey(
         "GitlabRepo",
@@ -311,31 +313,36 @@ class DiffusionRepo(models.Model):
 
 class GitlabRepo(models.Model):
     """Associate GitLab repos with Tools."""
+
     tool = models.CharField(max_length=64)
     name = models.CharField(max_length=255)
     repo_id = models.PositiveIntegerField()
     created_by = models.ForeignKey(
-        settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL)
+        settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL
+    )
     created_date = models.DateTimeField(
-        default=timezone.now, blank=True, editable=False)
+        default=timezone.now, blank=True, editable=False
+    )
 
     def __str__(self):
         return self.name
 
     def get_absolute_url(self):
         return urls.reverse(
-            'tools:repo_view',
+            "tools:repo_view",
             kwargs={
-                'tool': self.tool,
-                'repo_id': self.repo_id,
-            }
+                "tool": self.tool,
+                "repo_id": self.repo_id,
+            },
         )
 
     def _tool(self):
-        return Tool.objects.get(cn="{0}.{1}".format(
-            settings.OPENSTACK_PROJECT,
-            self.tool,
-        ))
+        return Tool.objects.get(
+            cn="{0}.{1}".format(
+                settings.OPENSTACK_PROJECT,
+                self.tool,
+            )
+        )
 
     @classmethod
     def create_from_diffusion(cls, diff_repo):
@@ -347,12 +354,17 @@ class GitlabRepo(models.Model):
         old_repo = phab.get_repository_by_phid(diff_repo.phid)
 
         # Find the first https URL for the diffusion repo.
-        src_url = next(iter([
-            u['fields']['uri']['display'] for u in
-            old_repo['attachments']['uris']['uris']
-            if u['fields']['display']['effective'] == 'always'
-            and u['fields']['uri']['display'].startswith('https')
-        ]), None)
+        src_url = next(
+            iter(
+                [
+                    u["fields"]["uri"]["display"]
+                    for u in old_repo["attachments"]["uris"]["uris"]
+                    if u["fields"]["display"]["effective"] == "always"
+                    and u["fields"]["uri"]["display"].startswith("https")
+                ]
+            ),
+            None,
+        )
 
         # Create a new gitlab repo, no owners yet, clone from src_url
         new_repo = gitlab_client.create_repository(gl_name, [], src_url)
@@ -361,7 +373,7 @@ class GitlabRepo(models.Model):
             gl_repo = GitlabRepo(
                 tool=diff_repo.tool,
                 name=gl_name,
-                repo_id=new_repo['id'],
+                repo_id=new_repo["id"],
                 created_by=diff_repo.created_by,
             )
             gl_repo.sync_maintainers_with_gitlab(True)
@@ -414,39 +426,48 @@ class GitlabRepo(models.Model):
 
 class AccessRequest(models.Model):
     """Request to join Tools project."""
-    PENDING = 'p'
-    FEEDBACK = 'f'
-    APPROVED = 'a'
-    DECLINED = 'd'
+
+    PENDING = "p"
+    FEEDBACK = "f"
+    APPROVED = "a"
+    DECLINED = "d"
     STATUS_CHOICES = (
-        (PENDING, _('Pending')),
-        (FEEDBACK, _('Feedback needed')),
-        (APPROVED, _('Approved')),
-        (DECLINED, _('Declined')),
+        (PENDING, _("Pending")),
+        (FEEDBACK, _("Feedback needed")),
+        (APPROVED, _("Approved")),
+        (DECLINED, _("Declined")),
     )
     CLOSED_STATUSES = (APPROVED, DECLINED)
 
     user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, related_name='requestor+', db_index=True,
-        on_delete=models.CASCADE)
+        settings.AUTH_USER_MODEL,
+        related_name="requestor+",
+        db_index=True,
+        on_delete=models.CASCADE,
+    )
     reason = models.TextField()
     created_date = models.DateTimeField(
-        default=timezone.now, blank=True, editable=False, db_index=True)
+        default=timezone.now, blank=True, editable=False, db_index=True
+    )
     admin_notes = models.TextField(blank=True, null=True)
     status = models.CharField(
-        max_length=1, choices=STATUS_CHOICES, default=PENDING, db_index=True)
+        max_length=1, choices=STATUS_CHOICES, default=PENDING, db_index=True
+    )
     resolved_by = models.ForeignKey(
-        settings.AUTH_USER_MODEL, related_name='resolver+',
-        blank=True, null=True, on_delete=models.SET_NULL)
+        settings.AUTH_USER_MODEL,
+        related_name="resolver+",
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
+    )
     resolved_date = models.DateTimeField(blank=True, null=True)
     suppressed = models.BooleanField(blank=True, default=False, db_index=True)
 
     def __str__(self):
-        return _('Access request {id}').format(id=self.id)
+        return _("Access request {id}").format(id=self.id)
 
     def get_absolute_url(self):
-        return urls.reverse(
-            'tools:membership_status', args=[str(self.id)])
+        return urls.reverse("tools:membership_status", args=[str(self.id)])
 
     def closed(self):
         return self.status in AccessRequest.CLOSED_STATUSES
@@ -457,24 +478,31 @@ class AccessRequest(models.Model):
 
 class AccessRequestComment(models.Model):
     request = models.ForeignKey(
-        AccessRequest,
-        related_name='comments', db_index=True, on_delete=models.CASCADE)
+        AccessRequest, related_name="comments", db_index=True, on_delete=models.CASCADE
+    )
     user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, related_name='+', on_delete=models.CASCADE)
+        settings.AUTH_USER_MODEL, related_name="+", on_delete=models.CASCADE
+    )
     created_date = models.DateTimeField(
-        default=timezone.now, blank=True, editable=False, db_index=True)
+        default=timezone.now, blank=True, editable=False, db_index=True
+    )
     comment = models.TextField()
 
     class Meta:
-        ordering = ('created_date', 'user',)
+        ordering = (
+            "created_date",
+            "user",
+        )
 
     def __str__(self):
-        return '{} --{} {:%Y-%m-%dT%H:%MZ}'.format(
-            self.comment, self.user.ldapname, self.created_date)
+        return "{} --{} {:%Y-%m-%dT%H:%MZ}".format(
+            self.comment, self.user.ldapname, self.created_date
+        )
 
 
 class SoftwareLicense(models.Model):
     """Describe a software license."""
+
     slug = models.CharField(max_length=32, unique=True)
     name = models.CharField(max_length=255)
     url = models.CharField(max_length=2047)
@@ -494,18 +522,19 @@ class ToolInfoTag(models.Model):
         return self.name
 
     class Meta:
-        ordering = ('name',)
+        ordering = ("name",)
 
 
 class Author(models.Model):
     """Describe an author."""
+
     name = models.CharField(max_length=128, unique=True)
 
     def __str__(self):
         return self.name
 
     class Meta:
-        ordering = ('name',)
+        ordering = ("name",)
 
 
 @reversion.register()
@@ -514,12 +543,13 @@ class ToolInfo(models.Model):
 
     A single Tool may have 1-to-N metadata records.
     """
+
     name = models.CharField(max_length=255, unique=True)
     tool = models.CharField(max_length=64, db_index=True)
     title = models.CharField(max_length=255)
     description = models.TextField()
     license = models.ForeignKey(SoftwareLicense, on_delete=models.PROTECT)
-    authors = models.ManyToManyField(Author, related_name='+')
+    authors = models.ManyToManyField(Author, related_name="+")
     tags = models.ManyToManyField(ToolInfoTag, blank=True)
     repository = models.CharField(max_length=2047, blank=True, null=True)
     issues = models.CharField(max_length=2047, blank=True, null=True)
@@ -528,43 +558,44 @@ class ToolInfo(models.Model):
     suburl = models.CharField(max_length=2047, blank=True, null=True)
 
     class Meta:
-        verbose_name = 'Toolinfo'
-        verbose_name_plural = 'Toolinfo'
+        verbose_name = "Toolinfo"
+        verbose_name_plural = "Toolinfo"
 
     def __str__(self):
         return self.name
 
     def get_tool(self):
         try:
-            return Tool.objects.get(cn="{0}.{1}".format(
-                settings.OPENSTACK_PROJECT,
-                self.tool,
-            ))
+            return Tool.objects.get(
+                cn="{0}.{1}".format(
+                    settings.OPENSTACK_PROJECT,
+                    self.tool,
+                )
+            )
         except Tool.DoesNotExist:
             return None
 
     def toolinfo_v1(self, request):
         if self.is_webservice:
-            url = 'https://{}.toolforge.org/{}'.format(
-                self.tool,
-                self.suburl or ''
-            )
+            url = "https://{}.toolforge.org/{}".format(self.tool, self.suburl or "")
         else:
             url = self.docs
             if not url:
                 url = request.build_absolute_uri(
-                    urls.reverse('tools:tool', args=[str(self.tool)])
+                    urls.reverse("tools:tool", args=[str(self.tool)])
                 )
 
-        return collections.OrderedDict([
-            ('name', self.name),
-            ('title', self.title),
-            ('description', self.description),
-            ('url', url),
-            ('keywords', ", ".join(tag.name for tag in self.tags.all())),
-            ('author', ", ".join(a.name for a in self.authors.all())),
-            ('repository', self.repository),
-        ])
+        return collections.OrderedDict(
+            [
+                ("name", self.name),
+                ("title", self.title),
+                ("description", self.description),
+                ("url", url),
+                ("keywords", ", ".join(tag.name for tag in self.tags.all())),
+                ("author", ", ".join(a.name for a in self.authors.all())),
+                ("repository", self.repository),
+            ]
+        )
 
     def toolinfo_v1_2(self, request):
         info = self.toolinfo_v1(request)

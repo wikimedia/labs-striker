@@ -30,4 +30,5 @@ class CeeFormatter(logstash.LogstashFormatterVersion1):
 
     def format(self, record):
         return "@cee: {}".format(
-            super(CeeFormatter, self).format(record).decode("utf-8"))
+            super(CeeFormatter, self).format(record).decode("utf-8")
+        )

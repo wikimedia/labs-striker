@@ -20,12 +20,10 @@
 
 import functools
 
-from django import shortcuts
-from django import urls
+from django import shortcuts, urls
 from django.conf import settings
 from django.contrib import messages
-from django.core.exceptions import ObjectDoesNotExist
-from django.core.exceptions import PermissionDenied
+from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.utils.translation import ugettext_lazy as _
 
 from striker.tools.models import Tool
@@ -34,29 +32,31 @@ from striker.tools.utils import project_member
 
 def inject_tool(f):
     """Inject a Tool into the wrapped function in place of a 'tool' kwarg."""
+
     @functools.wraps(f)
     def decorated(*args, **kwargs):
-        if 'tool' in kwargs:
-            name = kwargs['tool']
+        if "tool" in kwargs:
+            name = kwargs["tool"]
             try:
-                kwargs['tool'] = Tool.objects.get(
-                    cn='{0}.{1}'.format(settings.OPENSTACK_PROJECT, name)
+                kwargs["tool"] = Tool.objects.get(
+                    cn="{0}.{1}".format(settings.OPENSTACK_PROJECT, name)
                 )
             except ObjectDoesNotExist:
                 req = args[0]
-                messages.error(
-                    req, _('Tool {tool} not found').format(tool=name))
-                return shortcuts.redirect(
-                    urls.reverse('tools:index'))
+                messages.error(req, _("Tool {tool} not found").format(tool=name))
+                return shortcuts.redirect(urls.reverse("tools:index"))
         return f(*args, **kwargs)
+
     return decorated
 
 
 def require_tools_member(f):
     """Ensure that the active user is a member of the tools project."""
+
     @functools.wraps(f)
     def decorated(request, *args, **kwargs):
         if project_member(request.user):
             return f(request, *args, **kwargs)
         raise PermissionDenied
+
     return decorated

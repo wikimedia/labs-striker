@@ -15,6 +15,7 @@
 docs/_build
 !etc
 !manage.py
+!pyproject.toml
 !requirements.txt
 !setup.cfg
 !setup.py

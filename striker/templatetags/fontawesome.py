@@ -40,11 +40,11 @@ def fa_icon(icon, *args, **kwargs):
         {% fa_icon "square" aria_hidden="true" %}
         <i class="fa fa-square" aria-hidden="true"></i>
     """
-    classes = ['fa', 'fa-%s' % icon]
+    classes = ["fa", "fa-%s" % icon]
     for arg in args:
-        classes.append('fa-%s' % arg)
-    attribs = ['class="%s"' % html.escape(' '.join(classes))]
+        classes.append("fa-%s" % arg)
+    attribs = ['class="%s"' % html.escape(" ".join(classes))]
     for name, value in kwargs.items():
-        name = name.replace('_', '-')
+        name = name.replace("_", "-")
         attribs.append('%s="%s"' % (html.escape(name), html.escape(value)))
-    return html.mark_safe('<i %s></i>' % ' '.join(attribs))
+    return html.mark_safe("<i %s></i>" % " ".join(attribs))

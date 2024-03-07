@@ -18,14 +18,12 @@
 # You should have received a copy of the GNU General Public License
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
 
+import notifications.urls
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.staticfiles.storage import staticfiles_storage
-from django.urls import include
-from django.urls import path
+from django.urls import include, path
 from django.views.generic.base import RedirectView
-
-import notifications.urls
 
 import striker.admin
 import striker.labsauth.urls
@@ -36,17 +34,17 @@ import striker.views
 
 # Install custom error handler callbacks.
 # https://docs.djangoproject.com/en/1.8/topics/http/views/#customizing-error-views
-handler400 = 'striker.views.bad_request'  # noqa
-handler403 = 'striker.views.permission_denied'  # noqa
-handler404 = 'striker.views.page_not_found'  # noqa
-handler500 = 'striker.views.server_error'  # noqa
+handler400 = "striker.views.bad_request"  # noqa
+handler403 = "striker.views.permission_denied"  # noqa
+handler404 = "striker.views.page_not_found"  # noqa
+handler500 = "striker.views.server_error"  # noqa
 
 urlpatterns = [
-    path('', striker.views.index, name='index'),
-    path('csp-report', striker.views.csp_report, name='csp_report'),
-    path('e400', striker.views.force_400, name='force_400'),
-    path('e403', striker.views.force_403, name='force_403'),
-    path('e500', striker.views.force_500, name='force_500'),
+    path("", striker.views.index, name="index"),
+    path("csp-report", striker.views.csp_report, name="csp_report"),
+    path("e400", striker.views.force_400, name="force_400"),
+    path("e403", striker.views.force_403, name="force_403"),
+    path("e500", striker.views.force_500, name="force_500"),
     path(
         "favicon.ico",
         RedirectView.as_view(url=staticfiles_storage.url("img/favicon.ico")),
@@ -57,12 +55,10 @@ urlpatterns = [
         RedirectView.as_view(url=staticfiles_storage.url("robots.txt")),
         name="robots_txt",
     ),
-
-    path('alerts/', include(notifications.urls, namespace='notifications')),
-    path('auth/', include(striker.labsauth.urls, namespace='labsauth')),
-    path('profile/', include(striker.profile.urls, namespace='profile')),
-    path('register/', include(striker.register.urls, namespace='register')),
-    path('tools/', include(striker.tools.urls, namespace='tools')),
-
-    path('contrib-admin/', striker.admin.site.urls),
+    path("alerts/", include(notifications.urls, namespace="notifications")),
+    path("auth/", include(striker.labsauth.urls, namespace="labsauth")),
+    path("profile/", include(striker.profile.urls, namespace="profile")),
+    path("register/", include(striker.register.urls, namespace="register")),
+    path("tools/", include(striker.tools.urls, namespace="tools")),
+    path("contrib-admin/", striker.admin.site.urls),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

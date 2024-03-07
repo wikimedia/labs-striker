@@ -25,16 +25,13 @@ from django.contrib.auth.models import Group
 
 from striker.labsauth.utils import get_next_gid
 from striker.register import utils as reg_utils
-from striker.tools.models import SudoRole
-from striker.tools.models import Tool
-from striker.tools.models import ToolUser
-
+from striker.tools.models import SudoRole, Tool, ToolUser
 
 logger = logging.getLogger(__name__)
 
 
 def toolname_available(name):
-    toolname = '{0}.{1!s}'.format(settings.OPENSTACK_PROJECT, name)
+    toolname = "{0}.{1!s}".format(settings.OPENSTACK_PROJECT, name)
     try:
         Tool.objects.get(cn=toolname)
     except Tool.DoesNotExist:
@@ -58,7 +55,7 @@ def check_toolname_create(name):
 
 def create_tool(name, user):
     """Create a new tool account."""
-    group_name = '{}.{}'.format(settings.OPENSTACK_PROJECT, name)
+    group_name = "{}.{}".format(settings.OPENSTACK_PROJECT, name)
     gid = get_next_gid()
 
     # Create group
@@ -72,18 +69,18 @@ def create_tool(name, user):
         cn=group_name,
         uid_number=gid,
         gid_number=gid,
-        home_directory='/data/project/{}'.format(name),
-        login_shell='/bin/bash',
+        home_directory="/data/project/{}".format(name),
+        login_shell="/bin/bash",
     )
     service_user.save()
 
     # Create sudoers rule to allow maintainers to act as tool user
     sudoers = SudoRole(
-        cn='runas-{}'.format(group_name),
-        users=['%{}'.format(group_name)],
-        hosts=['ALL'],
-        commands=['ALL'],
-        options=['!authenticate'],
+        cn="runas-{}".format(group_name),
+        users=["%{}".format(group_name)],
+        hosts=["ALL"],
+        commands=["ALL"],
+        options=["!authenticate"],
         runas_users=[group_name],
     )
     sudoers.save()
@@ -94,8 +91,7 @@ def create_tool(name, user):
         maintainers, created = Group.objects.get_or_create(name=tool.cn)
         user.groups.add(maintainers.id)
     except Exception:
-        logger.exception(
-            'Failed to add %s to django maintainers group', user)
+        logger.exception("Failed to add %s to django maintainers group", user)
 
     return tool
 
@@ -118,5 +114,5 @@ def tools_admin(user):
 
 
 def project_member(user):
-    groups = user.groups.values_list('name', flat=True)
+    groups = user.groups.values_list("name", flat=True)
     return settings.TOOLS_TOOL_LABS_GROUP_NAME in groups

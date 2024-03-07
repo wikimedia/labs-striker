@@ -26,6 +26,6 @@ from striker.goals import models
 
 @django.contrib.admin.register(models.Milestone, site=striker.admin.site)
 class MilestoneAdmin(django.contrib.admin.ModelAdmin):
-    list_display = ('goal', 'name', 'user', 'completed_date')
-    list_filter = ('completed_date', 'goal', 'user')
-    ordering = ('-completed_date', 'user', 'goal')
+    list_display = ("goal", "name", "user", "completed_date")
+    list_filter = ("completed_date", "goal", "user")
+    ordering = ("-completed_date", "user", "goal")

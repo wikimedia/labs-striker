@@ -23,11 +23,11 @@ import logging
 from django_auth_ldap.backend import LDAPBackend
 from ratelimitbackend.backends import RateLimitMixin
 
-
 logger = logging.getLogger(__name__)
 
 
 class RateLimitedLDAPBackend(RateLimitMixin, LDAPBackend):
     """Add rate limiting to LDAPBackend."""
+
     minutes = 5
     requests = 15

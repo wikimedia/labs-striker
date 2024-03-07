@@ -18,11 +18,11 @@
 # You should have received a copy of the GNU General Public License
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
 
-NEXT_PAGE = 'striker.oauth.next_page'
-REQUEST_TOKEN_KEY = 'striker.oauth.request_token'
-ACCESS_TOKEN_KEY = 'striker.oauth.access_token'
-OAUTH_USERNAME_KEY = 'striker.oauth.username'
-OAUTH_EMAIL_KEY = 'striker.oauth.email'
-OAUTH_REALNAME_KEY = 'striker.oauth.realname'
-OATH_INFO = 'striker.oath.info'
-OATH_REQUIRED = 'striker.oath.required'
+NEXT_PAGE = "striker.oauth.next_page"
+REQUEST_TOKEN_KEY = "striker.oauth.request_token"
+ACCESS_TOKEN_KEY = "striker.oauth.access_token"
+OAUTH_USERNAME_KEY = "striker.oauth.username"
+OAUTH_EMAIL_KEY = "striker.oauth.email"
+OAUTH_REALNAME_KEY = "striker.oauth.realname"
+OATH_INFO = "striker.oath.info"
+OATH_REQUIRED = "striker.oath.required"

@@ -18,13 +18,11 @@
 # You should have received a copy of the GNU General Public License
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
 
-from django import shortcuts
-from django import urls
+from django import shortcuts, urls
 from django.contrib.admin import site as django_site
 from django.core.exceptions import PermissionDenied
 from django.utils.http import urlencode
 from django.views.decorators.cache import never_cache
-
 from ratelimitbackend.admin import RateLimitAdminSite
 
 
@@ -34,22 +32,20 @@ class StrikerAdminSite(RateLimitAdminSite):
         if not request.user.is_authenticated:
             # not authenticated, redirect to main login page
             return shortcuts.redirect(
-                urls.reverse('labsauth:login')
+                urls.reverse("labsauth:login")
                 + "?"
-                + urlencode({
-                    "next": urls.reverse('admin:index', current_app=self.name)
-                })
+                + urlencode(
+                    {"next": urls.reverse("admin:index", current_app=self.name)}
+                )
             )
         if self.has_permission(request):
             # Already logged-in, redirect to admin index
             return shortcuts.redirect(
-                urls.reverse('admin:index', current_app=self.name)
+                urls.reverse("admin:index", current_app=self.name)
             )
         else:
             # Logged in, but doesn't have required permissions
-            raise PermissionDenied(
-                "You do not have access to the admin panel."
-            )
+            raise PermissionDenied("You do not have access to the admin panel.")
 
 
 site = StrikerAdminSite()

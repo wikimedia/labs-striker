@@ -18,13 +18,13 @@
 # You should have received a copy of the GNU General Public License
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.conf import settings
-
 import ipware
+from django.conf import settings
 
 
 class XForwaredForMiddleware(object):
     """Replace request.META['REMOTE_ADDR'] with X-Forwared-For data."""
+
     def __init__(self, get_response):
         self.get_response = get_response
 
@@ -37,20 +37,20 @@ class XForwaredForMiddleware(object):
                     proxy_trusted_ips=settings.IPWARE_TRUSTED_PROXY_LIST,
                 )
             if ip is not None:
-                request.META['REMOTE_ADDR'] = ip
+                request.META["REMOTE_ADDR"] = ip
         response = self.get_response(request)
         return response
 
 
 class ReferrerPolicyMiddleware(object):
     """Add a Referrer-Policy header to responses."""
+
     def __init__(self, get_response):
         self.get_response = get_response
 
     def __call__(self, request):
         response = self.get_response(request)
-        header = 'Referrer-Policy'
+        header = "Referrer-Policy"
         if header not in response:
-            response[header] = getattr(
-                settings, 'REFERRER_POLICY', 'strict-origin')
+            response[header] = getattr(settings, "REFERRER_POLICY", "strict-origin")
         return response

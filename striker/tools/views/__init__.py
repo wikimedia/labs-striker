@@ -27,22 +27,23 @@ from striker.tools.utils import project_member
 
 def index(req):
     ctx = {
-        'my_tools': [],
-        'query': req.GET.get('q', ''),
-        'member': False,
+        "my_tools": [],
+        "query": req.GET.get("q", ""),
+        "member": False,
     }
     if not req.user.is_anonymous:
         # TODO: do we need to paginate the user's tools too? Magnus has 60!
-        ctx['my_tools'] = Tool.objects.filter(
-            members__contains=req.user.ldap_dn).order_by('cn')
-        ctx['member'] = project_member(req.user)
+        ctx["my_tools"] = Tool.objects.filter(
+            members__contains=req.user.ldap_dn
+        ).order_by("cn")
+        ctx["member"] = project_member(req.user)
 
-    page = req.GET.get('p')
-    if ctx['query'] == '':
+    page = req.GET.get("p")
+    if ctx["query"] == "":
         tool_list = Tool.objects.all()
     else:
-        tool_list = Tool.objects.filter(cn__icontains=ctx['query'])
-    tool_list = tool_list.order_by('cn')
+        tool_list = Tool.objects.filter(cn__icontains=ctx["query"])
+    tool_list = tool_list.order_by("cn")
     pager = paginator.Paginator(tool_list, 10)
     try:
         tools = pager.page(page)
@@ -50,6 +51,6 @@ def index(req):
         tools = pager.page(1)
     except paginator.EmptyPage:
         tools = pager.page(pager.num_pages)
-    ctx['all_tools'] = tools
+    ctx["all_tools"] = tools
 
-    return shortcuts.render(req, 'tools/index.html', ctx)
+    return shortcuts.render(req, "tools/index.html", ctx)

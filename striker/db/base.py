@@ -18,18 +18,16 @@
 # You should have received a copy of the GNU General Public License
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.db.backends.mysql import base
-from django.db.backends.mysql import schema
+from django.db.backends.mysql import base, schema
 
 
 class DatabaseSchemaEditor(schema.DatabaseSchemaEditor):
     """Add ROW_FORMAT=dynamic to CREATE TABLE declarations"""
-    sql_create_table = (
-        "CREATE TABLE %(table)s (%(definition)s)"
-        " ROW_FORMAT=DYNAMIC"
-    )
+
+    sql_create_table = "CREATE TABLE %(table)s (%(definition)s) ROW_FORMAT=DYNAMIC"
 
 
 class DatabaseWrapper(base.DatabaseWrapper):
     """Use custom SchemaEditor"""
+
     SchemaEditorClass = DatabaseSchemaEditor

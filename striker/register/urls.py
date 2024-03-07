@@ -19,21 +19,23 @@
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.conf import settings
-from django.urls import include
-from django.urls import path
+from django.urls import include, path
 
 from striker.register import views
 
-api_patterns = ([
-    path('username/<name>', views.username_available, name='username'),
-    path('shellname/<name>', views.shellname_available, name='shellname'),
-], 'api')
+api_patterns = (
+    [
+        path("username/<name>", views.username_available, name="username"),
+        path("shellname/<name>", views.shellname_available, name="shellname"),
+    ],
+    "api",
+)
 
-app_name = 'register'
+app_name = "register"
 urlpatterns = [
-    path('', views.index, name='index'),
-    path('api/', include(api_patterns)),
-    path('oauth', views.oauth, name='oauth'),
+    path("", views.index, name="index"),
+    path("api/", include(api_patterns)),
+    path("oauth", views.oauth, name="oauth"),
 ]
 if settings.FEATURE_ACCOUNT_CREATE:
-    urlpatterns.append(path('<step>', views.account_wizard, name='wizard'))
+    urlpatterns.append(path("<step>", views.account_wizard, name="wizard"))

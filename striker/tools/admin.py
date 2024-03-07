@@ -19,7 +19,6 @@
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
 
 import django.contrib.admin
-
 import reversion_compare.admin
 
 import striker.admin
@@ -28,39 +27,36 @@ from striker.tools import models
 
 @django.contrib.admin.register(models.DiffusionRepo, site=striker.admin.site)
 class DiffusionRepoAdmin(django.contrib.admin.ModelAdmin):
-    list_display = ('name', 'tool', 'phid')
-    list_filter = ('tool',)
-    ordering = ('name',)
+    list_display = ("name", "tool", "phid")
+    list_filter = ("tool",)
+    ordering = ("name",)
 
 
 @django.contrib.admin.register(models.AccessRequest, site=striker.admin.site)
 class AccessRequestAdmin(django.contrib.admin.ModelAdmin):
-    list_display = ('user', 'created_date', 'status')
-    list_filter = ('status',)
-    ordering = ('-created_date',)
+    list_display = ("user", "created_date", "status")
+    list_filter = ("status",)
+    ordering = ("-created_date",)
 
 
 @django.contrib.admin.register(models.SoftwareLicense, site=striker.admin.site)
 class SoftwareLicenseAdmin(django.contrib.admin.ModelAdmin):
-    list_display = ('slug', 'family', 'osi_approved', 'recommended')
-    list_filter = ('osi_approved', 'recommended')
-    ordering = ('slug',)
+    list_display = ("slug", "family", "osi_approved", "recommended")
+    list_filter = ("osi_approved", "recommended")
+    ordering = ("slug",)
 
 
 @django.contrib.admin.register(models.ToolInfo, site=striker.admin.site)
 class ToolInfoAdmin(reversion_compare.admin.CompareVersionAdmin):
-    list_display = ('name', 'tool')
-    ordering = ('name',)
+    list_display = ("name", "tool")
+    ordering = ("name",)
 
 
-@django.contrib.admin.register(
-    models.PhabricatorProject,
-    site=striker.admin.site
-)
+@django.contrib.admin.register(models.PhabricatorProject, site=striker.admin.site)
 class PhabricatorProjectAdmin(django.contrib.admin.ModelAdmin):
-    list_display = ('name', 'tool', 'phid')
-    list_filter = ('tool',)
-    ordering = ('name',)
+    list_display = ("name", "tool", "phid")
+    list_filter = ("tool",)
+    ordering = ("name",)
 
 
 @django.contrib.admin.register(models.GitlabRepo, site=striker.admin.site)

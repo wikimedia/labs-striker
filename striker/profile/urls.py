@@ -18,36 +18,46 @@
 # You should have received a copy of the GNU General Public License
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.urls import include
-from django.urls import path
-from django.views.generic import TemplateView
-
 from django.contrib.auth.decorators import login_required
+from django.urls import include, path
+from django.views.generic import TemplateView
 
 from striker.profile import views
 
-app_name = 'profile'
+app_name = "profile"
 urlpatterns = [
     path(
-        'nojs/',
-        login_required(
-            TemplateView.as_view(template_name='profile/nojs.html')),
-        name='nojs'
+        "nojs/",
+        login_required(TemplateView.as_view(template_name="profile/nojs.html")),
+        name="nojs",
     ),
-    path('settings/', include([
-        path('accounts/', views.accounts, name='accounts'),
-        path('phabricator/', include([
-            path('attach', views.phab_attach, name='phabricator_attach'),
-        ])),
-        path('ssh-keys/', include([
-            path('', views.ssh_keys, name='ssh_keys'),
-            path('delete', views.ssh_key_delete, name='ssh_key_delete'),
-            path('add', views.ssh_key_add, name='ssh_key_add'),
-        ])),
-        path(
-            'change_password/',
-            views.change_password,
-            name='change_password'
+    path(
+        "settings/",
+        include(
+            [
+                path("accounts/", views.accounts, name="accounts"),
+                path(
+                    "phabricator/",
+                    include(
+                        [
+                            path(
+                                "attach", views.phab_attach, name="phabricator_attach"
+                            ),
+                        ]
+                    ),
+                ),
+                path(
+                    "ssh-keys/",
+                    include(
+                        [
+                            path("", views.ssh_keys, name="ssh_keys"),
+                            path("delete", views.ssh_key_delete, name="ssh_key_delete"),
+                            path("add", views.ssh_key_add, name="ssh_key_add"),
+                        ]
+                    ),
+                ),
+                path("change_password/", views.change_password, name="change_password"),
+            ]
         ),
-    ])),
+    ),
 ]

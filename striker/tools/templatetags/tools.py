@@ -23,42 +23,41 @@ import logging
 from django import template
 from django.conf import settings
 
-
 logger = logging.getLogger(__name__)
 register = template.Library()
 
 
-@register.inclusion_tag('tools/templatetags/phab_project.html')
+@register.inclusion_tag("tools/templatetags/phab_project.html")
 def phab_project(project):
     return {
-        'phab_url': settings.PHABRICATOR_URL,
-        'project': project,
+        "phab_url": settings.PHABRICATOR_URL,
+        "project": project,
     }
 
 
-@register.inclusion_tag('tools/templatetags/phab_user.html')
+@register.inclusion_tag("tools/templatetags/phab_user.html")
 def phab_user(user):
     return {
-        'phab_url': settings.PHABRICATOR_URL,
-        'user': user,
+        "phab_url": settings.PHABRICATOR_URL,
+        "user": user,
     }
 
 
-@register.inclusion_tag('tools/templatetags/phab_policy.html')
+@register.inclusion_tag("tools/templatetags/phab_policy.html")
 def phab_policy(policy, phids):
     return {
-        'phab_url': settings.PHABRICATOR_URL,
-        'policy': policy,
-        'phids': phids,
+        "phab_url": settings.PHABRICATOR_URL,
+        "policy": policy,
+        "phids": phids,
     }
 
 
-@register.inclusion_tag('tools/templatetags/phab_rule.html')
+@register.inclusion_tag("tools/templatetags/phab_rule.html")
 def phab_rule(rule, phids):
     return {
-        'phab_url': settings.PHABRICATOR_URL,
-        'rule': rule,
-        'phids': phids,
+        "phab_url": settings.PHABRICATOR_URL,
+        "rule": rule,
+        "phids": phids,
     }
 
 
@@ -67,6 +66,5 @@ def get(dictionary, key):
     try:
         return dictionary.get(key)
     except TypeError as e:
-        logger.error(
-            'Invalid arguments: dictionary=%s key=%s %s', dictionary, key, e)
+        logger.error("Invalid arguments: dictionary=%s key=%s %s", dictionary, key, e)
         return None

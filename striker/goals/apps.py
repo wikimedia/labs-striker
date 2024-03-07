@@ -22,8 +22,8 @@ from django.apps import AppConfig
 
 
 class GoalsConfig(AppConfig):
-    name = 'striker.goals'
-    verbose_name = 'Striker goals'
+    name = "striker.goals"
+    verbose_name = "Striker goals"
 
     def ready(self):
         # Register signal handlers

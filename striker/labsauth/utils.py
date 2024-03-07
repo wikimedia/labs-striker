@@ -18,17 +18,15 @@
 # You should have received a copy of the GNU General Public License
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
 
-import ldap
 import logging
 import operator
 import time
 
+import ldap
 from django.conf import settings
 
 from striker import mediawiki
-from striker.labsauth import constants
-from striker.labsauth import models
-
+from striker.labsauth import constants, models
 
 logger = logging.getLogger(__name__)
 
@@ -40,11 +38,11 @@ def oauth_from_session(session):
     """
     token = session.get(constants.ACCESS_TOKEN_KEY, (None, None))
     return {
-        'username': session.get(constants.OAUTH_USERNAME_KEY, None),
-        'email': session.get(constants.OAUTH_EMAIL_KEY, None),
-        'realname': session.get(constants.OAUTH_REALNAME_KEY, None),
-        'token': token[0],
-        'secret': token[1],
+        "username": session.get(constants.OAUTH_USERNAME_KEY, None),
+        "email": session.get(constants.OAUTH_EMAIL_KEY, None),
+        "realname": session.get(constants.OAUTH_REALNAME_KEY, None),
+        "token": token[0],
+        "secret": token[1],
     }
 
 
@@ -55,30 +53,37 @@ def get_next_id_number(clazz, attr, low_val, high_val):
     :param attr: Attribute to examine (e.g. 'uid_number')
     """
     entries = clazz.objects.all().values(attr)
-    next_id = max(
-        max(entries, key=operator.itemgetter(attr))[attr] + 1,
-        low_val)
+    next_id = max(max(entries, key=operator.itemgetter(attr))[attr] + 1, low_val)
     if next_id > high_val:
         # From OpenStackNovaUser::getNextIdNumber:
         # Upper limit is only a warning, not a fatal error.
         logger.warning(
-            'Id range limit exceeded for %s. Soft limit %d; next %d',
-            attr, high_val, next_id)
+            "Id range limit exceeded for %s. Soft limit %d; next %d",
+            attr,
+            high_val,
+            next_id,
+        )
     return next_id
 
 
 def get_next_uid():
     """Get the next available LDAP user uid."""
     return get_next_id_number(
-        models.PosixAccount, 'uid_number',
-        settings.LABSAUTH_MIN_UID, settings.LABSAUTH_MAX_UID)
+        models.PosixAccount,
+        "uid_number",
+        settings.LABSAUTH_MIN_UID,
+        settings.LABSAUTH_MAX_UID,
+    )
 
 
 def get_next_gid():
     """Get the next available LDAP group gid."""
     return get_next_id_number(
-        models.PosixGroup, 'gid_number',
-        settings.LABSAUTH_MIN_GID, settings.LABSAUTH_MAX_GID)
+        models.PosixGroup,
+        "gid_number",
+        settings.LABSAUTH_MIN_GID,
+        settings.LABSAUTH_MAX_GID,
+    )
 
 
 def add_ldap_user(username, shellname, passwd, email):
@@ -88,7 +93,7 @@ def add_ldap_user(username, shellname, passwd, email):
     u.cn = username
     u.uid_number = get_next_uid()
     u.gid_number = settings.LABSAUTH_DEFAULT_GID
-    u.home_dir = '/home/%s' % shellname
+    u.home_dir = "/home/%s" % shellname
     u.login_shell = settings.LABSAUTH_DEFAULT_SHELL
     u.password = passwd
     u.sn = username
@@ -108,22 +113,19 @@ def oath_enabled(user):
     """Is oath enabled for the given user?"""
     mwapi = mediawiki.Client.default_client()
     res = mwapi.query_meta_oath(user.ldapname)
-    return res['enabled']
+    return res["enabled"]
 
 
 def oath_validate_token(user, totp):
     """Validate a TOTP OATH token."""
     mwapi = mediawiki.Client.default_client()
     res = mwapi.oathvalidate(user.ldapname, totp)
-    if not res['enabled']:
+    if not res["enabled"]:
         return True
     else:
-        return res['valid']
+        return res["valid"]
 
 
 def oath_save_validation(user, request):
     now = time.time()
-    request.session[constants.OATH_INFO] = {
-        'user': user.ldapname,
-        'time': now
-    }
+    request.session[constants.OATH_INFO] = {"user": user.ldapname, "time": now}

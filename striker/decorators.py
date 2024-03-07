@@ -23,13 +23,16 @@ import functools
 from django import shortcuts
 
 
-def confirm_required(template_name, key='__confirm__'):
+def confirm_required(template_name, key="__confirm__"):
     """Decorate a view that requires confirmation."""
+
     def decorator(f):
         @functools.wraps(f)
         def decorated(request, *args, **kwargs):
             if key in request.POST:
                 return f(request, *args, **kwargs)
             return shortcuts.render(request, template_name, {})
+
         return decorated
+
     return decorator

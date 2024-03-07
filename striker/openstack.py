@@ -21,25 +21,24 @@
 import functools
 import logging
 
+from django.conf import settings
 from keystoneauth1 import session as keystone_session
 from keystoneauth1.identity import v3
 from keystoneclient.v3 import client
-
-from django.conf import settings
-
 
 logger = logging.getLogger(__name__)
 
 
 class Client(object):
     """OpenStack client"""
+
     _default_instance = None
 
     @classmethod
     def default_client(cls):
         """Get an OpenStack client using the default credentials."""
         if cls._default_instance is None:
-            logger.debug('Creating default instance')
+            logger.debug("Creating default instance")
             cls._default_instance = cls(
                 url=settings.OPENSTACK_URL,
                 username=settings.OPENSTACK_USER,
@@ -63,13 +62,13 @@ class Client(object):
             password=self.password,
             username=self.username,
             project_name=project,
-            user_domain_name='Default',
-            project_domain_name='Default',
+            user_domain_name="Default",
+            project_domain_name="Default",
         )
         return keystone_session.Session(auth=auth)
 
     @functools.lru_cache(maxsize=None)
-    def _client(self, project=None, interface='public'):
+    def _client(self, project=None, interface="public"):
         project = project or self.project
         return client.Client(
             session=self._session(project),
@@ -79,7 +78,7 @@ class Client(object):
 
     def _admin_client(self):
         """Convenience method for getting a client with super user rights."""
-        return self._client(project='admin', interface='admin')
+        return self._client(project="admin", interface="admin")
 
     def _roles(self):
         if self.roles is None:
@@ -105,14 +104,12 @@ class Client(object):
     def users_by_role(self, project=None):
         project = project or self.project
         keystone = self._client()
-        ignore_users = ['novaadmin', 'novaobserver']
+        ignore_users = ["novaadmin", "novaobserver"]
         data = {}
         for role_name, role_id in self._roles().items():
             data[role_name] = [
-                r.user['id']
-                for r in keystone.role_assignments.list(
-                    project=project, role=role_id
-                )
-                if r.user['id'] not in ignore_users
+                r.user["id"]
+                for r in keystone.role_assignments.list(project=project, role=role_id)
+                if r.user["id"] not in ignore_users
             ]
         return data

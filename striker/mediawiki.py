@@ -23,15 +23,14 @@ import logging
 import urllib.parse
 
 import mwclient
-
 from django.conf import settings
-
 
 logger = logging.getLogger(__name__)
 
 
 class Client(object):
     """MediaWiki client"""
+
     _default_instance = None
     _anon_instance = None
 
@@ -39,13 +38,13 @@ class Client(object):
     def default_client(cls):
         """Get a MediaWiki client using the default credentials."""
         if cls._default_instance is None:
-            logger.debug('Creating default instance')
+            logger.debug("Creating default instance")
             cls._default_instance = cls(
                 settings.WIKITECH_URL,
                 consumer_token=settings.WIKITECH_CONSUMER_TOKEN,
                 consumer_secret=settings.WIKITECH_CONSUMER_SECRET,
                 access_token=settings.WIKITECH_ACCESS_TOKEN,
-                access_secret=settings.WIKITECH_ACCESS_SECRET
+                access_secret=settings.WIKITECH_ACCESS_SECRET,
             )
         return cls._default_instance
 
@@ -53,28 +52,35 @@ class Client(object):
     def anon_client(cls):
         """Get a MediaWiki client that is not authenticated."""
         if cls._anon_instance is None:
-            logger.debug('Creating anon instance')
+            logger.debug("Creating anon instance")
             cls._anon_instance = cls(settings.WIKITECH_URL)
         return cls._anon_instance
 
     def __init__(
-        self, url,
-        consumer_token=None, consumer_secret=None,
-        access_token=None, access_secret=None
+        self,
+        url,
+        consumer_token=None,
+        consumer_secret=None,
+        access_token=None,
+        access_secret=None,
     ):
         self.url = url
         self.site = self._site_for_url(
-            url, consumer_token, consumer_secret, access_token, access_secret)
+            url, consumer_token, consumer_secret, access_token, access_secret
+        )
 
     @classmethod
     def _site_for_url(
-        cls, url,
-        consumer_token=None, consumer_secret=None,
-        access_token=None, access_secret=None
+        cls,
+        url,
+        consumer_token=None,
+        consumer_secret=None,
+        access_token=None,
+        access_secret=None,
     ):
         parts = urllib.parse.urlparse(url)
         host = parts.netloc
-        if parts.scheme != 'https':
+        if parts.scheme != "https":
             host = (parts.scheme, parts.netloc)
         force_login = consumer_token is not None
         return mwclient.Site(
@@ -83,8 +89,8 @@ class Client(object):
             consumer_secret=consumer_secret,
             access_token=access_token,
             access_secret=access_secret,
-            clients_useragent='Striker',
-            force_login=force_login
+            clients_useragent="Striker",
+            force_login=force_login,
         )
 
     def query_users_cancreate(self, *users):
@@ -95,9 +101,11 @@ class Client(object):
         an anonymous user would get.
         """
         result = self.site.api(
-            'query', formatversion=2,
-            list='users',
-            usprop='cancreate', ususers='|'.join(users),
+            "query",
+            formatversion=2,
+            list="users",
+            usprop="cancreate",
+            ususers="|".join(users),
         )
 
         logger.debug(result)
@@ -109,43 +117,38 @@ class Client(object):
         # 'userinfo': {'anon': True, 'messages': False, 'name':
         # '137.164.12.107', 'id': 0}}, 'batchcomplete': True}
         # TODO: error handling
-        return result['query']['users']
+        return result["query"]["users"]
 
-    def get_message(self, message, *params, lang='en'):
+    def get_message(self, message, *params, lang="en"):
         result = self.site.api(
-            'query', formatversion=2,
-            meta='allmessages',
-            ammessages=message, amargs='|'.join(params), amlang=lang
+            "query",
+            formatversion=2,
+            meta="allmessages",
+            ammessages=message,
+            amargs="|".join(params),
+            amlang=lang,
         )
         # TODO: error handling
-        return result['query']['allmessages'][0]['content']
+        return result["query"]["allmessages"][0]["content"]
 
     def query_blocks_ip(self, ip):
-        result = self.site.api(
-            'query', formatversion=2,
-            list='blocks',
-            bkip=ip
-        )
-        return result['query']['blocks']
+        result = self.site.api("query", formatversion=2, list="blocks", bkip=ip)
+        return result["query"]["blocks"]
 
     def query_meta_oath(self, username):
-        result = self.site.api(
-            'query', formatversion=2,
-            meta='oath',
-            oathuser=username
-        )
-        return result['query']['oath']
+        result = self.site.api("query", formatversion=2, meta="oath", oathuser=username)
+        return result["query"]["oath"]
 
     def oathvalidate(self, username, totp):
-        token = self.site.get_token('csrf', force=True)
+        token = self.site.get_token("csrf", force=True)
         result = self.site.api(
-            'oathvalidate',
+            "oathvalidate",
             formatversion=2,
             user=username,
-            data=json.dumps({'token': totp}),
-            token=token
+            data=json.dumps({"token": totp}),
+            token=token,
         )
-        return result['oathvalidate']
+        return result["oathvalidate"]
 
     def get_page(self, title, follow_redirects=True):
         """Get a Page object."""
@@ -156,4 +159,4 @@ class Client(object):
 
     def user_talk_page(self, username):
         """Get a user's talk page."""
-        return self.get_page('User_talk:{}'.format(username))
+        return self.get_page("User_talk:{}".format(username))

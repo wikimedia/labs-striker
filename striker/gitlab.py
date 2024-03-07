@@ -22,9 +22,7 @@ import logging
 import urllib.parse
 
 import requests
-
 from django.conf import settings
-
 
 logger = logging.getLogger(__name__)
 
@@ -93,8 +91,7 @@ class Client(object):
             if "error" in err_json:
                 err_msg = err_json["error"]
         except json.decoder.JSONDecodeError:
-            logger.exception(
-                "Failed to parse error message from %s: %s", url, err_msg)
+            logger.exception("Failed to parse error message from %s: %s", url, err_msg)
         raise APIError(err_msg, r.status_code, r)
 
     def post(self, path, payload=None):
@@ -117,10 +114,8 @@ class Client(object):
                     "users",
                     {
                         "provider": settings.GITLAB_PROVIDER,
-                        "extern_uid": settings.GITLAB_EXTERN_FORMAT.format(
-                            user
-                        ),
-                    }
+                        "extern_uid": settings.GITLAB_EXTERN_FORMAT.format(user),
+                    },
                 )[0]
             except (APIError, IndexError):
                 logger.exception("Failed to lookup user '%s'", user.uid)
@@ -141,7 +136,7 @@ class Client(object):
             )
         except APIError as e:
             if e.code == 404:
-                raise KeyError('Repository {0} not found'.format(name))
+                raise KeyError("Repository {0} not found".format(name))
             raise e
 
     def create_repository(self, name, owners, import_url=None):
@@ -162,30 +157,39 @@ class Client(object):
     def set_repository_owners(self, repo_id, owners):
         """Make the given users owners of a repository."""
         owners = self.user_lookup(owners)
-        return self.post("projects/{}/members".format(repo_id), {
-            "user_id": ",".join(str(o["id"]) for o in owners.values()),
-            "access_level": 50,  # Owner
-        })
+        return self.post(
+            "projects/{}/members".format(repo_id),
+            {
+                "user_id": ",".join(str(o["id"]) for o in owners.values()),
+                "access_level": 50,  # Owner
+            },
+        )
 
     def attach_user(self, user):
         """Create a GitLab user account for a maintainer."""
-        return self.post("users", {
-            "provider": settings.GITLAB_PROVIDER,
-            "extern_uid": settings.GITLAB_EXTERN_FORMAT.format(user),
-            "username": user.uid,
-            "name": user.cn,
-            "email": user.mail,
-            "force_random_password": True,
-            "note": "Created via API by Striker."
-        })
+        return self.post(
+            "users",
+            {
+                "provider": settings.GITLAB_PROVIDER,
+                "extern_uid": settings.GITLAB_EXTERN_FORMAT.format(user),
+                "username": user.uid,
+                "name": user.cn,
+                "email": user.mail,
+                "force_random_password": True,
+                "note": "Created via API by Striker.",
+            },
+        )
 
     def invite_user(self, repo_id, user):
         """Invite a user to be an owner in a gitlab project."""
-        return self.post("projects/{}/invitations".format(repo_id), {
-            "email": user.mail,
-            "access_level": 50,  # Owner
-            "invite_source": "Invited via API by Striker",
-        })
+        return self.post(
+            "projects/{}/invitations".format(repo_id),
+            {
+                "email": user.mail,
+                "access_level": 50,  # Owner
+                "invite_source": "Invited via API by Striker",
+            },
+        )
 
     def import_status(self, repo_id):
         """Check the import status of a repo."""
