@@ -177,7 +177,10 @@ def status(req, app_id):
                         # publically on request without resolving
                         request.status = AccessRequest.FEEDBACK
 
-                    elif request.status == AccessRequest.APPROVED:
+                    elif (
+                        request.status == AccessRequest.APPROVED
+                        and not project_member(request.user)
+                    ):
                         openstack.grant_role(
                             settings.OPENSTACK_USER_ROLE,
                             request.user.shellname,
