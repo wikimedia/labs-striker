@@ -48,9 +48,7 @@
     </table>
   </div>
   <div class="panel-footer">
-    {% with form.data.urlencode|add:"&o="|add:o as extra %}
-    {% bootstrap_pagination access_requests size="small" parameter_name="p" extra=extra %}
-    {% endwith %}
+    {% bootstrap_pagination access_requests size="small" parameter_name="p" extra=pagination_query %}
   </div>
 </div>
 {% endblock %}

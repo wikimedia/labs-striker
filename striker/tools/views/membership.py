@@ -27,7 +27,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
 from django.core import exceptions, paginator
 from django.db.utils import DatabaseError
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, QueryDict
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from notifications.signals import notify
@@ -77,7 +77,11 @@ def membership(req):
     form = AccessRequestSearchForm(req.GET or {})
     ctx["form"] = form
 
+    pagination_query = QueryDict("", mutable=True)
+
     if form.is_valid():
+        pagination_query.update(form.data)
+
         qs = AccessRequest.objects.get_queryset()
         if not tools_admin(req.user):
             qs = qs.filter(suppressed=False)
@@ -94,7 +98,7 @@ def membership(req):
         all_requests = qs.all()
         all_requests = all_requests.order_by(ctx["o"])
 
-    pager = paginator.Paginator(all_requests, 25)
+    pager = paginator.Paginator(all_requests, 1)
     page = req.GET.get("p", 1)
     try:
         access_requests = pager.page(page)
@@ -102,7 +106,13 @@ def membership(req):
         access_requests = pager.page(1)
     except paginator.EmptyPage:
         access_requests = pager.page(pager.num_pages)
+
+    if "o" not in pagination_query:
+        pagination_query["o"] = ctx["o"]
+    ctx["pagination_query"] = pagination_query.urlencode()
+
     ctx["access_requests"] = access_requests
+
     return shortcuts.render(req, "tools/membership.html", ctx)
 
 
