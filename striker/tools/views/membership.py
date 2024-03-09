@@ -98,7 +98,7 @@ def membership(req):
         all_requests = qs.all()
         all_requests = all_requests.order_by(ctx["o"])
 
-    pager = paginator.Paginator(all_requests, 1)
+    pager = paginator.Paginator(all_requests, 25)
     page = req.GET.get("p", 1)
     try:
         access_requests = pager.page(page)
