@@ -24,8 +24,7 @@ from django import shortcuts, urls
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import Group
-from django.core import exceptions, paginator
+from django.core import paginator
 from django.db.utils import DatabaseError
 from django.http import HttpResponseRedirect, QueryDict
 from django.utils import timezone
@@ -219,8 +218,7 @@ def status(req, app_id):
                     comment.save()
 
                 # Send notification of change
-                if as_admin:
-                    recipient = request.user
+                if not as_admin:
                     verb = _("commented on")
                     description = ""
                     if comment:
@@ -232,35 +230,22 @@ def status(req, app_id):
                             level = "success"
                         else:
                             level = "warning"
-                else:
-                    try:
-                        recipient = Group.objects.get(
-                            name=settings.TOOLS_ADMIN_GROUP_NAME
-                        )
-                    except exceptions.ObjectDoesNotExist:
-                        logger.exception(
-                            "Have you logged in with an admin account yet?"
-                        )
-                        recipient = req.user
-                    verb = _("updated")
-                    description = comment.comment
-                    level = "info"
 
-                notify.send(
-                    recipient=recipient,
-                    sender=req.user,
-                    verb=verb,
-                    target=request,
-                    public=False,
-                    description=description,
-                    level=level,
-                    actions=[
-                        {
-                            "title": _("View request"),
-                            "href": request.get_absolute_url(),
-                        },
-                    ],
-                )
+                    notify.send(
+                        recipient=request.user,
+                        sender=req.user,
+                        verb=verb,
+                        target=request,
+                        public=False,
+                        description=description,
+                        level=level,
+                        actions=[
+                            {
+                                "title": _("View request"),
+                                "href": request.get_absolute_url(),
+                            },
+                        ],
+                    )
 
                 messages.info(req, _("Toolforge membership request updated"))
                 return shortcuts.redirect(
