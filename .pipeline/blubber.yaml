@@ -144,4 +144,5 @@ variants:
       - runserver
       - --noreload
       - --nostatic
-      - 0.0.0.0:8080
+      # the following is set as an argument:
+      # - 127.0.0.1:8080
