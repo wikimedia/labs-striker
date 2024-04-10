@@ -1,3 +1,11 @@
+.environment-banner {
+  display: block;
+  padding: 15px 20px;
+  text-align: center;
+  background: #36c;  /* Codex background-color-progressive */
+  color: #ffffff;
+  font-weight: bold;
+}
 .container {
   width:auto;
   max-width:1024px;

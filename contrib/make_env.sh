@@ -57,6 +57,8 @@ GITLAB_URL=http://gitlab.local.wmftest.net:8084
 GITLAB_PROVIDER=ldapmain
 GITLAB_EXTERN_FORMAT="uid={0.uid},ou=people,dc=wmftest,dc=net"
 
+SITE_ENVIRONMENT_BANNER="LOCAL DEVELOPMENT ENVIRONMENT"
+
 #####################################################################
 ## Values to set manually when following initial setup instructions
 

@@ -460,5 +460,8 @@ GITLAB_EXTERN_FORMAT = env.str("GITLAB_EXTERN_FORMAT", default="{0.cn}")
 NOTIFICATIONS_SOFT_DELETE = True
 NOTIFICATIONS_USE_JSONFIELD = True
 
+# == Site branding ==
+SITE_ENVIRONMENT_BANNER = env.str("SITE_ENVIRONMENT_BANNER", default="")
+
 # == Feature flags ==
 FEATURE_ACCOUNT_CREATE = env.bool("FEATURE_ACCOUNT_CREATE", default=True)

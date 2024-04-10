@@ -89,6 +89,7 @@ services:
       - OPENSTACK_PROJECT
       - OPENSTACK_USER_ROLE
       - OPENSTACK_ADMIN_ROLE
+      - SITE_ENVIRONMENT_BANNER
       - FEATURE_ACCOUNT_CREATE
     volumes:
       - type: bind

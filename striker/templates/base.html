@@ -3,6 +3,7 @@
 {% load i18n %}
 {% load notifications_tags %}
 {% load static %}
+{% load banner %}
 <!DOCTYPE html>
 <html>
   <head>
@@ -26,6 +27,12 @@
     {% block css %}{% endblock css %}
   </head>
   <body>
+    {% environment_banner as banner_contents %}
+    {% if banner_contents %}
+      <div class="environment-banner">
+        {{ banner_contents }}
+      </div>
+    {% endif %}
     {% block navbar %}
     <nav class="navbar navbar-default navbar-static-top">
       <div class="container-fluid">
