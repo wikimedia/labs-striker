@@ -50,7 +50,7 @@ Striker stack. We need to create and approve several OAuth consumer
 registrations here that will be used by other applications in the stack.
 
 ### Create OAuth consumer for Phabricator
-http://sulwiki.local.wmftest.net:8082/wiki/Special:OAuthConsumerRegistration/propose
+http://sulwiki.local.wmftest.net:8082/wiki/Special:OAuthConsumerRegistration/propose/oauth1a
 
 * Application name: Phabricator
 * Application description: Phabricator login
@@ -66,14 +66,13 @@ Save the consumer token and secret token values for use later when we are
 setting up Phabricator.
 
 ### Create OAuth consumer for Striker
-http://sulwiki.local.wmftest.net:8082/wiki/Special:OAuthConsumerRegistration/propose
+http://sulwiki.local.wmftest.net:8082/wiki/Special:OAuthConsumerRegistration/propose/oauth1a
 
 * Application name: Toolforge
 * Application description: Toolforge console
 * OAuth callback URL: http://striker.local.wmftest.net:8080
 * Check the 'Allow consumer to specify a callback in requests and use
   "callback" URL above as a required prefix.' checkbox.
-* Contact email address: admin@local.wmftest.net
 * Types of grants being requested: "User identity verification only with access
   to real name and email address, no ability to read pages or act on a user's
   behalf."
@@ -103,14 +102,14 @@ http://ldapwiki.local.wmftest.net:8083/wiki/Special:CreateAccount
 * Instance shell account name: strikerbot
 
 ### Create StrikerBot owner-only consumer
-http://ldapwiki.local.wmftest.net:8083/wiki/Special:OAuthConsumerRegistration/propose
+http://ldapwiki.local.wmftest.net:8083/wiki/Special:OAuthConsumerRegistration/propose/oauth1a
 
 * Application name: Striker
 * Application description: Allow Striker to auth as StrikerBot account for various wiki interactions including 2fa validation.
 * Check the "This consumer is for use only by StrikerBot." checkbox
 * Select grants:
   * Basic rights
-  * High-volume editing
+  * High-volume (bot) access
   * Edit existing pages
   * Edit protected pages
   * Create, edit, and move pages
