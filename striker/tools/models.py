@@ -576,15 +576,22 @@ class ToolInfo(models.Model):
         except Tool.DoesNotExist:
             return None
 
+    @property
+    def webservice_url(self):
+        if not self.is_webservice:
+            return None
+        return "https://{}.{}/{}".format(
+            self.tool, settings.TOOLS_WEB_BASE_DOMAIN, (self.suburl or "").lstrip("/")
+        )
+
     def toolinfo_v1(self, request):
-        if self.is_webservice:
-            url = "https://{}.toolforge.org/{}".format(self.tool, self.suburl or "")
-        else:
+        url = self.webservice_url
+        if not url:
             url = self.docs
-            if not url:
-                url = request.build_absolute_uri(
-                    urls.reverse("tools:tool", args=[str(self.tool)])
-                )
+        if not url:
+            url = request.build_absolute_uri(
+                urls.reverse("tools:tool", args=[str(self.tool)])
+            )
 
         return collections.OrderedDict(
             [

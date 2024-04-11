@@ -5,7 +5,7 @@
     <div class="col-sm-6">
       <h3 class="panel-title">
         {% bootstrap_icon "info-sign" %}
-        {% if toolinfo.is_webservice %}<a href="https://{{ toolinfo.tool }}.toolforge.org/{{ toolinfo.suburl|default:'' }}">{% endif %}{{ toolinfo.title }}{% if toolinfo.is_webservice %}</a>{% endif %}
+        {% if toolinfo.webservice_url %}<a href="{{ toolinfo.webservice_url }}">{% endif %}{{ toolinfo.title }}{% if toolinfo.webservice_url %}</a>{% endif %}
       </h3>
     </div>
     <div class="col-sm-6">

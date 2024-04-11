@@ -427,6 +427,8 @@ TOOLS_DISABLED_POLICY_ENTRY = env.str(
     default="cn=disabled,ou=ppolicies,dc=wikimedia,dc=org",
 )
 
+TOOLS_WEB_BASE_DOMAIN = env.str("TOOLS_WEB_BASE_DOMAIN", default="toolforge.org")
+
 # == Project settings ==
 PROJECTS_BASE_DN = "ou=projects,{}".format(
     env.str("LDAP_BASE_DN", default="dc=wikimedia,dc=org")
