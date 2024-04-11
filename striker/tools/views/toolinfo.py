@@ -37,7 +37,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from striker.tools.forms import ToolInfoForm, ToolInfoPublicForm
 from striker.tools.models import Author, Tool, ToolInfo, ToolInfoTag
-from striker.tools.utils import member_or_admin
+from striker.tools.utils import member_or_admin, toolinfo_prefix
 from striker.tools.views.decorators import inject_tool
 
 logger = logging.getLogger(__name__)
@@ -64,7 +64,10 @@ def create(req, tool):
         )
 
     initial_values = {
-        "name": "toolforge-{}".format(tool.name),
+        "name": "{prefix}-{tool}".format(
+            prefix=toolinfo_prefix(settings.TOOLS_WEB_BASE_DOMAIN),
+            tool=tool.name,
+        ),
         "author": req.user,
     }
     if ToolInfo.objects.filter(tool=tool.name).count():

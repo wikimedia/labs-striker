@@ -34,7 +34,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.cache import never_cache
 from notifications.signals import notify
 
-from striker import decorators
+from striker import decorators, settings
 from striker.labsauth.models import LabsUser
 from striker.tools import utils
 from striker.tools.forms import MaintainersForm, ToolCreateForm, ToolDisableForm
@@ -46,7 +46,7 @@ from striker.tools.models import (
     ToolInfo,
     ToolUser,
 )
-from striker.tools.utils import member_or_admin
+from striker.tools.utils import member_or_admin, toolinfo_prefix
 from striker.tools.views.decorators import inject_tool, require_tools_member
 
 logger = logging.getLogger(__name__)
@@ -91,7 +91,10 @@ def create(req):
                 try:
                     with reversion.create_revision():
                         toolinfo = ToolInfo(
-                            name="toolforge.{}".format(form.cleaned_data["name"]),
+                            name="{}-{}".format(
+                                toolinfo_prefix(settings.TOOLS_WEB_BASE_DOMAIN),
+                                form.cleaned_data["name"],
+                            ),
                             tool=form.cleaned_data["name"],
                             title=form.cleaned_data["title"],
                             description=form.cleaned_data["description"],

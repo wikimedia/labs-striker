@@ -116,3 +116,10 @@ def tools_admin(user):
 def project_member(user):
     groups = user.groups.values_list("name", flat=True)
     return settings.TOOLS_TOOL_LABS_GROUP_NAME in groups
+
+
+def toolinfo_prefix(domain):
+    """Generate a prefix for a Toolforge record based on the used webservice domain."""
+    # toolforge.org = toolforge
+    # beta.toolforge.org = toolforge-beta
+    return "-".join(reversed(domain.split(".")[:-1]))
