@@ -64,8 +64,10 @@ def make_authhash():
 class LabsUser(AbstractBaseUser, PermissionsMixin):
     """Custom user class that is a better match for a Wikimedia account."""
 
-    ldapname = models.CharField(_("LDAP username"), max_length=255, unique=True)
-    ldapemail = models.EmailField(_("LDAP email address"), blank=True)
+    ldapname = models.CharField(
+        _("Developer account username"), max_length=255, unique=True
+    )
+    ldapemail = models.EmailField(_("Developer account email address"), blank=True)
     shellname = models.CharField(
         _("shellname"), max_length=32, unique=True, blank=True, null=True
     )
