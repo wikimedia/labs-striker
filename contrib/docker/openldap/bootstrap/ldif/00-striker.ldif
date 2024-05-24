@@ -22,6 +22,7 @@ objectClass: organizationalPerson
 objectClass: ldapPublicKey
 objectClass: posixAccount
 objectClass: shadowAccount
+objectClass: wikimediaPerson
 objectClass: top
 cn: Admin
 sn: Admin
@@ -32,6 +33,7 @@ uidNumber: 1001
 gidNumber: 1001
 homeDirectory: /home/admin
 loginShell: /bin/bash
+userPassword: {SSHA}pTXDACpyR0S9FvzYM7NdPgT1IQhhm4I+xKpA2A==
 
 dn: cn=wmf,ou=groups,dc=wmftest,dc=net
 objectClass: groupOfNames

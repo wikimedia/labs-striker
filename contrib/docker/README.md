@@ -8,6 +8,7 @@ services. For development, you can use Docker to setup all the things.
 * SUL wiki (pretend its meta): http://sulwiki.local.wmftest.net:8082/
 * LDAP wiki (pretend its wikitech): http://ldapwiki.local.wmftest.net:8083/
 * GitLab: http://gitlab.local.wmftest.net:8084/
+* Bitu: http://idm.local.wmftest.net:8085/
 
 The docker-compose and Dockerfile automation take care of the basic
 installation and configuration of the various software components needed to
@@ -81,8 +82,21 @@ http://sulwiki.local.wmftest.net:8082/wiki/Special:OAuthConsumerRegistration/pro
 Save the consumer token and secret token values for use later when we are
 setting up Striker.
 
+### Create OAuth consumer for Bitu
+http://sulwiki.local.wmftest.net:8082/wiki/Special:OAuthConsumerRegistration/propose/oauth1a
+
+* Application name: Bitu
+* Application description: Bitu Integration
+* OAuth callback URL: http://bitu.local.wmftest.net:8085/complete/mediawiki
+* Request authorization for specific permissions
+  - Pick "Access two-factor authentication (OATH) information for self and others"
+* Check the "By submitting this application, ..." checkbox
+
+Save the consumer token and secret token values for use later when we are
+setting up Bitu.
+
 ### Approve OAuth consumers
-Approve both consumers at http://sulwiki.local.wmftest.net:8082/wiki/Special:OAuthManageConsumers/proposed
+Approve all three consumers at http://sulwiki.local.wmftest.net:8082/wiki/Special:OAuthManageConsumers/proposed
 
 Setup LDAP wiki
 ---------------
@@ -283,3 +297,36 @@ URL: http://striker.local.wmftest.net:8080/
   * WIKITECH_ACCESS_TOKEN = <32 char access token>
   * WIKITECH_ACCESS_SECRET = <40 char access secret>
 * Load the new settings: `make restart tail`
+
+
+Setup Bitu
+----------
+These are created in the step "Create OAuth consumer for Bitu"
+* Edit your .env configuration file:
+  * BITU_SULWIKI_CONSUMER_TOKEN: ${SULWIKI_CONSUMER_TOKEN}
+  * BITU_SULWIKI_CONSUMER_SECRET: ${SULWIKI_CONSUMER_SECRET}
+
+The MediaWiki OAuth consumer configuration is only required if you need to be able to use the account
+linking feature in Bitu. If not this can be left out.
+
+Create an API user, by going to: http://bitu.local.wmftest.net:8085/admin/accounts/user/
+Sign in as "Admin" using password: "admin". The new user can be created with any username
+you like, but the suggestion is to just use "Striker". Assign the new user the following
+permission "signup | user validation | Can add user user validation". This will
+allow the user to access the token validation API http://bitu.local.wmftest.net:8085/signup/api/username/.
+
+Next create an API token for the new user, by going to the token option in the admin
+interface, http://bitu.local.wmftest.net:8085/admin/accounts/token/ and click "ADD TOKEN".
+
+You can test your newly created API token using requests or curl, see example:
+
+```
+>>> headers = {'Authorization': 'Token RhydGaigfishJedwuvGuWearr', 'Content-Type': 'application/json'}
+>>> url = 'http://bitu.local.wmftest.net:8085/mediawiki/signup/username/'
+>>> payload = {'username': 'maxmustermann'}
+>>> r = requests.post(headers=headers, json=payload, url=url)
+>>> r.status_code
+201
+>>> r.json()
+{'username': 'maxmustermann', 'uid': 'maxmustermann', 'sanitized': 'Maxmustermann'}
+```
