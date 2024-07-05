@@ -73,6 +73,7 @@ class RepoCreateForm(forms.Form):
                     "single repository.)"
                 ),
                 initial=True,
+                required=False,
             )
 
     def clean_repo_name(self):
@@ -122,6 +123,7 @@ class ProjectCreateForm(forms.Form):
                         "entry. (Recommended)"
                     ),
                     initial=True,
+                    required=False,
                 )
                 self.fields["mark_as_toolinfo_issue_tracker"] = field
 
