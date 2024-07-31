@@ -52,7 +52,7 @@ class OathVerifyForm(forms.Form):
             attrs={
                 "placeholder": _("Authentication code"),
                 "autofocus": "autofocus",
-                "autocomplete": "off",
+                "autocomplete": "one-time-code",
             }
         ),
         max_length=255,
