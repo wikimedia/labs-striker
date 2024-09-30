@@ -26,6 +26,7 @@ import re
 from django import shortcuts, urls
 from django.conf import settings
 from django.contrib import messages
+from django.db.models import Q
 from django.http import JsonResponse
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy as _
@@ -108,7 +109,7 @@ def oauth(req):
     oauth = oauth_from_session(req.session)
     try:
         # TODO: change to LdapUser once T148048 is done
-        user = LabsUser.objects.get(sulname=oauth["username"])
+        user = LabsUser.objects.get(Q(sulname=oauth["username"]) | Q(sulid=oauth["id"]))
 
         messages.error(
             req,
