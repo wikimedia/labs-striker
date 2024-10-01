@@ -112,9 +112,11 @@ def add_ldap_user(username, shellname, passwd, email):
 
 def oath_enabled(user):
     """Is oath enabled for the given user?"""
-    mwapi = mediawiki.Client.default_client()
-    res = mwapi.query_meta_oath(user.ldapname)
-    return res["enabled"]
+    # mwapi = mediawiki.Client.default_client()
+    # res = mwapi.query_meta_oath(user.ldapname)
+    # return res["enabled"]
+    # T376190: quick and dirty global disable for OATH checking
+    return False
 
 
 def oath_validate_token(user, totp):
