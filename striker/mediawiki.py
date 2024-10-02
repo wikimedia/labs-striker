@@ -18,7 +18,6 @@
 # You should have received a copy of the GNU General Public License
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
 
-import json
 import logging
 import urllib.parse
 
@@ -134,21 +133,6 @@ class Client(object):
     def query_blocks_ip(self, ip):
         result = self.site.api("query", formatversion=2, list="blocks", bkip=ip)
         return result["query"]["blocks"]
-
-    def query_meta_oath(self, username):
-        result = self.site.api("query", formatversion=2, meta="oath", oathuser=username)
-        return result["query"]["oath"]
-
-    def oathvalidate(self, username, totp):
-        token = self.site.get_token("csrf", force=True)
-        result = self.site.api(
-            "oathvalidate",
-            formatversion=2,
-            user=username,
-            data=json.dumps({"token": totp}),
-            token=token,
-        )
-        return result["oathvalidate"]
 
     def get_page(self, title, follow_redirects=True):
         """Get a Page object."""

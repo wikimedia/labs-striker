@@ -776,30 +776,6 @@ LOCK TABLES `module_deps` WRITE;
 UNLOCK TABLES;
 
 --
--- Table structure for table `oathauth_users`
---
-
-DROP TABLE IF EXISTS `oathauth_users`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `oathauth_users` (
-  `id` int(11) NOT NULL,
-  `module` varbinary(255) NOT NULL,
-  `data` blob DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=binary;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `oathauth_users`
---
-
-LOCK TABLES `oathauth_users` WRITE;
-/*!40000 ALTER TABLE `oathauth_users` DISABLE KEYS */;
-/*!40000 ALTER TABLE `oathauth_users` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `oauth2_access_tokens`
 --
 

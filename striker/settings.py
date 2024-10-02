@@ -161,7 +161,6 @@ MIDDLEWARE = (
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
-    "striker.labsauth.middleware.OathMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "striker.middleware.ReferrerPolicyMiddleware",
@@ -433,9 +432,6 @@ TOOLS_WEB_BASE_DOMAIN = env.str("TOOLS_WEB_BASE_DOMAIN", default="toolforge.org"
 PROJECTS_BASE_DN = "ou=projects,{}".format(
     env.str("LDAP_BASE_DN", default="dc=wikimedia,dc=org")
 )
-
-# == OATH settings ==
-OATHMIDDLEWARE_REDIRECT = "labsauth:oath"
 
 # == OpenStack settings ==
 OPENSTACK_URL = env.str(

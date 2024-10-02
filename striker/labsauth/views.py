@@ -19,20 +19,18 @@
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
 
 import logging
-from urllib.parse import urlparse
 
 import mwoauth
 from django import shortcuts, urls
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.db.utils import DatabaseError, IntegrityError
 from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.cache import never_cache
 from django.views.decorators.debug import sensitive_post_parameters
 from ratelimitbackend import views as ratelimit_views
 
-from striker.labsauth import constants, forms, utils
+from striker.labsauth import constants, forms
 
 logger = logging.getLogger(__name__)
 
@@ -53,32 +51,7 @@ def login(req):
         req.session.set_expiry(settings.REMEMBER_ME_TTL)
         req.session.save()
 
-    if req.user.is_authenticated:
-        # Flag the session with OATH status and expect that OathMiddleware is
-        # installed to force the user to provide validation if needed
-        req.session[constants.OATH_REQUIRED] = utils.oath_enabled(req.user)
-
     return resp
-
-
-@sensitive_post_parameters()
-@never_cache
-def oath(req):
-    redirect_to = req.POST.get(
-        REDIRECT_FIELD_NAME, req.GET.get(REDIRECT_FIELD_NAME, "")
-    )
-    if req.method == "POST":
-        form = forms.OathVerifyForm(data=req.POST, request=req)
-        if form.is_valid():
-            netloc = urlparse(redirect_to)[1]
-            if not redirect_to:
-                redirect_to = settings.LOGIN_REDIRECT_URL
-            elif netloc and netloc != req.get_host():
-                redirect_to = settings.LOGIN_REDIRECT_URL
-            return shortcuts.redirect(redirect_to)
-    else:
-        form = forms.OathVerifyForm()
-    return shortcuts.render(req, "labsauth/oath.html", {"form": form})
 
 
 @never_cache

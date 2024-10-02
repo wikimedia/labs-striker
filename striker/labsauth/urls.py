@@ -27,7 +27,6 @@ app_name = "labsauth"
 urlpatterns = [
     path("login/", views.login, name="login"),
     path("logout/", auth_views.LogoutView.as_view(), name="logout"),
-    path("oath", views.oath, name="oath"),
     path("initiate", views.oauth_initiate, name="oauth_initiate"),
     path("callback", views.oauth_callback, name="oauth_callback"),
 ]

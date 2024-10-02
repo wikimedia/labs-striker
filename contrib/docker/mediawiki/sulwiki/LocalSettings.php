@@ -154,10 +154,6 @@ wfLoadExtension( 'WikiEditor' );
 # End of automatically generated settings.
 # Add more configuration options below.
 
-wfLoadExtension( 'OATHAuth' );
-$wgGroupPermissions['sysop']['oathauth-api-all'] = true;
-$wgGroupPermissions["oathauth"]["oathauth-api-all"] = true;
-
 wfLoadExtension( 'OAuth' );
 $wgMWOAuthSecureTokenTransfer = false;
 $wgOAuthSecretKey = '292ed299345a01c1c0520b60f628c01ea817a0b3372b89dbb7637a2f678d018a';

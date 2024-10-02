@@ -120,13 +120,12 @@ http://ldapwiki.local.wmftest.net:8083/wiki/Special:OAuthConsumerRegistration/pr
   * Protect and unprotect pages
   * Send email to other users
   * Access private information
-  * Access two-factor authentication (OATH) information for self and others
 * Check the "By submitting this application, ..." checkbox
 
 Save the consumer token, consumer secret, access token, and access secret
 values for use later when we are setting up Striker.
 
-### Grant StrikerBot the ability to check OATH information
+### Grant StrikerBot the bot right
 
 * Log out of the StrikerBot account
 * Login as the Admin~ldapwiki account
@@ -137,7 +136,6 @@ http://ldapwiki.local.wmftest.net:8083/wiki/Special:UserRights/StrikerBot
 
 Add to groups:
 * bot
-* oathauth
 
 Setup Phabricator
 -----------------
