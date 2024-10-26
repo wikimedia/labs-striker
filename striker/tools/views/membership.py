@@ -196,7 +196,7 @@ def status(req, app_id):
                             request.user.shellname,
                         )
                         mwapi = mediawiki.Client.default_client()
-                        talk = mwapi.user_talk_page(request.user.ldapname)
+                        talk = mwapi.user_talk_page(request.user.sulname)
                         msg = "{}\n{}".format(talk.text(), WELCOME_MSG).strip()
                         talk.save(msg, summary=WELCOME_SUMMARY, bot=False)
                         cache.purge_openstack_users()
