@@ -379,6 +379,8 @@ LABSAUTH_MAX_GID = env.int("MAX_GID", default=59999)
 LABSAUTH_MIN_UID = env.int("MIN_UID", default=500)
 LABSAUTH_MAX_UID = env.int("MAX_UID", default=49999)
 
+LDAP_TOOL_URL = env.str("LDAP_TOOL_URL", default="https://ldap.toolforge.org")
+
 # == OAuth settings ==
 OAUTH_CONSUMER_KEY = env.str("OAUTH_CONSUMER_KEY")
 OAUTH_CONSUMER_SECRET = env.str("OAUTH_CONSUMER_SECRET")

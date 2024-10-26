@@ -259,7 +259,7 @@ def status(req, app_id):
     ctx = {
         "app": request,
         "form": form,
-        "wikitech": settings.WIKITECH_URL,
+        "ldap_tool": settings.LDAP_TOOL_URL,
         "meta": settings.OAUTH_MWURL,
     }
     return shortcuts.render(req, "tools/membership/status.html", ctx)
