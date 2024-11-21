@@ -1,0 +1,22 @@
+# Map author and committer names and email addresses to canonical real names
+# and email addresses.
+#
+# Two types of entries are useful here. The first sets a canonical author
+# name for a given email address:
+#
+#   Canonical Author Name <author email>
+#
+# The second allows collecting alternate email addresses into a single
+# canonical author name and email address:
+#
+#   Canonical Author Name <author email> <alternate email>
+#
+# Mappings are only needed for authors who have used multiple author names
+# and/or author emails for revisions over time.
+#
+# See also: https://git-scm.com/docs/git-shortlog#_mapping_authors
+#
+Bryan Davis <bd808@wikimedia.org> <bd808@bd808.com>
+Bryan Davis <bd808@wikimedia.org> <github@casadebender.com>
+MarcoAurelio <maurelio@toolforge.org> <maurelio@tools.wmflabs.org>
+Taavi Väänänen <hi@taavi.wtf> <hi@tassu.me>
