@@ -1,5 +1,47 @@
 @import '@wikimedia/codex/dist/codex.style.css';
 @import ( reference ) '@wikimedia/codex-design-tokens/theme-wikimedia-ui.less';
+@import ( reference ) '@wikimedia/codex/mixins/css-icon.less';
+@import ( reference ) '@wikimedia/codex/mixins/link.less';
+
+.striker-link {
+	--color-visited: @color-progressive;
+	--color-visited--hover: @color-progressive--hover;
+	--color-visited--active: @color-progressive--active;
+
+	.cdx-mixin-link();
+}
+
+.striker-icon {
+	&--add {
+		.cdx-mixin-css-icon( @cdx-icon-add );
+	}
+
+	&--code {
+		.cdx-mixin-css-icon( @cdx-icon-code );
+	}
+
+	&--key {
+		.cdx-mixin-css-icon( @cdx-icon-key );
+	}
+
+	&--user-add {
+		.cdx-mixin-css-icon( @cdx-icon-user-add );
+	}
+
+	&--user-rights {
+		.cdx-mixin-css-icon( @cdx-icon-user-rights );
+	}
+}
+
+.striker-card-mb {
+	margin-bottom: 1em;
+}
+
+/* Hacks for Bootstrap interoperability */
+.cdx-card__text__supporting-text {
+	font-size: 0.875em; // was: rem
+}
+/* End of hacks. */
 
 // TODO: bundle via NPM? or just drop entirely
 @import 'thirdparty/bootstrap.min.css';

@@ -3,8 +3,9 @@
 
 {% block title %}{% trans "Add your SSH public key" %}{% endblock %}
 
+{% block icon %}striker-icon--key{% endblock %}
 {% block body %}
-<p>{% blocktrans %}Wikimedia VPS and Toolforge servers are accessed using <a href="https://en.wikipedia.org/wiki/Secure_Shell">SSH</a>. You need to upload an ssh public key to enable your SSH access.{% endblocktrans %}</p>
-<p class="text-muted">{% blocktrans %}See <a href="https://wikitech.wikimedia.org/wiki/Help:Toolforge/Quickstart#Set_up_an_SSH_client_and_a_key">the help documentation</a> for more information on how to generate and upload your public SSH key.{% endblocktrans %}</p>
-<p><a href="{% url 'profile:ssh_keys' %}" class="btn btn-default">{% trans "Add public SSH key" %}</a></p>
+<span class="cdx-card__text__description">{% blocktrans %}Wikimedia VPS and Toolforge servers are accessed using <a class="striker-link" href="https://en.wikipedia.org/wiki/Secure_Shell">SSH</a>. You need to upload an ssh public key to enable your SSH access.{% endblocktrans %}</span>
+<span class="cdx-card__text__supporting-text">{% blocktrans %}See <a class="striker-link" href="https://wikitech.wikimedia.org/wiki/Help:Toolforge/Quickstart#Set_up_an_SSH_client_and_a_key">the help documentation</a> for more information on how to generate and upload your public SSH key.{% endblocktrans %}</span>
+<span class="cdx-card__text__description"><a href="{% url 'profile:ssh_keys' %}" class="striker-link">{% trans "Add public SSH key" %}</a></span>
 {% endblock %}

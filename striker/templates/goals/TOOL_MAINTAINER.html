@@ -3,7 +3,8 @@
 
 {% block title %}{% trans "Create or join a tool" %}{% endblock %}
 
+{% block icon %}striker-icon--add{% endblock %}
 {% block body %}
 {% url "tools:index" as tools_url %}
-<p>{% blocktrans with url='' %}Your account is not associated with any tools. Visit <a href="{{ tools_url }}">the Tools page</a> to find a existing tool to join or create a new tool.{% endblocktrans %}</p>
+<span class="cdx-card__text__description">{% blocktrans with url='' %}Your account is not associated with any tools. Visit <a class="striker-link" href="{{ tools_url }}">the Tools page</a> to find a existing tool to join or create a new tool.{% endblocktrans %}</span>
 {% endblock %}

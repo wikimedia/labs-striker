@@ -3,7 +3,8 @@
 
 {% block title %}{% trans "Become a Toolforge member" %}{% endblock %}
 
+{% block icon %}striker-icon--user-rights{% endblock %}
 {% block body %}
-<p>{% blocktrans %}Request membership in the Toolforge project so you can create your own tool and help maintain existing tools.{% endblocktrans %}</p>
-<p><a href="{% url 'tools:membership_apply' %}" class="btn btn-default">{% trans "Join now" %}</a></p>
+<span class="cdx-card__text__description">{% blocktrans %}Request membership in the Toolforge project so you can create your own tool and help maintain existing tools.{% endblocktrans %}</span>
+<span class="cdx-card__text__description"><a href="{% url 'tools:membership_apply' %}" class="striker-link">{% trans "Join now" %}</a></span>
 {% endblock %}

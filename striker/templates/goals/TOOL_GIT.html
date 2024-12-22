@@ -3,7 +3,8 @@
 
 {% block title %}{% trans "Add a git repository to a tool" %}{% endblock %}
 
+{% block icon %}striker-icon--code{% endblock %}
 {% block body %}
-<p>{% blocktrans %}Toolforge offers hosting for git repositories using GitLab. You can add a git repository to any tool you maintain.{% endblocktrans %}</p>
-<p><a href="{% url 'tools:index' %}" class="btn btn-default">{% trans "View my tools" %}</a></p>
+<span class="cdx-card__text__description">{% blocktrans %}Toolforge offers hosting for git repositories using GitLab. You can add a git repository to any tool you maintain.{% endblocktrans %}</span>
+<span class="cdx-card__text__description"><a href="{% url 'tools:index' %}" class="striker-link">{% trans "View my tools" %}</a></span>
 {% endblock %}

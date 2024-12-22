@@ -3,7 +3,8 @@
 
 {% block title %}{% trans "Connect with your Wikimedia account" %}{% endblock %}
 
+{% block icon %}striker-icon--user-add{% endblock %}
 {% block body %}
-<p>{% blocktrans %}Connect your Wikimedia account with your developer account.{% endblocktrans %}</p>
-<p><a href="{% url 'labsauth:oauth_initiate' %}?next=/" class="btn btn-default">Connect now</a></p>
+<span class="cdx-card__text__description">{% blocktrans %}Connect your Wikimedia account with your developer account.{% endblocktrans %}</span>
+<span class="cdx-card__text__description"><a href="{% url 'labsauth:oauth_initiate' %}?next=/" class="striker-link">Connect now</a></span>
 {% endblock %}

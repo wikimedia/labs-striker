@@ -3,8 +3,9 @@
 
 {% block title %}{% trans "Connect with your Phabricator account" %}{% endblock %}
 
+{% block icon %}striker-icon--user-add{% endblock %}
 {% block body %}
-<p>{% blocktrans %}Connect with your Phabricator account so that you can manage git repositories for your tools.{% endblocktrans %}</p>
-<p class="text-muted">{% blocktrans with url=phab_url%}Login to <a href="{{ url }}">Phabricator</a> using your Wikimedia account or your Wikimedia developer account to create a new Phabricator account if you do not have one.{% endblocktrans %}</p>
-<p><a href="{% url 'profile:phabricator_attach' %}?next=/" class="btn btn-default">{% trans "Connect now" %}</a></p>
+<span class="cdx-card__text__description">{% blocktrans %}Connect with your Phabricator account so that you can manage git repositories for your tools.{% endblocktrans %}</span>
+<span class="cdx-card__text__supporting-text">{% blocktrans with url=phab_url%}Login to <a class="striker-link" href="{{ url }}">Phabricator</a> using your Wikimedia account or your Wikimedia developer account to create a new Phabricator account if you do not have one.{% endblocktrans %}</span>
+<span class="cdx-card__text__description"><a class="striker-link" href="{% url 'profile:phabricator_attach' %}?next=/">{% trans "Connect now" %}</a></span>
 {% endblock %}
