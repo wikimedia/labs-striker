@@ -15,12 +15,11 @@
 {% endblock %}
 
 {% block content %}
-<div class="panel-group" role="tablist">
-  <div class="panel panel-info panel-pager">
-    {% include "tools/info/revision/header.html" %}
-    {% include "tools/info/revision/body.html" %}
-  </div>
-  <div class="panel panel-default">
+<div class="striker-mb">
+  {% include "tools/info/record.html" %}
+</div>
+
+<div class="panel panel-default">
     <div class="panel-heading">
       <h3 class="panel-title">{% trans "Are you sure you want to delete this toolinfo record?" %}</h3>
     </div>
@@ -43,7 +42,6 @@
         </a>
       </div>
     </div>
-  </div>
 </div>
 {% endblock %}
 {# vim:sw=2:ts=2:sts=2:et: #}

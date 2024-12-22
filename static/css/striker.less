@@ -79,6 +79,10 @@
 		.cdx-mixin-css-icon( @cdx-icon-subtract );
 	}
 
+	&--tag-warning-small {
+		.cdx-mixin-css-icon( @cdx-icon-tag, @color-warning, @size-icon-small );
+	}
+
 	&--trash-destructive {
 		.cdx-mixin-css-icon( @cdx-icon-trash, @color-destructive );
 	}
@@ -100,8 +104,21 @@
 	}
 }
 
+.striker-fullwidth {
+	width: 100%;
+}
+
+.striker-mt {
+	margin-top: 1em;
+}
+
 .striker-mb {
 	margin-bottom: 1em;
+}
+
+.striker-info-chip--tag {
+	background-color: @background-color-warning-subtle;
+	border-color: @border-color-warning;
 }
 
 @import './home.less';
@@ -117,6 +134,9 @@
 	.cdx-message__content {
 		margin: 0;
 	}
+}
+.cdx-info-chip__text {
+	font-size: 0.875em; // was: rem
 }
 /* End of hacks. */
 
@@ -312,13 +332,6 @@ form.hidden-labels label.no-hide {
 
 .toolinfo-details {
 	margin-top: 0.5em;
-}
-
-.toolinfo-tags .label-default {
-	background-color: #fdf3da;
-	border-radius: 3px;
-	border: 1px solid #e9dbcd;
-	color: #726f56;
 }
 
 .diff del,

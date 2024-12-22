@@ -19,7 +19,7 @@
 {% block content %}
 <div class="container-fluid">
   <div class="row">
-    <div class="panel-group">
+    <div class="striker-card-group">
       {% if can_suppress or not version.suppressed %}
       <div class="panel panel-{% if version.suppressed %}danger{% else %}default{% endif %}">
         <div class="panel-body">
@@ -33,10 +33,7 @@
           </dl>
         </div>
       </div>
-      <div class="panel panel-{% if version.suppressed %}danger{% else %}info{% endif %}">
-        {% include "tools/info/revision/header.html" %}
-        {% include "tools/info/revision/body.html" %}
-      </div>
+      {% include "tools/info/record.html" %}
       {% else %}{# suppressed #}
       <div class="panel panel-danger">
         <div class="panel-body">

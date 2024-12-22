@@ -1,0 +1,81 @@
+{% load i18n %}
+
+<span class="cdx-card">
+  <span class="cdx-card__text striker-fullwidth">
+    <span class="cdx-card__text__title">
+      {% if toolinfo.webservice_url %}<a href="{{ toolinfo.webservice_url }}">{% endif %}
+      {{ toolinfo.title }}
+      {% if toolinfo.webservice_url %}</a>{% endif %}
+    </span>
+    <span class="cdx-card__text__description">{{ toolinfo.description|striptags }}</span>
+
+    <div class="toolinfo-details">
+      <dl class="dl-horizontal">
+        <dt>{% trans "License" %}</dt>
+        <dd><a href="{{ toolinfo.license.url }}">{{ toolinfo.license.name }}</a></dd>
+        {% if toolinfo.repository %}
+          <dt>{% trans "Source code" %}</dt>
+          <dd><a href="{{ toolinfo.repository }}">{{ toolinfo.repository }}</a></dd>
+        {% endif %}
+        {% if toolinfo.issues %}
+          <dt>{% trans "Issues" %}</dt>
+          <dd><a href="{{ toolinfo.issues }}">{{ toolinfo.issues }}</a></dd>
+        {% endif %}
+        {% if toolinfo.docs %}
+          <dt>{% trans "Docs" %}</dt>
+          <dd><a href="{{ toolinfo.docs }}">{{ toolinfo.docs }}</a></dd>
+        {% endif %}
+      </dl>
+    </div>
+
+    {% with toolinfo.tags.all as tags %}
+    <span class="cdx-card__text__description">
+      {% for tag in toolinfo.tags.all %}
+        <span class="cdx-info-chip striker-info-chip--tag">
+          <span class="striker-icon--tag-warning-small"></span>
+          <span class="cdx-info-chip__text">{{ tag.name }}</span>
+        </span>
+      {% endfor %}
+      </span>
+    {% endwith %}
+
+    <span class="cdx-card__text__description">
+      {% if can_revert or can_suppress %}
+        <form action="{% url 'tools:info_admin' tool=tool.name info_id=toolinfo.pk version_id=version.pk %}" method="POST" class="form-inline">
+        {% csrf_token %}
+      {% endif %}
+      <span class="btn-toolbar pull-right" role="toolbar">
+        <a href="{% url 'tools:info_history' tool=tool.name info_id=toolinfo.pk %}" class="striker-link">{% trans "history" %}</a>
+        {% if can_edit %}
+          <a
+            href="{% url 'tools:info_edit' tool=tool.name info_id=toolinfo.pk %}"
+            class="cdx-button cdx-button--fake-button cdx-button--fake-button--enabled cdx-button--weight-quiet"
+          >
+            {% trans "edit" %}
+          </a>
+        {% endif %}
+        {% if can_delete %}
+          <a
+            href="{% url 'tools:info_delete' tool=tool.name info_id=toolinfo.pk %}"
+            class="cdx-button cdx-button--fake-button cdx-button--fake-button--enabled cdx-button--weight-quiet cdx-button--action-destructive"
+          >
+            {% trans "delete" %}
+          </a>
+        {% endif %}
+        {% if can_revert and not version.suppressed %}
+          <button name="_revert" type="submit" class="cdx-button cdx-button--weight-quiet cdx-button--action-destructive">{% trans "revert" %}</button>
+        {% endif %}
+        {% if can_suppress %}
+          {% if version.suppressed %}
+            <button name="_show" type="submit" class="cdx-button cdx-button--weight-quiet">{% trans "show" %}</button>
+          {% else %}
+            <button name="_hide" type="submit" class="cdx-button cdx-button--weight-quiet">{% trans "hide" %}</button>
+          {% endif %}
+        {% endif %}
+      </span>
+      {% if can_revert or can_suppress %}
+      </form>
+      {% endif %}
+    </span>
+  </span>
+</span>

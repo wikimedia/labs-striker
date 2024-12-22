@@ -15,10 +15,5 @@
 {% endblock %}
 
 {% block content %}
-<div class="panel-group" role="tablist">
-  <div class="panel panel-info panel-pager">
-    {% include "tools/info/revision/header.html" %}
-    {% include "tools/info/revision/body.html" %}
-  </div>
-</div>
+{% include "tools/info/record.html" with toolinfo=toolinfo %}
 {% endblock %}
