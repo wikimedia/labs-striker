@@ -1,6 +1,8 @@
 {
 	"private": true,
 	"dependencies": {
+		"@wikimedia/codex": "1.18.0",
+		"@wikimedia/codex-design-tokens": "1.18.0",
 		"less": "^4.2.1",
 		"vite": "^6.0.5",
 		"zxcvbn": "^4.4.2"
