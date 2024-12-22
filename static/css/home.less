@@ -1,0 +1,58 @@
+@import ( reference ) '@wikimedia/codex-design-tokens/theme-wikimedia-ui.less';
+@import ( reference ) '@wikimedia/codex-design-tokens/theme-wikimedia-ui-mixin-dark.less';
+@import ( reference ) '@wikimedia/codex/mixins/link.less';
+
+.striker-home-title {
+	.cdx-mode-dark();
+	background: @background-color-base;
+	color: @color-base;
+	padding: @spacing-250;
+
+	.striker-link {
+		--color-visited: @color-progressive;
+		--color-visited--hover: @color-progressive--hover;
+		--color-visited--active: @color-progressive--active;
+		.cdx-mixin-link();
+	}
+
+	&--logo {
+		margin-bottom: @spacing-100;
+
+		img {
+			width: @size-800;
+			height: @size-800;
+		}
+	}
+
+	&--name {
+		font-weight: @font-weight-bold;
+		font-size: @size-400;
+		color: @color-emphasized;
+		margin-bottom: @spacing-200;
+
+		@media screen and ( min-width: @min-width-breakpoint-desktop ) {
+			font-size: @size-800;
+		}
+
+		span {
+			display: block;
+		}
+	}
+
+	p {
+		font-size: @size-200;
+		color: @color-emphasized;
+
+		@media screen and ( min-width: @min-width-breakpoint-desktop ) {
+			max-width: 50%;
+		}
+	}
+}
+
+.striker-home-content {
+	margin-top: @spacing-250;
+
+	@media screen and ( min-width: @min-width-breakpoint-desktop ) {
+		margin: @spacing-250;
+	}
+}

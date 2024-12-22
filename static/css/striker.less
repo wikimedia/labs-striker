@@ -43,6 +43,10 @@
 		}
 	}
 
+	&--help {
+		.cdx-mixin-css-icon( @cdx-icon-help );
+	}
+
 	&--key {
 		.cdx-mixin-css-icon( @cdx-icon-key );
 	}
@@ -90,11 +94,17 @@
 	&--user-rights {
 		.cdx-mixin-css-icon( @cdx-icon-user-rights );
 	}
+
+	&--wikitext {
+		.cdx-mixin-css-icon( @cdx-icon-wikitext );
+	}
 }
 
 .striker-mb {
 	margin-bottom: 1em;
 }
+
+@import './home.less';
 
 /* Hacks for Bootstrap interoperability */
 .cdx-card__text__supporting-text {

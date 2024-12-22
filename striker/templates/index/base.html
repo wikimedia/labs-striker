@@ -1,0 +1,61 @@
+{% load i18n %}
+{% load static %}
+
+<div class="striker-home-title">
+  <div class="striker-home-title--logo"><img src="{% static "img/toolforge-circle.svg" %}" alt="" aria-hidden="true"></div>
+  {% blocktrans with tf_url='https://www.toolforge.org/' wmcs_url='https://wikitech.wikimedia.org/wiki/Help:Cloud_Services_introduction' %}
+  <h1 class="striker-home-title--name">
+    <span>Wikimedia</span> <span>Toolforge</span>
+  </h1>
+  <p><strong><a href="{{ tf_url }}" class="striker-link">Wikimedia Toolforge</a></strong> is a free cloud hosting platform for Wikimedia contributors. It provides web servers, data access, job management, and other features to help developers maintain tools and bots.</p>
+  <p><strong>Toolforge admin console</strong> helps Toolforge users manage their tools.</p>
+  <p>Toolforge is a part of the wider <strong><a href="{{ wmcs_url }}" class="striker-link">Wikimedia Cloud Services</a></strong> suite of services, supported by Wikimedia Foundation staff and movement volunteers.</p>
+  {% endblocktrans %}
+</div>
+<div class="striker-home-content striker-card-group">
+  {% block first_card %}{% endblock %}
+  {% block membership_card %}{% endblock %}
+  <span class="cdx-card">
+    <!-- TODO: a better tool logo -->
+    <span class="cdx-card__icon striker-icon--wikitext"></span>
+    <span class="cdx-card__text">
+      <span class="cdx-card__text__title">{% trans 'Browse tools' %}</span>
+      <span class="cdx-card__text__description">
+        {% url 'tools:index' as tools_url %}
+        {% blocktrans with tools_count=tools_count tools_url=tools_url %}
+          Browse all
+          <a href="{{ tools_url }}" class="striker-link"> {{ tools_count }} tools</a>
+          currently hosted on Wikimedia Toolforge.
+        {% endblocktrans %}
+      </span>
+    </span>
+  </span>
+  {% block settings_card %}{% endblock %}
+  <span class="cdx-card">
+    <span class="cdx-card__icon striker-icon--help"></span>
+    <span class="cdx-card__text">
+      <span class="cdx-card__text__title">{% trans 'Read the documentation' %}</span>
+      <span class="cdx-card__text__description">
+        {% blocktrans with user_docs_url='https://wikitech.wikimedia.org/wiki/Help:Toolforge' admin_docs_url='https://wikitech.wikimedia.org/wiki/Portal:Toolforge/Admin' %}
+          Find out
+          <a href="{{ user_docs_url }}" class="striker-link">how to use the platform</a>,
+          or read <a href="{{ admin_docs_url }}" class="striker-link">admin docs</a>
+          to find out what it takes to keep it running.
+        {% endblocktrans %}
+      </span>
+    </span>
+  </span>
+  <span class="cdx-card">
+    <span class="cdx-card__icon striker-icon--message"></span>
+    <span class="cdx-card__text">
+      <span class="cdx-card__text__title">{% trans 'Get help and stay up-to-date' %}</span>
+      <span class="cdx-card__text__description">
+        {% blocktrans with support_url='https://wikitech.wikimedia.org/wiki/Help:Cloud_Services_communication' %}
+          Reach out with questions and join the conversation
+          <a href="{{ support_url }}" class="striker-link">on a WMCS communications channel</a>.
+        {% endblocktrans %}
+      </span>
+    </span>
+  </span>
+</div>
+{# vim:sw=2:ts=2:sts=2:et:ft=htmldjango: #}
