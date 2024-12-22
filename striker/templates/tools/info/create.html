@@ -2,6 +2,7 @@
 {% load bootstrap3 %}
 {% load i18n %}
 {% load static %}
+{% load vite %}
 
 {% block title %}{% blocktrans with name=tool.name %}Tool: {{ name }}{% endblocktrans %}{% endblock %}
 
@@ -41,7 +42,7 @@
 
 {% block js %}
 {{ block.super }}
-<script lang="javascript" src="{% static 'js/parsley.min.js' %}"></script>
-<script lang="javascript" src="{% static 'js/parsley-bootstrap.js' %}"></script>
+<script lang="javascript" src="{% static 'js/thirdparty/parsley.min.js' %}"></script>
+<script lang="javascript" src="{% vite 'static/js/parsley-bootstrap.mjs' %}"></script>
 {{ form.media }}
 {% endblock %}

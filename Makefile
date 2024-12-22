@@ -22,6 +22,7 @@ PIPELINE_DIR := $(PROJECT_DIR)/.pipeline
 DOCKERIZE := /srv/dockerize/bin/dockerize
 # Prefer Compose v2, but allow override on hosts that only have v1
 COMPOSE ?= docker compose
+NPM ?= fresh-node -- npm
 
 help:
 	@echo "Make targets:"
@@ -92,6 +93,14 @@ gitlab:  ## Open a shell in gitlab container
 phabricator:  ## Open a shell in phabricator container
 	$(COMPOSE) exec phabricator /bin/bash
 .PHONY: phabricator
+
+node_modules: ## Install Node dependencies
+	$(NPM) ci
+build: node_modules ## Build static assets
+	$(NPM) run build
+watch: node_modules
+	$(NPM) run build -- --watch
+.PHONY: build watch
 
 .env:  ## Generate a .env file for local development
 	./contrib/make_env.sh ./.env

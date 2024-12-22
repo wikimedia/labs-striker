@@ -3,6 +3,7 @@
 /*.egg-info
 /.coverage
 /.env
+/.eslintcache
 /.pc
 /.pybuild
 /.python-version
@@ -14,7 +15,9 @@
 /db.sqlite3
 /dist
 /docs/_build
+/node_modules
 /staticfiles
+/static/vite
 /striker.ini
 /striker/local_settings.py
 /tests/cover

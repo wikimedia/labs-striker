@@ -12,6 +12,20 @@ runs:
     DJANGO_SETTINGS_MODULE: "striker.settings"
 
 variants:
+  base-node:
+    base: docker-registry.wikimedia.org/nodejs20-slim:latest
+    node: { requirements: [package.json, package-lock.json] }
+  vite:
+    includes: [base-node]
+    lives:
+      in: /srv/app
+    builder:
+      requirements:
+        - from: local
+          source: .
+          destination: .
+      command: [npm, run, build]
+
   base-python:
     apt:
       packages:
@@ -55,6 +69,9 @@ variants:
       - from: local
         source: .
         destination: .
+      - from: vite
+        source: /srv/app/static/vite
+        destination: static/vite
     entrypoint:
       - /bin/bash
       - -c
@@ -62,6 +79,15 @@ variants:
         set -eux;
         export -n PYTHONPATH PIP_FIND_LINKS PIP_WHEEL_DIR PIP_NO_INDEX;
         tox
+  test-node:
+    includes: [base-node]
+    runs:
+      insecurely: true
+    copies:
+      - from: local
+        source: .
+        destination: .
+    entrypoint: [npm, run, test]
 
   local-python:
     # Local development Python runtime container including special support for
@@ -115,13 +141,16 @@ variants:
         - from: local
           source: .
           destination: .
+        - from: vite
+          source: /srv/app/static/vite
+          destination: static/vite
       command:
         - /bin/bash
         - -c
         - >-
           set -eux;
           ls -alh
-          && (poetry run python3 manage.py collectstatic -c --no-input --ignore src --ignore tests --ignore *.json --ignore Gruntfile.js
+          && (poetry run python3 manage.py collectstatic -c --no-input --ignore src --ignore tests --ignore "*.json" --ignore Gruntfile.js
           && cd /srv/app/staticfiles
           && python3 -mjson.tool staticfiles.json > staticfiles.json.pretty
           && mv staticfiles.json.pretty staticfiles.json)

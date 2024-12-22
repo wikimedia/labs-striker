@@ -250,7 +250,11 @@ LOGOUT_REDIRECT_URL = "index"
 
 STATIC_URL = "/static/"
 STATIC_ROOT = env.str("STATIC_ROOT", default=os.path.join(BASE_DIR, "staticfiles"))
-STATICFILES_DIRS = (os.path.join(BASE_DIR, "static"),)
+STATICFILES_DIRS = (
+    ("img", os.path.join(BASE_DIR, "static/img")),
+    ("js/thirdparty", os.path.join(BASE_DIR, "static/js/thirdparty")),
+    os.path.join(BASE_DIR, "static/vite"),
+)
 STATICFILES_FINDERS = (
     "django.contrib.staticfiles.finders.FileSystemFinder",
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
@@ -291,8 +295,8 @@ SECURE_BROWSER_XSS_FILTER = True
 # == Content-Security-Policy ==
 # https://django-csp.readthedocs.io/en/latest/configuration.html
 CSP_DEFAULT_SRC = ["'none'"]  # Use a whitelist only approach
-CSP_SCRIPT_SRC = ["'self'"]
-CSP_IMG_SRC = ["'self'"]
+CSP_SCRIPT_SRC = ["'self'", "'unsafe-inline'"]
+CSP_IMG_SRC = ["'self'", "data:"]
 CSP_OBJECT_SRC = ["'none'"]
 CSP_MEDIA_SRC = ["'none'"]
 CSP_FONT_SRC = ["'self'"]
@@ -316,9 +320,9 @@ REFERRER_POLICY = "strict-origin-when-cross-origin"
 
 # == Bootstrap3 settings ==
 BOOTSTRAP3 = {
-    "jquery_url": STATIC_URL + "js/jquery.min.js",
+    "jquery_url": STATIC_URL + "js/thirdparty/jquery.min.js",
     "base_url": STATIC_URL,
-    "javascript_url": STATIC_URL + "js/bootstrap.min.js",
+    "javascript_url": STATIC_URL + "js/thirdparty/bootstrap.min.js",
     "include_jquery": True,
 }
 

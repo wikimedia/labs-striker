@@ -7,6 +7,8 @@ pipelines:
         run:
           env:
             PIPELINE_RUNNING: '1'
+      - name: test-node
+        build: test-node
 
   publish:
     blubberfile: blubber.yaml

@@ -1,0 +1,19 @@
+{
+	"private": true,
+	"dependencies": {
+		"less": "^4.2.1",
+		"vite": "^6.0.5",
+		"zxcvbn": "^4.4.2"
+	},
+	"scripts": {
+		"build": "vite build",
+		"test": "grunt test"
+	},
+	"devDependencies": {
+		"eslint-config-wikimedia": "0.28.2",
+		"grunt": "1.6.1",
+		"grunt-eslint": "24.3.0",
+		"grunt-stylelint": "0.20.1",
+		"stylelint-config-wikimedia": "0.18.0"
+	}
+}

@@ -1,43 +1,43 @@
 {
-  "command": "/usr/sbin/apache2",
-  "config_files": [
-    {
-      "source": "/var/lib/kolla/config_files/src/etc/ldap.conf",
-      "dest": "/etc/ldap.conf",
-      "merge": true,
-      "preserve_properties": true
-    },
-    {
-      "source": "/var/lib/kolla/config_files/src/etc/apache2/sites-enabled/",
-      "dest": "/etc/apache2/sites-enabled",
-      "merge": false,
-      "preserve_properties": true
-    },
-    {
-      "source": "/var/lib/kolla/config_files/src/etc/keystone/",
-      "dest": "/etc/keystone",
-      "merge": true,
-      "preserve_properties": true
-    },
-    {
-      "source": "/var/lib/kolla/config_files/src/var/lib/kolla/venv/lib/python3.9/site-packages/",
-      "dest": "/var/lib/kolla/venv/lib/python3.9/site-packages",
-      "merge": true,
-      "preserve_properties": true
-    },
-    {
-      "source": "/var/lib/kolla/config_files/src/striker/extend_start.sh",
-      "dest": "/usr/local/bin/kolla_extend_start",
-      "owner": "root",
-      "perm": "0555",
-      "optional": false
-    },
-    {
-      "source": "/var/lib/kolla/config_files/src/striker/dtu.py",
-      "dest": "/usr/local/bin/dtu",
-      "owner": "root",
-      "perm": "0555",
-      "optional": false
-    }
-  ]
+	"command": "/usr/sbin/apache2",
+	"config_files": [
+		{
+			"source": "/var/lib/kolla/config_files/src/etc/ldap.conf",
+			"dest": "/etc/ldap.conf",
+			"merge": true,
+			"preserve_properties": true
+		},
+		{
+			"source": "/var/lib/kolla/config_files/src/etc/apache2/sites-enabled/",
+			"dest": "/etc/apache2/sites-enabled",
+			"merge": false,
+			"preserve_properties": true
+		},
+		{
+			"source": "/var/lib/kolla/config_files/src/etc/keystone/",
+			"dest": "/etc/keystone",
+			"merge": true,
+			"preserve_properties": true
+		},
+		{
+			"source": "/var/lib/kolla/config_files/src/var/lib/kolla/venv/lib/python3.9/site-packages/",
+			"dest": "/var/lib/kolla/venv/lib/python3.9/site-packages",
+			"merge": true,
+			"preserve_properties": true
+		},
+		{
+			"source": "/var/lib/kolla/config_files/src/striker/extend_start.sh",
+			"dest": "/usr/local/bin/kolla_extend_start",
+			"owner": "root",
+			"perm": "0555",
+			"optional": false
+		},
+		{
+			"source": "/var/lib/kolla/config_files/src/striker/dtu.py",
+			"dest": "/usr/local/bin/dtu",
+			"owner": "root",
+			"perm": "0555",
+			"optional": false
+		}
+	]
 }

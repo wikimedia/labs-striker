@@ -2,12 +2,16 @@
 *
 
 # Conditionally include things we know we want in the container
+!.eslintignore
+!.eslintrc.json
 # Copy .git/refs/heads/* into the container
 !.git
 .git/*
 !.git/HEAD
 !.git/refs/heads/*
 !.pipeline
+!.stylelintrc.json
+!Gruntfile.js
 !LICENSE
 !README.rst
 !contrib
@@ -15,6 +19,8 @@
 docs/_build
 !etc
 !manage.py
+!package.json
+!package-lock.json
 !poetry.lock
 !pyproject.toml
 !requirements.txt
@@ -23,3 +29,4 @@ docs/_build
 !striker
 !test-requirements.txt
 !tox.ini
+!vite.config.mjs

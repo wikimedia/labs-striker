@@ -8,7 +8,7 @@ services:
       args:
         LIVES_UID: ${LOCAL_UID:?run `make .env`}
         LIVES_GID: ${LOCAL_GID:?run `make .env`}
-    image: "striker/striker"
+    image: striker/striker
     restart: always
     # Run container as local user to allow Linux mount writes
     user: "${LOCAL_UID:?run `make .env`}:${LOCAL_GID:?run `make .env`}"
@@ -112,7 +112,7 @@ services:
   mariadb:
     build:
       context: contrib/docker/mariadb
-    image: "striker/mariadb"
+    image: striker/mariadb
     restart: always
     volumes:
       - type: volume
@@ -127,11 +127,11 @@ services:
   openldap:
     build:
       context: contrib/docker/openldap
-    image: "striker/openldap"
+    image: striker/openldap
     restart: always
     command:
-      - "--loglevel"
-      - "debug"
+      - --loglevel
+      - debug
     ports:
       - "1389:389"
     volumes:
@@ -151,7 +151,7 @@ services:
   phabricator:
     build:
       context: contrib/docker/phabricator
-    image: "striker/phabricator"
+    image: striker/phabricator
     restart: always
     ports:
       - "8081:8081"
@@ -170,7 +170,7 @@ services:
   keystone:
     build:
       context: contrib/docker/keystone
-    image: "striker/keystone"
+    image: striker/keystone
     restart: always
     ports:
       - "5000:5000"
@@ -184,7 +184,7 @@ services:
   sulwiki:
     build:
       context: contrib/docker/mediawiki
-    image: "striker/mediawiki"
+    image: striker/mediawiki
     restart: always
     environment:
       APACHE_PORT: 8082
@@ -209,7 +209,7 @@ services:
   ldapwiki:
     build:
       context: contrib/docker/mediawiki
-    image: "striker/mediawiki"
+    image: striker/mediawiki
     restart: always
     environment:
       APACHE_PORT: 8083

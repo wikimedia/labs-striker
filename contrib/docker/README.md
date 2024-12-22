@@ -23,7 +23,7 @@ provisioning tool (like Puppet, Chef, Saltstack, etc) to handle state
 reconciliation for us.
 
 ```console
-$ make start tail
+$ make build start tail
  So much stuff scrolls by...
  Still scrolling...
  Will it ever stop?

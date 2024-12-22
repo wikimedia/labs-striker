@@ -2,6 +2,7 @@
 {% load bootstrap3 %}
 {% load i18n %}
 {% load static %}
+{% load vite %}
 
 {% block title %}{% trans "Create a Wikimedia developer account" %}{% endblock %}
 {% block content %}
@@ -90,8 +91,8 @@
 
 {% block js %}
 {{ block.super }}
-<script lang="javascript" src="{% static 'js/parsley.min.js' %}"></script>
-<script lang="javascript" src="{% static 'js/parsley-bootstrap.js' %}"></script>
+<script lang="javascript" src="{% static 'js/thirdparty/parsley.min.js' %}"></script>
+<script lang="javascript" src="{% vite 'static/js/parsley-bootstrap.mjs' %}"></script>
 {% block step_js %}{% endblock %}
 {% endblock %}
 {# vim:sw=2:ts=2:sts=2:et:ft=htmldjango: #}

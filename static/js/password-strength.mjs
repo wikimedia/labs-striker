@@ -2,6 +2,8 @@
  * Copyright (c) 2016 Wikimedia Foundation and contributors.
  * Licensed under the GPL v3+ license
  */
+import zxcvbn from "zxcvbn";
+
 $(function () {
     "use strict";
     var $passwd = $('.check-password-strength-input'),

@@ -1,0 +1,12 @@
+/package-lock.json
+
+/cover/**/*
+/docs/_build/**/*
+/staticfiles/**
+/static/css/thirdparty/**/*
+/static/js/thirdparty/**/*
+/static/vite/**
+
+
+# TODO: fix in a later commit
+/striker/tools/fixtures/software_license.json
