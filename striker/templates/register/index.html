@@ -3,17 +3,21 @@
 {% load i18n %}
 
 {% block step-oauth %}
-<div class="panel panel-primary">
-  <div class="panel-heading">
-    <h3 class="panel-title">{% bootstrap_icon "globe" %} {% trans "Login with your Wikimedia account" %}</h3>
-  </div>
-  <div class="panel-body">
-    <p>{% blocktrans with oauth="https://www.mediawiki.org/wiki/Special:MyLanguage/Help:OAuth" %}Login with your Wikimedia account using <a href="{{ oauth }}">OAuth</a> to get started creating a new developer account.{% endblocktrans %}</p>
-    <a href="{% url 'labsauth:oauth_initiate' %}?next={% url 'register:oauth' %}" class="btn btn-primary btn-block">
-      {% bootstrap_icon "log-in" %}
-      {% trans 'Login using Wikimedia account' %}
-    </a>
-  </div>
-</div>
+<span class="cdx-card">
+  <span class="cdx-card__icon striker-icon--logo-wikimedia"></span>
+  <span class="cdx-card__text">
+    <span class="cdx-card__text__title">{% trans "Login with your Wikimedia account" %}</span>
+    <span class="cdx-card__text__supporting-text">
+      {% blocktrans with oauth="https://www.mediawiki.org/wiki/Special:MyLanguage/Help:OAuth" %}
+      Login with your Wikimedia account using <a href="{{ oauth }}" class="striker-link">OAuth</a> to get started creating a new developer account.
+      {% endblocktrans %}
+    </span>
+    <span class="cdx-card__text">
+      <a href="{% url 'labsauth:oauth_initiate' %}?next={% url 'register:oauth' %}" class="striker-link">
+        {% trans 'Login using Wikimedia account' %}
+      </a>
+    </span>
+  </span>
+</span>
 {% endblock %}
 {# vim:sw=2:ts=2:sts=2:et:ft=htmldjango: #}

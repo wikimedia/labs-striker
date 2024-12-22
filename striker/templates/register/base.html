@@ -14,74 +14,82 @@
   </div>
   <div class="row">
     <div class="col-sm-6">
-      <div class="panel-group">
+      <div class="striker-card-group">
         {% block step-oauth %}
-        <div class="panel panel-{% if wizard.steps.step1|default:-1 > 0 %}success{% else %}default{% endif %}">
-          <div class="panel-heading">
-            <span class="text-muted">{% bootstrap_icon "globe" %} {% trans "Login with your Wikimedia account" %}</span>
-          </div>
-        </div>
+        <span class="cdx-card">
+          <span class="cdx-card__icon {% if wizard.steps.step1|default:-1 > 0 %}striker-icon--check-success{% else %}striker-icon--logo-wikimedia{% endif %}"></span>
+          <span class="cdx-card__text">
+            <span class="cdx-card__text__title">{% trans "Login with your Wikimedia account" %}</span>
+          </span>
+        </span>
         {% endblock %}
         {% block step-ldap %}
-        <div class="panel panel-{% if wizard.steps.step1|default:-1 > 1 %}success{% else %}default{% endif %}">
-          <div class="panel-heading">
-            <span class="text-muted">{% bootstrap_icon "user" %} {% trans "Choose your developer account username" %}</span>
-          </div>
-        </div>
+        <span class="cdx-card">
+          <span class="cdx-card__icon {% if wizard.steps.step1|default:-1 > 1 %}striker-icon--check-success{% else %}striker-icon--user-avatar{% endif %}"></span>
+          <span class="cdx-card__text">
+            <span class="cdx-card__text__title">{% trans "Choose your developer account username" %}</span>
+          </span>
+        </span>
         {% endblock %}
         {% block step-shell %}
-        <div class="panel panel-{% if wizard.steps.step1|default:-1 > 2 %}success{% else %}default{% endif %}">
-          <div class="panel-heading">
-            <span class="text-muted">{% bootstrap_icon "hdd" %} {% trans "Choose your UNIX shell username" %}</span>
-          </div>
-        </div>
+        <span class="cdx-card">
+          <span class="cdx-card__icon {% if wizard.steps.step1|default:-1 > 2 %}striker-icon--check-success{% else %}striker-icon--keyboard{% endif %}"></span>
+          <span class="cdx-card__text">
+            <span class="cdx-card__text__title">{% trans "Choose your UNIX shell username" %}</span>
+          </span>
+        </span>
         {% endblock %}
         {% block step-email %}
-        <div class="panel panel-{% if wizard.steps.step1|default:-1 > 3 %}success{% else %}default{% endif %}">
-          <div class="panel-heading">
-            <span class="text-muted">{% bootstrap_icon "envelope" %} {% trans "Add your email address" %}</span>
-          </div>
-        </div>
+        <span class="cdx-card">
+          <span class="cdx-card__icon {% if wizard.steps.step1|default:-1 > 3 %}striker-icon--check-success{% else %}striker-icon--message{% endif %}"></span>
+          <span class="cdx-card__text">
+            <span class="cdx-card__text__title">{% trans "Add your email address" %}</span>
+          </span>
+        </span>
         {% endblock %}
         {% block step-password %}
-        <div class="panel panel-{% if wizard.steps.step1|default:-1 > 4 %}success{% else %}default{% endif %}">
-          <div class="panel-heading">
-            <span class="text-muted">{% bootstrap_icon "lock" %} {% trans "Set your password" %}</span>
-          </div>
-        </div>
+        <span class="cdx-card">
+          <span class="cdx-card__icon {% if wizard.steps.step1|default:-1 > 4 %}striker-icon--check-success{% else %}striker-icon--lock{% endif %}"></span>
+          <span class="cdx-card__text">
+            <span class="cdx-card__text__title">{% trans "Set your password" %}</span>
+          </span>
+        </span>
         {% endblock %}
         {% block step-confirm %}
-        <div class="panel panel-{% if wizard.steps.step1|default:-1 > 5 %}success{% else %}default{% endif %}">
-          <div class="panel-heading">
-            <span class="text-muted">{% bootstrap_icon "check" %} {% trans "Create account" %}</span>
-          </div>
-        </div>
+        <span class="cdx-card">
+          <span class="cdx-card__icon {% if wizard.steps.step1|default:-1 > 5 %}striker-icon--check-success{% else %}striker-icon--check{% endif %}"></span>
+          <span class="cdx-card__text">
+            <span class="cdx-card__text__title">{% trans "Create account" %}</span>
+          </span>
+        </span>
         {% endblock %}
       </div>
     </div>
     <div class="col-sm-6">
       {% block left-col %}
-      <div class="panel-group">
-        <div class="panel panel-info">
-          <div class="panel-heading">
-            {% bootstrap_icon "info-sign" %} {% trans "About Wikimedia developer accounts" %}
-          </div>
-          <div class="panel-body">
-            {% blocktrans %}<strong>Toolforge</strong> shares an account system with many other technical tools used by Wikimedians. The developer account used here also works with <a href="https://wikitech.wikimedia.org/">Wikitech</a>, <a href="https://gerrit.wikimedia.org/">Gerrit</a>, <a href="https://phabricator.wikimedia.org/">Phabricator</a>, and other tools designed to help our technical contributors build and maintain software. This developer account is separate from the <a href="https://meta.wikimedia.org/wiki/Help:Unified_login">Wikimedia accounts</a> that are used by most <a href="https://meta.wikimedia.org/wiki/Wikimedia_wikis">Wikimedia wikis</a>.{% endblocktrans %}
-          </div>
-        </div>
-        <div class="panel panel-danger">
-          <div class="panel-heading">
-            {% bootstrap_icon "alert" %} {% trans "Privacy notices" %}
-          </div>
-          <div class="panel-body">
-            {% blocktrans %}Creating and using a developer account will expose some information to other Cloud Services users:{% endblocktrans %}
-            <ul>
-              <li>{% blocktrans %}The email address you associate with your developer account <strong>will</strong> be publically visible.{% endblocktrans %}</li>
-              <li>{% blocktrans %}Your IP address <strong>will</strong> be recorded and <strong>may</strong> be visible to other users of Cloud VPS and Toolforge when you connect to virtual machines using SSH.{% endblocktrans %}</li>
-            </ul>
-          </div>
-        </div>
+      <div class="striker-card-group">
+        <span class="cdx-card">
+          <span class="cdx-card__icon striker-icon--user-avatar"></span>
+          <span class="cdx-card__text">
+            <span class="cdx-card__text__title">{% trans "About Wikimedia developer accounts" %}</span>
+            <span class="cdx-card__text__description">
+              {% blocktrans %}<strong>Toolforge</strong> shares an account system with many other technical tools used by Wikimedians. The developer account used here also works with <a href="https://gerrit.wikimedia.org/" class="striker-link">Gerrit</a>, <a href="https://phabricator.wikimedia.org/" class="striker-link">Phabricator</a>, and other tools designed to help our technical contributors build and maintain software. This developer account is separate from the <a href="https://meta.wikimedia.org/wiki/Help:Unified_login" class="striker-link">Wikimedia accounts</a> that are used by most <a href="https://meta.wikimedia.org/wiki/Wikimedia_wikis" class="striker-link">Wikimedia wikis</a>.{% endblocktrans %}
+            </span>
+          </span>
+        </span>
+        <span class="cdx-card">
+          <span class="cdx-card__icon striker-icon--notice"></span>
+          <span class="cdx-card__text">
+            <span class="cdx-card__text__title">{% trans "Privacy notices" %}</span>
+            <span class="cdx-card__text__description">
+              {% blocktrans %}Creating and using a developer account will expose some information to other Cloud Services users:{% endblocktrans %}
+              <ul>
+                <li>{% blocktrans %}The email address you associate with your developer account <strong>will</strong> be publically visible.{% endblocktrans %}</li>
+                <li>{% blocktrans %}Your IP address <strong>will</strong> be recorded and <strong>may</strong> be visible to other users of Cloud VPS and Toolforge when you connect to virtual machines using SSH.{% endblocktrans %}</li>
+              </ul>
+            </span>
+          </span>
+        </span>
       </div>
       {% endblock %}
     </div>

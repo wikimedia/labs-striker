@@ -3,6 +3,17 @@
 @import ( reference ) '@wikimedia/codex/mixins/css-icon.less';
 @import ( reference ) '@wikimedia/codex/mixins/link.less';
 
+.striker-card-group {
+	.cdx-card {
+		margin-bottom: @spacing-100;
+	}
+
+	&.cdx-card > :last-child,
+	& > :last-child .cdx-card {
+		margin-bottom: 0;
+	}
+}
+
 .striker-link {
 	--color-visited: @color-progressive;
 	--color-visited--hover: @color-progressive--hover;
@@ -16,12 +27,28 @@
 		.cdx-mixin-css-icon( @cdx-icon-add );
 	}
 
+	&--block-destructive {
+		.cdx-mixin-css-icon( @cdx-icon-block, @color-destructive );
+	}
+
 	&--code {
 		.cdx-mixin-css-icon( @cdx-icon-code );
 	}
 
+	&--check {
+		.cdx-mixin-css-icon( @cdx-icon-check );
+
+		&-success {
+			.cdx-mixin-css-icon( @cdx-icon-check, @color-success );
+		}
+	}
+
 	&--key {
 		.cdx-mixin-css-icon( @cdx-icon-key );
+	}
+
+	&--keyboard {
+		.cdx-mixin-css-icon( @cdx-icon-keyboard );
 	}
 
 	&--lock {
@@ -30,6 +57,14 @@
 
 	&--logo-wikimedia {
 		.cdx-mixin-css-icon( @cdx-icon-logo-wikimedia );
+	}
+
+	&--message {
+		.cdx-mixin-css-icon( @cdx-icon-message );
+	}
+
+	&--notice {
+		.cdx-mixin-css-icon( @cdx-icon-notice );
 	}
 
 	&--settings {
@@ -64,6 +99,14 @@
 /* Hacks for Bootstrap interoperability */
 .cdx-card__text__supporting-text {
 	font-size: 0.875em; // was: rem
+}
+
+.cdx-card .cdx-message {
+	display: inline-block;
+
+	.cdx-message__content {
+		margin: 0;
+	}
 }
 /* End of hacks. */
 
@@ -159,11 +202,6 @@ form.hidden-labels label.no-hide {
 
 .footer {
 	margin-top: 2em;
-}
-
-.panel-body-warning {
-	background-color: #fcf8e3;
-	color: #8a6d3b;
 }
 
 .panel-success > .panel-heading > .text-muted {

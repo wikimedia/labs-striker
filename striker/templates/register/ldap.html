@@ -3,28 +3,23 @@
 {% load i18n %}
 
 {% block step-ldap %}
-<div class="panel panel-primary">
-  <div class="panel-heading">
-    <h3 class="panel-title">{% bootstrap_icon "user" %} {% trans "Choose your developer username" %}</h3>
-  </div>
-  <div class="panel-body">
-    <p>{% blocktrans %}Developer account usernames are commonly either the same as a user's Wikimedia account username or their real name (e.g. "Jimmy Wales").{% endblocktrans %}</p>
-    <form method="post" action="" class="form parsley">
-      {% csrf_token %}
-      {{ wizard.management_form }}
+<form method="post" action="" class="form parsley">
+  {% csrf_token %}
+  {{ wizard.management_form }}
+  <span class="cdx-card">
+    <span class="cdx-card__icon striker-icon--user-avatar"></span>
+    <span class="cdx-card__text">
+      <span class="cdx-card__text__title">{% trans "Choose your developer username" %}</span>
+      <span class="cdx-card__text__description">
+        {% blocktrans %}Developer account usernames are commonly either the same as a user's Wikimedia account username or their real name (e.g. "Jimmy Wales").{% endblocktrans %}
+      </span>
       {% bootstrap_form wizard.form %}
-      {% buttons %}
-      <div class="row">
-        <div class="col-sm-6 col-sm-push-6">
-          <button class="btn btn-primary pull-right" type="submit">{% trans "Next" %} {% bootstrap_icon "chevron-right" %}</button>
-        </div>
-        <div class="col-sm-6 col-sm-pull-6">
-          <a class="btn btn-default pull-left" href="{% url 'register:index' %}">{% bootstrap_icon "chevron-left" %} {% trans "Previous" %}</a>
-        </div>
-      </div>
-      {% endbuttons %}
-    </form>
-  </div>
-</div>
+      <span class="cdx-card__text__description">
+        <button class="cdx-button cdx-button--weight-primary cdx-button--action-progressive pull-right" type="submit">{% trans "Next" %}</button>
+        <a class="striker-link pull-left" href="{% url 'register:index' %}">{% trans "Previous" %}</a>
+      </span>
+    </span>
+  </span>
+</form>
 {% endblock %}
 {# vim:sw=2:ts=2:sts=2:et:ft=htmldjango: #}
