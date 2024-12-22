@@ -23,10 +23,6 @@
 }
 
 .striker-icon {
-	&--add {
-		.cdx-mixin-css-icon( @cdx-icon-add );
-	}
-
 	&--block-destructive {
 		.cdx-mixin-css-icon( @cdx-icon-block, @color-destructive );
 	}
@@ -75,10 +71,6 @@
 		.cdx-mixin-css-icon( @cdx-icon-settings );
 	}
 
-	&--subtract {
-		.cdx-mixin-css-icon( @cdx-icon-subtract );
-	}
-
 	&--tag-warning-small {
 		.cdx-mixin-css-icon( @cdx-icon-tag, @color-warning, @size-icon-small );
 	}
@@ -87,8 +79,16 @@
 		.cdx-mixin-css-icon( @cdx-icon-text-summary, @color-warning );
 	}
 
-	&--trash-destructive {
-		.cdx-mixin-css-icon( @cdx-icon-trash, @color-destructive );
+	&--trash {
+		.cdx-mixin-css-icon( @cdx-icon-trash );
+
+		&-destructive {
+			.cdx-mixin-css-icon( @cdx-icon-trash, @color-destructive );
+		}
+
+		&-inverted {
+			.cdx-mixin-css-icon( @cdx-icon-trash, @color-inverted );
+		}
 	}
 
 	&--user-add {
@@ -133,6 +133,17 @@
 @import './layout.less';
 
 /* Hacks for Bootstrap interoperability */
+.cdx-accordion {
+	.cdx-accordion__header {
+		font-size: 1em; // was: rem
+		font-weight: @font-weight-bold;
+	}
+
+	.cdx-accordion__content {
+		font-size: 1em; // was: rem
+	}
+}
+
 .cdx-card__text__supporting-text {
 	font-size: 0.875em; // was: rem
 }

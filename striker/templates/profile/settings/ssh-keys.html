@@ -4,70 +4,59 @@
 
 {% block title %}{% trans "SSH keys" %}{% endblock %}
 {% block content %}
-{% if ssh_keys %}
-<div class="panel-group">
-  {% for key in ssh_keys %}
-  {% trans "Show" as show %}
-  {% trans "Hide" as hide %}
-  <div class="panel panel-default">
-    <div class="panel-heading">
-      <div class="row">
-        <div class="col-sm-11">
-          <h3 class="panel-title"><span class="striker-icon--key" aria-hidden="true"></span> {{ key.comment }} ({{ key.bits }} {{ key.type_name }})</h3>
-        </div>
-        <div class="col-sm-1">
-          <form method="post" action="{% url 'profile:ssh_key_delete' %}" class="form form-inline">
-            {% csrf_token %}
-            {% bootstrap_form key.form %}
-            {% trans "Delete" as delete_title %}
-            <button
-              class="cdx-button cdx-button--action-destructive cdx-button--weight-quiet pull-right"
-              type="submit"
-              title="{{ delete_title }}"
-              aria-label="{{ delete_title }}"
-            >
-              <span class="striker-icon--trash-destructive"></span>
-            </button>
-          </form>
-        </div>
-      </div>
-    </div>
-    <div class="panel-body">
-      <dl class="dl-horizontal margin-zero">
-        <dt>{% trans "Fingerprint" %}</dt>
-        <dd>{{ key.hash_md5 }}</dd>
-        <dd>{{ key.hash_sha256 }}</dd>
-        <dt>
-          <a class="btn btn-default btn-xs collapsed" role="button" data-toggle="collapse" href="#pubkey-{{ forloop.counter }}" aria-expanded="false" aria-controls="pubkey-{{ forloop.counter }}">
-            <span class="if-collapsed striker-icon--add" aria-label="{{ show }}"></span>
-            <span class="if-not-collapsed striker-icon--subtract" aria-label="{{ hide }}"></span>
-            {% trans "Public key" %}
-          </a>
-        </dt>
-        <dd>
-          <div class="collapse" id="pubkey-{{ forloop.counter }}">
-            <div class="well well-sm margin-zero pubkey-view">{{ key.keydata }}</div>
-          </div>
-        </dd>
-      </dl>
-    </div>
+{% trans "Show" as show %}
+{% trans "Hide" as hide %}
+{% for key in ssh_keys %}
+<details class="cdx-accordion">
+  <summary>
+    <h3 class="cdx-accordion__header">
+      <span class="cdx-accordion__header__title">
+        {{ key.comment }} ({{ key.bits }} {{ key.type_name }})
+      </span>
+    </h3>
+  </summary>
+  <div class="cdx-accordion__content">
+    <dl class="dl-horizontal margin-zero">
+      <dt>{% trans "Fingerprint" %}</dt>
+      <dd>{{ key.hash_md5 }}</dd>
+      <dd>{{ key.hash_sha256 }}</dd>
+      <dt>{% trans "Contents" %}</dt>
+      <dd class="striker-mb">
+        <div class="well well-sm margin-zero pubkey-view">{{ key.keydata }}</div>
+      </dd>
+      <dt>{% trans "Actions" %}</dt>
+      <dd>
+        <form method="post" action="{% url 'profile:ssh_key_delete' %}">
+          {% csrf_token %}
+          {% bootstrap_form key.form %}
+          {% trans "Delete" as delete_title %}
+          <button class="cdx-button cdx-button--weight-primary cdx-button--action-destructive" type="submit" title="{{ delete_title }}" aria-label="{{ delete_title }}" >
+            <span class="striker-icon--trash-inverted" aria-hidden="true"></span>
+            Delete
+          </button>
+        </form>
+      </dd>
+    </dl>
   </div>
-  {% endfor %}
-</div>
-{% endif %}
-<div class="panel panel-info">
-  <div class="panel-heading">
-    <h3 class="panel-title"><span class="striker-icon--add" aria-hidden="true"></span> {% trans "New SSH key" %}</h3>
-  </div>
-  <div class="panel-body">
+</details>
+{% endfor %}
+<details class="cdx-accordion" {% if not ssh_keys %}open{% endif %}>
+  <summary>
+    <h3 class="cdx-accordion__header">
+      <span class="cdx-accordion__header__title">
+        {% trans "New SSH key" %}
+      </span>
+    </h3>
+  </summary>
+  <div class="cdx-accordion__content">
     <form method="post" action="{% url 'profile:ssh_key_add' %}" class="form">
       {% csrf_token %}
       {% bootstrap_form new_key %}
       {% buttons %}
-      <button class="btn btn-primary" type="submit">{% trans "Add SSH key" %}</button>
+      <button class="cdx-button cdx-button--action-progressive cdx-button--weight-primary" type="submit">{% trans "Add SSH key" %}</button>
       {% endbuttons %}
     </form>
   </div>
-</div>
+</details>
 {% endblock %}
 {# vim:sw=2:ts=2:sts=2:et: #}
