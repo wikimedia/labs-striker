@@ -1,11 +1,10 @@
 {% load bootstrap3 %}
-{% load fontawesome %}
 {% load i18n %}
 
 {% if user.phid %}
 <div class="panel panel-default">
   <div class="panel-heading">
-      <h3 class="panel-title"><span class="fa-stack">{% fa_icon "circle" "stack-2x" "fw" aria_hidden="true" %}{% fa_icon "cog" "stack-1x" "fw" "inverse" aria_hidden="true" %}</span> {% trans "Phabricator account" %}</h3>
+      <h3 class="panel-title"><span class="striker-icon--settings" aria-hidden="true"></span> {% trans "Phabricator account" %}</h3>
   </div>
   <div class="panel-body">
     <dl class="dl-horizontal margin-zero">

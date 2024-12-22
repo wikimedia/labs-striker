@@ -1,6 +1,5 @@
 {% extends "profile/settings/base.html" %}
 {% load bootstrap3 %}
-{% load fontawesome %}
 {% load i18n %}
 
 {% block title %}{% trans "SSH keys" %}{% endblock %}
@@ -14,14 +13,21 @@
     <div class="panel-heading">
       <div class="row">
         <div class="col-sm-11">
-          <h3 class="panel-title"><span class="fa-stack">{% fa_icon "square" "stack-2x" "fw" aria_hidden="true" %}{% fa_icon "key" "stack-1x" "fw" "inverse" aria_hidden="true" %}</span> {{ key.comment }} ({{ key.bits }} {{ key.type_name }})</h3>
+          <h3 class="panel-title"><span class="striker-icon--key" aria-hidden="true"></span> {{ key.comment }} ({{ key.bits }} {{ key.type_name }})</h3>
         </div>
         <div class="col-sm-1">
           <form method="post" action="{% url 'profile:ssh_key_delete' %}" class="form form-inline">
             {% csrf_token %}
             {% bootstrap_form key.form %}
             {% trans "Delete" as delete_title %}
-            <button class="btn btn-danger pull-right" type="submit" title="{{ delete_title }}" aria-label="{{ delete_title }}" >{% bootstrap_icon "trash" %}</button>
+            <button
+              class="cdx-button cdx-button--action-destructive cdx-button--weight-quiet pull-right"
+              type="submit"
+              title="{{ delete_title }}"
+              aria-label="{{ delete_title }}"
+            >
+              <span class="striker-icon--trash-destructive"></span>
+            </button>
           </form>
         </div>
       </div>
@@ -33,8 +39,8 @@
         <dd>{{ key.hash_sha256 }}</dd>
         <dt>
           <a class="btn btn-default btn-xs collapsed" role="button" data-toggle="collapse" href="#pubkey-{{ forloop.counter }}" aria-expanded="false" aria-controls="pubkey-{{ forloop.counter }}">
-            <span class="if-collapsed">{% fa_icon "plus-square-o" "fw" aria_label=show title=show %}</span>
-            <span class="if-not-collapsed">{% fa_icon "minus-square-o" "fw" aria_label=hide title=hide %}</span>
+            <span class="if-collapsed striker-icon--add" aria-label="{{ show }}"></span>
+            <span class="if-not-collapsed striker-icon--subtract" aria-label="{{ hide }}"></span>
             {% trans "Public key" %}
           </a>
         </dt>
@@ -51,7 +57,7 @@
 {% endif %}
 <div class="panel panel-info">
   <div class="panel-heading">
-    <h3 class="panel-title"><span class="fa-stack">{% fa_icon "square-o" "stack-2x" "fw" aria_hidden="true" %}{% fa_icon "key" "stack-1x" "fw" aria_hidden="true" %}</span> {% trans "New SSH key" %}</h3>
+    <h3 class="panel-title"><span class="striker-icon--add" aria-hidden="true"></span> {% trans "New SSH key" %}</h3>
   </div>
   <div class="panel-body">
     <form method="post" action="{% url 'profile:ssh_key_add' %}" class="form">

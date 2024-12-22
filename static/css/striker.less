@@ -24,8 +24,32 @@
 		.cdx-mixin-css-icon( @cdx-icon-key );
 	}
 
+	&--lock {
+		.cdx-mixin-css-icon( @cdx-icon-lock );
+	}
+
+	&--logo-wikimedia {
+		.cdx-mixin-css-icon( @cdx-icon-logo-wikimedia );
+	}
+
+	&--settings {
+		.cdx-mixin-css-icon( @cdx-icon-settings );
+	}
+
+	&--subtract {
+		.cdx-mixin-css-icon( @cdx-icon-subtract );
+	}
+
+	&--trash-destructive {
+		.cdx-mixin-css-icon( @cdx-icon-trash, @color-destructive );
+	}
+
 	&--user-add {
 		.cdx-mixin-css-icon( @cdx-icon-user-add );
+	}
+
+	&--user-avatar {
+		.cdx-mixin-css-icon( @cdx-icon-user-avatar );
 	}
 
 	&--user-rights {
@@ -46,7 +70,6 @@
 // TODO: bundle via NPM? or just drop entirely
 @import 'thirdparty/bootstrap.min.css';
 @import 'thirdparty/bootstrap-theme.min.css';
-@import 'thirdparty/font-awesome.min.css';
 
 .environment-banner {
 	display: block;
