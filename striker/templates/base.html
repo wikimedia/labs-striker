@@ -86,7 +86,21 @@
     {% block banner %}{% endblock banner %}
     <div id="content" class="container-fluid">
       {% block pre_content %}
-      {% bootstrap_messages %}
+      {% if messages %}
+      <div class="striker-messages striker-mb">
+        {% for message in messages %}
+        <div
+          class="cdx-message cdx-message--block {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}cdx-message--error{% else %}cdx-message--notice{% endif %}"
+          aria-live="polite"
+        >
+          <span class="cdx-message__icon"></span>
+          <div class="cdx-message__content">
+            <p>{{ message }}</p>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
       {% endblock pre_content %}
       {% block content %}<p>{{ request.path }}: Your message here.</p>{% endblock content %}
       {% block post_content %}{% endblock post_content %}
