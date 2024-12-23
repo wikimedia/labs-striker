@@ -38,13 +38,16 @@
       {% for info in toolinfo %}
       {% include "tools/info/record.html" with toolinfo=info %}
       {% if forloop.last and not is_disabled and can_edit %}
-      <div class="pull-right striker-mt">
-        <a
-          href="{% url 'tools:info_create' tool=tool.name %}"
-          class="cdx-button cdx-button--fake-button cdx-button--fake-button--enabled cdx-button--weight-quiet cdx-button--action-progressive"
-        >{% trans "Add toolinfo record" %}
-        </a>
-      </div>
+        <div class="striker-mt striker-mb">
+          <div class="pull-right">
+            <a
+              href="{% url 'tools:info_create' tool=tool.name %}"
+              class="cdx-button cdx-button--fake-button cdx-button--fake-button--enabled cdx-button--weight-quiet cdx-button--action-progressive"
+            >{% trans "Add toolinfo record" %}
+            </a>
+          </div>
+          <div class="clearfix"></div>
+        </div>
       {% endif %}
       {% empty %}
       <span class="cdx-card">
@@ -69,61 +72,123 @@
       {% endfor %}
     </div>
   </div>
-  <div class="col-sm-3 col-sm-pull-9 panel-group">
-    <div class="panel panel-default">
-      <div class="panel-heading" role="tab" id="maintainers">
-        <h3 class="panel-title">{% bootstrap_icon "user" %} {% trans "Maintainers" %}</h3>
+  <div class="col-sm-3 col-sm-pull-9">
+    <div class="cdx-table">
+      <div class="cdx-table__header">
+        <div class="cdx-table__header__caption" aria-hidden="true">
+          {% trans "Maintainers" %}
+        </div>
+        {% if not is_disabled and can_edit %}
+          <div class="cdx-table__header__header-content">
+            <a
+              class="cdx-button cdx-button--fake-button cdx-button--fake-button--enabled cdx-button--weight-primary"
+              href="{% url 'tools:maintainers' tool=tool.name %}"
+            >
+              {% trans "Manage maintainers" %}
+            </a>
+          </div>
+        {% endif %}
       </div>
-      <ul class="list-group">
-        {% for maintainer in tool.maintainers|dictsort:"cn" %}
-        <li class="list-group-item">{{ maintainer.cn }}</li>
-        {% endfor %}
-        {% for maintainer in tool.tool_members|dictsort:"cn" %}
-        <li class="list-group-item">{{ maintainer.cn }}</li>
-        {% endfor %}
-      </ul>
-      {% if not is_disabled and can_edit %}
-      <div class="list-group">
-        <a class="list-group-item" href="{% url 'tools:maintainers' tool=tool.name %}">{% bootstrap_icon "edit" %} {% trans "manage maintainers" %}</a>
+      <div class="cdx-table__table-wrapper striker-mt">
+        <table class="cdx-table__table">
+          <caption>{% trans "Maintainers" %}</caption>
+          <tbody>
+            {% for maintainer in tool.maintainers|dictsort:"cn" %}
+              <tr>
+                <td>{{ maintainer.cn }}</td>
+              </tr>
+            {% endfor %}
+            {% for maintainer in tool.tool_members|dictsort:"cn" %}
+              <tr>
+                <td>{{ maintainer.cn }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
       </div>
-      {% endif %}
-    </div>
-    <div class="panel panel-default">
-      <div class="panel-heading" role="tab" id="git">
-        <h3 class="panel-title">{% bootstrap_icon "hdd" %} {% trans "Git repositories" %}</h3>
+  </div>
+    <div class="cdx-table striker-mt">
+      <div class="cdx-table__header">
+        <div class="cdx-table__header__caption" aria-hidden="true">
+          {% trans "Git repositories" %}
+        </div>
+        {% if not is_disabled and can_edit %}
+          <div class="cdx-table__header__header-content">
+            <a
+              class="cdx-button cdx-button--fake-button cdx-button--fake-button--enabled cdx-button--weight-primary"
+              href="{% url 'tools:repo_create' tool=tool.name %}"
+            >
+              {% trans "Create repository" %}
+            </a>
+          </div>
+        {% endif %}
       </div>
-      <div class="list-group">
-        {% for repo in repos %}
-        <a class="list-group-item" href="{% url 'tools:repo_view' tool=tool.name repo_id=repo.repo_id %}">{{ repo.name }}</a>
-        {% endfor %}
+      <div class="cdx-table__table-wrapper striker-mt">
+        <table class="cdx-table__table">
+          <caption>{% trans "Git repositories" %}</caption>
+          <tbody>
+            {% for repo in repositories %}
+              <tr>
+                <td>
+                  <a class="striker-link" href="{% url 'tools:repo_view' tool=tool.name repo_id=repo.repo_id %}">{{ repo.name }}</a>
+                </td>
+              </tr>
+            {% empty %}
+              <tr class="cdx-table__table__empty-state">
+                <td class="cdx-table__table__empty-state-content">
+                  {% trans "This tool has no repositories associated." %}
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
       </div>
-      {% if not is_disabled and can_edit %}
-      <div class="list-group">
-        <a class="list-group-item" href="{% url 'tools:repo_create' tool=tool.name %}">{% bootstrap_icon "plus-sign" %} {% trans "create repository" %}</a>
+  </div>
+    <div class="cdx-table striker-mt">
+      <div class="cdx-table__header">
+        <div class="cdx-table__header__caption" aria-hidden="true">
+          {% trans "Phabricator projects" %}
+        </div>
+        {% if not is_disabled and can_edit %}
+          <div class="cdx-table__header__header-content">
+            <a
+              class="cdx-button cdx-button--fake-button cdx-button--fake-button--enabled cdx-button--weight-primary"
+              href="{% url 'tools:project_create' tool=tool.name %}"
+            >
+              {% trans "Create project" %}
+            </a>
+          </div>
+        {% endif %}
       </div>
-      {% endif %}
-    </div>
-    <div class="panel panel-default">
-      <div class="panel-heading" role="tab" id="projects">
-        <h3 class="panel-title">{% bootstrap_icon "briefcase" %} {% trans "Phabricator projects" %}</h3>
+      <div class="cdx-table__table-wrapper striker-mt">
+        <table class="cdx-table__table">
+          <caption>{% trans "Phabricator projects" %}</caption>
+          <tbody>
+            {% for project in projects %}
+              <tr>
+                <td>
+                  <a class="striker-link" href="{% url 'tools:project_view' tool=tool.name project=project.name %}">{{ project.name }}</a>
+                </td>
+              </tr>
+            {% empty %}
+              <tr class="cdx-table__table__empty-state">
+                <td class="cdx-table__table__empty-state-content">
+                  {% trans "This tool has no projects associated." %}
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
       </div>
-      <div class="list-group">
-        {% for project in projects %}
-        <a class="list-group-item" href="{% url 'tools:project_view' tool=tool.name project=project.name %}">{{ project.name }}</a>
-        {% endfor %}
-      </div>
-      {% if not is_disabled and can_edit %}
-      <div class="list-group">
-        <a class="list-group-item" href="{% url 'tools:project_create' tool=tool.name %}">{% bootstrap_icon "plus-sign" %} {% trans "create project" %}</a>
-      </div>
-      {% endif %}
     </div>
     {% if can_delete and not is_disabled %}
-    <div class="panel panel-default">
-      <form method="post" action="{% url 'tools:disable' tool=tool.name %}" class="form form-inline">
+    <div class="striker-mt">
+      <form method="post" action="{% url 'tools:disable' tool=tool.name %}">
         {% csrf_token %}
         {% bootstrap_form disable_form %}
-        <button class="btn btn-danger btn-block" type="submit">{% bootstrap_icon "off" %} {% trans "Disable tool" %}</button>
+        <button class="cdx-button cdx-button--action-destructive cdx-button--weight-primary" type="submit">
+          {% trans "Disable tool" %}
+        </button>
       </form>
     </div>
     {% endif %}

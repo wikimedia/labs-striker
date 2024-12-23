@@ -3,7 +3,7 @@
 <span class="cdx-card">
   <span class="cdx-card__text striker-fullwidth">
     <span class="cdx-card__text__title">
-      {% if toolinfo.webservice_url %}<a href="{{ toolinfo.webservice_url }}">{% endif %}
+      {% if toolinfo.webservice_url %}<a href="{{ toolinfo.webservice_url }}" class="striker-link">{% endif %}
       {{ toolinfo.title }}
       {% if toolinfo.webservice_url %}</a>{% endif %}
     </span>
@@ -12,18 +12,18 @@
     <div class="toolinfo-details">
       <dl class="dl-horizontal">
         <dt>{% trans "License" %}</dt>
-        <dd><a href="{{ toolinfo.license.url }}">{{ toolinfo.license.name }}</a></dd>
+        <dd><a href="{{ toolinfo.license.url }}" class="striker-link">{{ toolinfo.license.name }}</a></dd>
         {% if toolinfo.repository %}
           <dt>{% trans "Source code" %}</dt>
-          <dd><a href="{{ toolinfo.repository }}">{{ toolinfo.repository }}</a></dd>
+          <dd><a href="{{ toolinfo.repository }}" class="striker-link">{{ toolinfo.repository }}</a></dd>
         {% endif %}
         {% if toolinfo.issues %}
           <dt>{% trans "Issues" %}</dt>
-          <dd><a href="{{ toolinfo.issues }}">{{ toolinfo.issues }}</a></dd>
+          <dd><a href="{{ toolinfo.issues }}" class="striker-link">{{ toolinfo.issues }}</a></dd>
         {% endif %}
         {% if toolinfo.docs %}
           <dt>{% trans "Docs" %}</dt>
-          <dd><a href="{{ toolinfo.docs }}">{{ toolinfo.docs }}</a></dd>
+          <dd><a href="{{ toolinfo.docs }}" class="striker-link">{{ toolinfo.docs }}</a></dd>
         {% endif %}
       </dl>
     </div>
