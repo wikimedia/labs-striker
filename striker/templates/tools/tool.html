@@ -14,28 +14,27 @@
 
 {% block content %}
 <div class="row">
-  <div class="col-sm-9 col-sm-push-3 panel-group">
-    {% if is_disabled %}
-    <div class="panel panel-danger">
-      <div class="panel-heading">
-        <h3 class="panel-title">
-          {% bootstrap_icon "off" %}
-          {% trans "Tool disabled" %}
-        </h3>
-      </div>
-      <div class="panel-body">
-        <p>{% blocktrans with since=locked_time|timesince %}This tool has been disabled for {{ since }}. Disabled tools are archived and deleted after 40 days.{% endblocktrans %}</p>
-        {% if can_delete %}
-        <form method="post" action="{% url 'tools:enable' tool=tool.name %}" class="form form-inline">
-          {% csrf_token %}
-          <input type="hidden" name="name" value="{{ tool.name }}">
-          <button class="btn btn-success pull-right" type="submit">{% bootstrap_icon "play-circle" %} {% trans "Re-enable tool" %}</button>
-        </form>
-        {% endif %}
-      </div>
-    </div>
-    {% endif %}
+  <div class="col-sm-9 col-sm-push-3">
     <div class="striker-card-group">
+      {% if is_disabled %}
+      <span class="cdx-card">
+        <span class="cdx-card__icon striker-icon--block-destructive" aria-hidden="true"></span>
+        <span class="cdx-card__text">
+          <span class="cdx-card__text__title">{% trans "Tool disabled" %}</span>
+          <span class="cdx-card__text__description">{% blocktrans with since=locked_time|timesince %}This tool has been disabled for {{ since }}. Disabled tools are archived and deleted after 40 days.{% endblocktrans %}</span>
+          {% if can_delete %}
+          <form method="post" action="{% url 'tools:enable' tool=tool.name %}" class="cdx-card__text__description">
+            {% csrf_token %}
+            <input type="hidden" name="name" value="{{ tool.name }}">
+            <button class="cdx-button cdx-button--action-destructive cdx-button--weight-primary" type="submit">
+              {% trans "Re-enable tool" %}
+            </button>
+          </form>
+          {% endif %}
+        </span>
+      </span>
+      {% endif %}
+
       {% for info in toolinfo %}
       {% include "tools/info/record.html" with toolinfo=info %}
       {% if forloop.last and not is_disabled and can_edit %}
@@ -48,22 +47,25 @@
       </div>
       {% endif %}
       {% empty %}
-      <div class="panel panel-warning">
-        <div class="panel-heading">
-          <h3 class="panel-title">
-            {% bootstrap_icon "wrench" %}
-            {% trans "No toolinfo records found" %}
-          </h3>
-        </div>
-        <div class="panel-body">
-          {% blocktrans %}Creating a toolinfo description is required for new tools and recommended for all tools.{% endblocktrans %}
-        </div>
-        {% if not is_disabled and can_edit %}
-        <div class="panel-body text-right">
-          <a href="{% url 'tools:info_create' tool=tool.name %}" class="btn btn-primary btn-sm">{% bootstrap_icon "plus" %} {% trans "add toolinfo" %}</a>
-        </div>
-        {% endif %}
-      </div>
+      <span class="cdx-card">
+        <span class="cdx-card__icon striker-icon--text-summary-warning" aria-hidden="true"></span>
+        <span class="cdx-card__text">
+          <span class="cdx-card__text__title">{% trans "No toolinfo records found" %}</span>
+          <span class="cdx-card__text__description">
+            {% blocktrans %}Creating a toolinfo description is required for new tools and recommended for all tools.{% endblocktrans %}
+          </span>
+          {% if not is_disabled and can_edit %}
+          <span class="cdx-card__text__description">
+            <a
+              href="{% url 'tools:info_create' tool=tool.name %}"
+              class="cdx-button cdx-button--fake-button cdx-button--fake-button--enabled cdx-button--weight-primary cdx-button--action-progressive"
+            >
+              {% trans "Add toolinfo" %}
+            </a>
+          </span>
+          {% endif %}
+        </span>
+      </span>
       {% endfor %}
     </div>
   </div>
