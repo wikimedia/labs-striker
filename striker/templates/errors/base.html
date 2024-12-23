@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+  {% block message %}{% endblock %}
+
+  {% block details %}
+    <span class="cdx-card">
+      <span class="cdx-card__text">
+        <span class="cdx-card__text__title">Debug information</span>
+        <span class="cdx-card__text__description">If you report this error, please include the details below.</span>
+        <dl class="cdx-card__text__description dl-horizontal">
+          <dt>Request ID</dt>
+          <dd>{{ request_id }}</dd>
+        </dl>
+      </span>
+    </span>
+  {% endblock %}
+{% endblock content %}

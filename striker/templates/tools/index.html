@@ -5,87 +5,85 @@
 
 {% block title %}{% trans "Tools" %}{% endblock %}
 {% block content %}
-<div class="container-fluid">
-  <div class="row">
-    <div class="col-md-3 panel-group">
-      <div class="panel panel-default">
-        <div class="panel-heading">{% bootstrap_icon "star" %} {% trans "Your tools" %}</div>
-        {% if not user.is_anonymous %}
-        <div class="list-group">
-          {% for tool in my_tools %}
-          <a href="{% url 'tools:tool' tool=tool %}" class="list-group-item">{{ tool.name }}</a>
-          {% empty %}
-          {% if member %}
-          <div class="list-group-item">{% blocktrans %}Your account is not associated with any tools.{% endblocktrans %}</div>
-          {% else %}
-          <div class="list-group-item">
-            <p>{% blocktrans %}Request membership in the Toolforge project so you can create your own tool and help maintain existing tools.{% endblocktrans %}</p>
-            <a href="{% url 'tools:membership_apply' %}" class="btn btn-success">{% trans "Join now" %}</a>
-          </div>
-          {% endif %}
-          {% endfor %}
-        </div>
+<div class="row">
+  <div class="col-md-3 panel-group">
+    <div class="panel panel-default">
+      <div class="panel-heading">{% bootstrap_icon "star" %} {% trans "Your tools" %}</div>
+      {% if not user.is_anonymous %}
+      <div class="list-group">
+        {% for tool in my_tools %}
+        <a href="{% url 'tools:tool' tool=tool %}" class="list-group-item">{{ tool.name }}</a>
+        {% empty %}
         {% if member %}
-        <div class="list-group">
-          <a class="list-group-item" href="{% url 'tools:tool_create' %}">{% bootstrap_icon "plus-sign" %} {% trans "Create new tool" %}</a>
+        <div class="list-group-item">{% blocktrans %}Your account is not associated with any tools.{% endblocktrans %}</div>
+        {% else %}
+        <div class="list-group-item">
+          <p>{% blocktrans %}Request membership in the Toolforge project so you can create your own tool and help maintain existing tools.{% endblocktrans %}</p>
+          <a href="{% url 'tools:membership_apply' %}" class="btn btn-success">{% trans "Join now" %}</a>
         </div>
         {% endif %}
-        {% else %}{# user.is_anonymous #}
-        <div class="panel-body">
-          {% url 'labsauth:login' as login_url %}
-          {% url 'tools:index' as tools_url %}
-          {% blocktrans with login_url=login_url tools_url=tools_url %}
-          <a href="{{ login_url }}?next={{ tools_url }}">Login</a> to see your tools.
-          {% endblocktrans %}
-        </div>
-        {% endif %}
+        {% endfor %}
       </div>
-      <div class="panel panel-default">
-        <ul class="nav nav-pills nav-stacked">
-          <li role="presentation">
-            <a href="{% url 'tools:membership' %}">
-              {% bootstrap_icon "user" %} {% trans "Membership requests" %}
-              {% open_access_requests as pending %}
-              {% if pending != 0 %}
-                <span class="badge">{{ pending }}</span>
-              {% endif %}
-            </a>
-          </li>
-        </ul>
+      {% if member %}
+      <div class="list-group">
+        <a class="list-group-item" href="{% url 'tools:tool_create' %}">{% bootstrap_icon "plus-sign" %} {% trans "Create new tool" %}</a>
       </div>
+      {% endif %}
+      {% else %}{# user.is_anonymous #}
+      <div class="panel-body">
+        {% url 'labsauth:login' as login_url %}
+        {% url 'tools:index' as tools_url %}
+        {% blocktrans with login_url=login_url tools_url=tools_url %}
+        <a href="{{ login_url }}?next={{ tools_url }}">Login</a> to see your tools.
+        {% endblocktrans %}
+      </div>
+      {% endif %}
     </div>
-    <div class="col-md-9">
-      <div class="panel panel-default panel-pager">
-        <div class="panel-heading">
-          <div class="row">
-            <div class="col-sm-6">
-              <h3 class="panel-title">{% bootstrap_icon "wrench" %} {% trans "Tools" %}</h3>
-            </div>
-            <div class="col-sm-6">
-              <form method="get" action="{% url 'tools:index' %}">
-                <div class="input-group">
-                  <input type="text" name="q" value="{{ query }}" class="form-control" placeholder="{% trans 'Search for...' %}">
-                  <span class="input-group-btn">
-                    <button type="submit" class="btn btn-success">
-                      {% bootstrap_icon "search" %}
-                      <span class="sr-only">{% trans 'Search' %}</span>
-                    </button>
-                  </span>
-                </div>
-              </form>
-            </div>
+    <div class="panel panel-default">
+      <ul class="nav nav-pills nav-stacked">
+        <li role="presentation">
+          <a href="{% url 'tools:membership' %}">
+            {% bootstrap_icon "user" %} {% trans "Membership requests" %}
+            {% open_access_requests as pending %}
+            {% if pending != 0 %}
+              <span class="badge">{{ pending }}</span>
+            {% endif %}
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div class="col-md-9">
+    <div class="panel panel-default panel-pager">
+      <div class="panel-heading">
+        <div class="row">
+          <div class="col-sm-6">
+            <h3 class="panel-title">{% bootstrap_icon "wrench" %} {% trans "Tools" %}</h3>
+          </div>
+          <div class="col-sm-6">
+            <form method="get" action="{% url 'tools:index' %}">
+              <div class="input-group">
+                <input type="text" name="q" value="{{ query }}" class="form-control" placeholder="{% trans 'Search for...' %}">
+                <span class="input-group-btn">
+                  <button type="submit" class="btn btn-success">
+                    {% bootstrap_icon "search" %}
+                    <span class="sr-only">{% trans 'Search' %}</span>
+                  </button>
+                </span>
+              </div>
+            </form>
           </div>
         </div>
-        <div class="list-group">
-          {% for tool in all_tools %}
-          <a href="{% url 'tools:tool' tool=tool %}" class="list-group-item">{{ tool.name }}</a>
-          {% endfor %}
-        </div>
-        <div class="panel-footer">
-          {% with "q="|add:query as q  %}
-          {% bootstrap_pagination all_tools size="small" parameter_name="p" extra=q %}
-          {% endwith %}
-        </div>
+      </div>
+      <div class="list-group">
+        {% for tool in all_tools %}
+        <a href="{% url 'tools:tool' tool=tool %}" class="list-group-item">{{ tool.name }}</a>
+        {% endfor %}
+      </div>
+      <div class="panel-footer">
+        {% with "q="|add:query as q  %}
+        {% bootstrap_pagination all_tools size="small" parameter_name="p" extra=q %}
+        {% endwith %}
       </div>
     </div>
   </div>

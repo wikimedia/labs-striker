@@ -1,0 +1,19 @@
+{% extends "errors/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Forbidden" %}{% endblock %}
+{% block message %}
+<blockquote>
+  <p>A <a href="https://en.wikipedia.org/wiki/Web_server" class="striker-link">web server</a> may or may not return a <strong>403 Forbidden</strong> HTTP status code in response to a request from a client for a web page or resource to indicate that the server can be reached and understood the request, but refuses to take any further action. Status code 403 responses are the result of the web server being configured to deny access, for some reason, to the requested resource by the client.</p>
+  <footer>
+    <a href="https://en.wikipedia.org/w/index.php?title=HTTP_403&oldid=735681980" class="striker-link">&quot;HTTP 403.&quot;</a>
+    <cite title="Wikipedia: The Free Encyclopedia">Wikipedia: The Free Encyclopedia.</cite>
+    Wikimedia Foundation, Inc.
+    22 August 2016.
+    Web. 27 August 2016.
+  </footer>
+</blockquote>
+
+<p>You are not currently authorized to view the URI <code>{{ request_path }}</code>.</p>
+<p>You may be able to get further information in the <a href="ircs://irc.libera.chat/wikimedia-cloud" class="striker-link">#wikimedia-cloud</a> channel on the <a href="https://libera.chat" class="striker-link">Libera Chat IRC network</a>.</p>
+{% endblock %}

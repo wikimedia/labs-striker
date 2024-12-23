@@ -18,41 +18,37 @@
 {% endblock %}
 
 {% block content %}
-<div class="container-fluid">
-  <div class="row">
-    <div class="panel panel-info">
-      <div class="panel-heading">
-        <div class="row">
-          <div class="col-sm-9">
-            <h3 class="panel-title">
-              {% bootstrap_icon "info-sign" %}
-              {{ toolinfo.title }}
-            </h3>
+<div class="panel panel-info">
+  <div class="panel-heading">
+    <div class="row">
+      <div class="col-sm-9">
+        <h3 class="panel-title">
+          {% bootstrap_icon "info-sign" %}
+          {{ toolinfo.title }}
+        </h3>
+      </div>
+      <div class="col-sm-3">
+        <div class="btn-toolbar pull-right" role="toolbar">
+          {% if can_delete %}
+          <div class="btn-group" role="group">
+              <a href="{% url 'tools:info_delete' tool=tool.name info_id=toolinfo.pk %}" class="btn btn-danger btn-sm">{% bootstrap_icon "trash" %} {% trans "delete" %}</a>
           </div>
-          <div class="col-sm-3">
-            <div class="btn-toolbar pull-right" role="toolbar">
-              {% if can_delete %}
-              <div class="btn-group" role="group">
-                  <a href="{% url 'tools:info_delete' tool=tool.name info_id=toolinfo.pk %}" class="btn btn-danger btn-sm">{% bootstrap_icon "trash" %} {% trans "delete" %}</a>
-              </div>
-              {% endif %}
-              <div class="btn-group" role="group">
-                <a href="{% url 'tools:info_history' tool=tool.name info_id=toolinfo.pk %}" class="btn btn-default btn-sm">{% bootstrap_icon "time" %} {% trans "history" %}</a>
-              </div>
-            </div>
+          {% endif %}
+          <div class="btn-group" role="group">
+            <a href="{% url 'tools:info_history' tool=tool.name info_id=toolinfo.pk %}" class="btn btn-default btn-sm">{% bootstrap_icon "time" %} {% trans "history" %}</a>
           </div>
         </div>
       </div>
-      <div class="panel-body">
-        <form method="post" action="{% url 'tools:info_edit' tool=tool.name info_id=toolinfo.pk %}" class="form parsley">
-          {% csrf_token %}
-          {% bootstrap_form form %}
-          {% buttons %}
-          <input class="btn btn-primary" type="submit" value="{% trans "Save" %}" />
-          {% endbuttons %}
-        </form>
-      </div>
     </div>
+  </div>
+  <div class="panel-body">
+    <form method="post" action="{% url 'tools:info_edit' tool=tool.name info_id=toolinfo.pk %}" class="form parsley">
+      {% csrf_token %}
+      {% bootstrap_form form %}
+      {% buttons %}
+      <input class="btn btn-primary" type="submit" value="{% trans "Save" %}" />
+      {% endbuttons %}
+    </form>
   </div>
 </div>
 {% endblock %}

@@ -89,14 +89,14 @@ def csp_report(req):
 
 
 @requires_csrf_token
-def page_not_found(request, exception, template_name="404.html"):
+def page_not_found(request, exception, template_name="errors/404.html"):
     """Handler for 404 responses."""
     ctx = {"request_path": request.path}
     return shortcuts.render(request, template_name, ctx, status=404)
 
 
 @requires_csrf_token
-def server_error(request, template_name="500.html"):
+def server_error(request, template_name="errors/500.html"):
     """Handler for 500 responses."""
     ctx = {
         "request_path": request.path,
@@ -106,7 +106,7 @@ def server_error(request, template_name="500.html"):
 
 
 @requires_csrf_token
-def bad_request(request, exception, template_name="400.html"):
+def bad_request(request, exception, template_name="errors/400.html"):
     """Handler for 400 responses."""
     ctx = {
         "request_path": request.path,
@@ -116,7 +116,7 @@ def bad_request(request, exception, template_name="400.html"):
 
 
 @requires_csrf_token
-def permission_denied(request, exception, template_name="403.html"):
+def permission_denied(request, exception, template_name="errors/403.html"):
     """Handler for 403 responses."""
     ctx = {
         "request_path": request.path,

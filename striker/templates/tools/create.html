@@ -15,23 +15,19 @@
 {% endblock %}
 
 {% block content %}
-<div class="container-fluid">
-  <div class="row">
-    <div class="panel panel-default">
-      <div class="panel-heading">
-        <h3 class="panel-title">{% bootstrap_icon "wrench" %} {% trans "Create Tool account" %}</h3>
-      </div>
-      <div class="panel-body">
-        <p>{% blocktrans with help="https://wikitech.wikimedia.org/wiki/Help:Toolforge/Tool_Accounts" %}A Tool account is the "user" associated with a Tool on Toolforge. The account allows multiple Toolforge users to collaborate on creating and maintaining a tool. Maintainers may have more than one tool account, and tool accounts may have more than one maintainer. See <a href="{{ help }}">help on Wikitech</a> for more information.{% endblocktrans %}</p>
-        <form method="post" action="{% url 'tools:tool_create' %}" class="form parsley">
-          {% csrf_token %}
-          {% bootstrap_form form %}
-          {% buttons %}
-          <input class="btn btn-success" type="submit" value="{% trans "Create" %}" />
-          {% endbuttons %}
-        </form>
-      </div>
-    </div>
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">{% bootstrap_icon "wrench" %} {% trans "Create Tool account" %}</h3>
+  </div>
+  <div class="panel-body">
+    <p>{% blocktrans with help="https://wikitech.wikimedia.org/wiki/Help:Toolforge/Tool_Accounts" %}A Tool account is the "user" associated with a Tool on Toolforge. The account allows multiple Toolforge users to collaborate on creating and maintaining a tool. Maintainers may have more than one tool account, and tool accounts may have more than one maintainer. See <a href="{{ help }}">help on Wikitech</a> for more information.{% endblocktrans %}</p>
+    <form method="post" action="{% url 'tools:tool_create' %}" class="form parsley">
+      {% csrf_token %}
+      {% bootstrap_form form %}
+      {% buttons %}
+      <input class="btn btn-success" type="submit" value="{% trans "Create" %}" />
+      {% endbuttons %}
+    </form>
   </div>
 </div>
 {% endblock %}

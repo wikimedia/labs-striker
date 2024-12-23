@@ -16,26 +16,22 @@
 {% endblock %}
 
 {% block content %}
-<div class="container-fluid">
-  <div class="row">
-    <div class="panel panel-info">
-      <div class="panel-heading">
-        <h3 class="panel-title">
-          {% bootstrap_icon "info-sign" %}
-          {% blocktrans with name=tool.name %}Create new toolinfo for tool "{{ name }}"{% endblocktrans %}
-        </h3>
-      </div>
-      <div class="panel-body">
-        <p>{% blocktrans %}A toolinfo record is used to advertise your tool on Toolforge. Most tools only need a single toolinfo record. The exception is when you have created a suite of related tools which are all hosted under a single Toolforge Tool account.{% endblocktrans %}</p>
-        <form method="post" action="{% url 'tools:info_create' tool=tool.name %}" class="form parsley">
-          {% csrf_token %}
-          {% bootstrap_form form %}
-          {% buttons %}
-          <input class="btn btn-success" type="submit" value="{% trans "Create" %}" />
-          {% endbuttons %}
-        </form>
-      </div>
-    </div>
+<div class="panel panel-info">
+  <div class="panel-heading">
+    <h3 class="panel-title">
+      {% bootstrap_icon "info-sign" %}
+      {% blocktrans with name=tool.name %}Create new toolinfo for tool "{{ name }}"{% endblocktrans %}
+    </h3>
+  </div>
+  <div class="panel-body">
+    <p>{% blocktrans %}A toolinfo record is used to advertise your tool on Toolforge. Most tools only need a single toolinfo record. The exception is when you have created a suite of related tools which are all hosted under a single Toolforge Tool account.{% endblocktrans %}</p>
+    <form method="post" action="{% url 'tools:info_create' tool=tool.name %}" class="form parsley">
+      {% csrf_token %}
+      {% bootstrap_form form %}
+      {% buttons %}
+      <input class="btn btn-success" type="submit" value="{% trans "Create" %}" />
+      {% endbuttons %}
+    </form>
   </div>
 </div>
 {% endblock %}

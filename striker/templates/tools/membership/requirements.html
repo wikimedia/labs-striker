@@ -13,24 +13,20 @@
 {% endblock %}
 
 {% block content %}
-<div class="container-fluid">
-  <div class="row">
-    <div class="panel panel-default">
-      <div class="panel-heading">
-        <h3 class="panel-title">{% trans "Request Toolforge project membership" %}</h3>
-      </div>
-      <div class="panel-body">
-        {% trans "You need to finish setting up your account before you can request Toolforge project membership." %}
-      </div>
-    </div>
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">{% trans "Request Toolforge project membership" %}</h3>
   </div>
+  <div class="panel-body">
+    {% trans "You need to finish setting up your account before you can request Toolforge project membership." %}
+  </div>
+</div>
 
+<div class="striker-card-group">
   {% for goal in goals %}
-    <div class="row">
-      {% with goal_template="goals/"|add:goal|add:".html" %}
-        {% include goal_template %}
-      {% endwith %}
-    </div>
+    {% with goal_template="goals/"|add:goal|add:".html" %}
+      {% include goal_template %}
+    {% endwith %}
   {% endfor %}
 </div>
 {% endblock %}

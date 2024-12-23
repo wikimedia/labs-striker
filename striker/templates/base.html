@@ -84,7 +84,7 @@
     </nav>
     {% endblock navbar %}
     {% block banner %}{% endblock banner %}
-    <div id="content" class="container-fluid">
+    <div id="content" class="striker-content">
       {% block pre_content %}
       {% if messages %}
       <div class="striker-messages striker-mb">
@@ -107,21 +107,21 @@
     </div>
     <footer class="footer text-muted text-right" role="contentinfo">
       <div class="container">
-        <div class="row">
+        <div>
           <hr>
         </div>
-        <div class="row">
+        <div>
         <ul class="list-inline">
-          <li><a href="https://wikimediafoundation.org/wiki/Privacy_policy">{% trans "Privacy policy" %}</a></li>
-          <li><a href="https://wikimediafoundation.org/wiki/Terms_of_Use">{% trans "Terms of Use" %}</a></li>
-          <li><a href="https://www.mediawiki.org/wiki/Code_of_Conduct">{% trans "Code of Conduct" %}</a></li>
-          <li><a href="https://phabricator.wikimedia.org/diffusion/LSTR/">{% trans "Source" %}</a></li>
-          <li><a href="https://phabricator.wikimedia.org/tag/striker/">{% trans "Issues" %}</a></li>
-          <li><a href="https://wikitech.wikimedia.org/wiki/Toolsadmin.wikimedia.org">{% trans "Docs" %}</a></li>
+          <li><a href="https://wikimediafoundation.org/wiki/Privacy_policy" class="striker-link">{% trans "Privacy policy" %}</a></li>
+          <li><a href="https://wikimediafoundation.org/wiki/Terms_of_Use" class="striker-link">{% trans "Terms of Use" %}</a></li>
+          <li><a href="https://www.mediawiki.org/wiki/Code_of_Conduct" class="striker-link">{% trans "Code of Conduct" %}</a></li>
+          <li><a href="https://phabricator.wikimedia.org/diffusion/LSTR/" class="striker-link">{% trans "Source" %}</a></li>
+          <li><a href="https://phabricator.wikimedia.org/tag/striker/" class="striker-link">{% trans "Issues" %}</a></li>
+          <li><a href="https://wikitech.wikimedia.org/wiki/Portal:Toolforge/Admin/Striker" class="striker-link">{% trans "Docs" %}</a></li>
         </ul>
       </div>
-      <div class="row">
-        <p>Code licensed <a href="https://phabricator.wikimedia.org/diffusion/LSTR/browse/master/LICENSE" rel="license">GPLv3+</a>, docs <a href="https://creativecommons.org/licenses/by-sa/3.0/" rel="license">CC BY-SA 3.0</a>.
+      <div>
+        <p>Code licensed <a href="https://phabricator.wikimedia.org/diffusion/LSTR/browse/master/LICENSE" class="striker-link" rel="license">GPLv3+</a>, docs <a href="https://creativecommons.org/licenses/by-sa/3.0/" class="striker-link" rel="license">CC BY-SA 3.0</a>.
         </div>
       </div>
     </footer>

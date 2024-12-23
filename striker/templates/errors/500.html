@@ -1,0 +1,20 @@
+{% extends "errors/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Internal Server Error" %}{% endblock %}
+{% block message %}
+<blockquote>
+  <p><strong>500 Internal Server Error</strong></p>
+  <p>A generic error message, given when an unexpected condition was encountered and no more specific message is suitable.</p>
+  <footer>
+    <a href="https://en.wikipedia.org/w/index.php?title=List_of_HTTP_status_codes&oldid=736266399" class="striker-link">&quot;List of HTTP status codes.&quot;</a>
+    <cite title="Wikipedia: The Free Encyclopedia">Wikipedia: The Free Encyclopedia.</cite>
+    Wikimedia Foundation, Inc.
+    26 August 2016.
+    Web. 27 August 2016.
+  </footer>
+</blockquote>
+
+<p>An unexpected technical problem has occured while handing the requested URI <code>{{ request_path }}</code>. This is probably temporary and should be fixed soon. Please try again later.</p>
+<p>You may be able to get further information in the <a href="ircs://irc.libera.chat/wikimedia-cloud" class="striker-link">#wikimedia-cloud</a> channel on the <a href="https://libera.chat" class="striker-link">Libera Chat IRC network</a>.</p>
+{% endblock %}

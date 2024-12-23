@@ -1,0 +1,20 @@
+{% extends "errors/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Not found" %}{% endblock %}
+{% block message %}
+<blockquote>
+  <p>The <strong>404</strong> or <strong>Not Found</strong> error message is a <a href="https://en.wikipedia.org/wiki/Hypertext_Transfer_Protocol" class="striker-link">Hypertext Transfer Protocol</a> (HTTP) <a href="https://en.wikipedia.org/wiki/List_of_HTTP_status_codes">standard response code</a>, in computer network communications, to indicate that the <a href="https://en.wikipedia.org/wiki/Web_browser" class="striker-link">client</a> was able to communicate with a given <a href="https://en.wikipedia.org/wiki/Server_(computing)" class="striker-link">server</a>, but the server could not find what was requested.</p>
+  <footer>
+    <a href="https://en.wikipedia.org/w/index.php?title=HTTP_404&oldid=733045782" class="striker-link">&quot;HTTP 404.&quot;</a>
+    <cite title="Wikipedia: The Free Encyclopedia">Wikipedia: The Free Encyclopedia.</cite>
+    Wikimedia Foundation, Inc.
+    5 August 2016.
+    Web. 27 August 2016.
+  </footer>
+</blockquote>
+
+<p>No handler found for the requested URI <code>{{request_path}}</code>.</p>
+{% endblock %}
+
+{% block details %}{% endblock %}

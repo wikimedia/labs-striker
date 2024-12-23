@@ -17,31 +17,27 @@
 {% endblock %}
 
 {% block content %}
-<div class="container-fluid">
-  <div class="row">
-    <div class="striker-card-group">
-      {% if can_suppress or not version.suppressed %}
-      <div class="panel panel-{% if version.suppressed %}danger{% else %}default{% endif %}">
-        <div class="panel-body">
-          <dl class="dl-horizontal">
-            <dt>{% trans "Date" %}</dt>
-            <dd class="{% if version.suppressed %}history-deleted{% endif %}">{{ version.revision.date_created|date:"c" }}</dd>
-            <dt>{% trans "User" %}</dt>
-            <dd class="{% if version.suppressed %}history-deleted{% endif %}">{{ version.revision.user }}</dd>
-            <dt>{% trans "Comment" %}</dt>
-            <dd class="{% if version.suppressed %}history-deleted{% endif %}">{{ version.revision.comment|default:"" }}</dd>
-          </dl>
-        </div>
-      </div>
-      {% include "tools/info/record.html" %}
-      {% else %}{# suppressed #}
-      <div class="panel panel-danger">
-        <div class="panel-body">
-          {% trans "This toolinfo revision has been hidden." %}
-        </div>
-      </div>
-      {% endif %}
+<div class="striker-card-group">
+  {% if can_suppress or not version.suppressed %}
+  <div class="panel panel-{% if version.suppressed %}danger{% else %}default{% endif %}">
+    <div class="panel-body">
+      <dl class="dl-horizontal">
+        <dt>{% trans "Date" %}</dt>
+        <dd class="{% if version.suppressed %}history-deleted{% endif %}">{{ version.revision.date_created|date:"c" }}</dd>
+        <dt>{% trans "User" %}</dt>
+        <dd class="{% if version.suppressed %}history-deleted{% endif %}">{{ version.revision.user }}</dd>
+        <dt>{% trans "Comment" %}</dt>
+        <dd class="{% if version.suppressed %}history-deleted{% endif %}">{{ version.revision.comment|default:"" }}</dd>
+      </dl>
     </div>
   </div>
+  {% include "tools/info/record.html" %}
+  {% else %}{# suppressed #}
+  <div class="panel panel-danger">
+    <div class="panel-body">
+      {% trans "This toolinfo revision has been hidden." %}
+    </div>
+  </div>
+  {% endif %}
 </div>
 {% endblock %}
