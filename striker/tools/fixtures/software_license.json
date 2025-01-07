@@ -1,410 +1,410 @@
 [
-    {
-        "fields": {
-            "family": "GPL",
-            "name": "GNU General Public License 3.0 only",
-            "osi_approved": true,
-            "recommended": false,
-            "slug": "GPL-3.0-only",
-            "url": "https://www.gnu.org/licenses/gpl-3.0.html"
-        },
-        "model": "tools.softwarelicense",
-        "pk": 1
-    },
-    {
-        "fields": {
-            "family": "GPL",
-            "name": "GNU General Public License 2.0 only",
-            "osi_approved": true,
-            "recommended": false,
-            "slug": "GPL-2.0-only",
-            "url": "https://www.gnu.org/licenses/gpl-2.0.html"
-        },
-        "model": "tools.softwarelicense",
-        "pk": 2
-    },
-    {
-        "fields": {
-            "family": "AGPL",
-            "name": "GNU Affero General Public License 3.0 only",
-            "osi_approved": true,
-            "recommended": false,
-            "slug": "AGPL-3.0-only",
-            "url": "https://www.gnu.org/licenses/agpl-3.0.html"
-        },
-        "model": "tools.softwarelicense",
-        "pk": 3
-    },
-    {
-        "fields": {
-            "family": "LGPL",
-            "name": "GNU Lesser General Public License 2.1 only",
-            "osi_approved": true,
-            "recommended": false,
-            "slug": "LGPL-2.1-only",
-            "url": "https://www.gnu.org/licenses/lgpl-2.1.html"
-        },
-        "model": "tools.softwarelicense",
-        "pk": 4
-    },
-    {
-        "fields": {
-            "family": "LGPL",
-            "name": "GNU Lesser General Public License 3.0 only",
-            "osi_approved": true,
-            "recommended": false,
-            "slug": "LGPL-3.0-only",
-            "url": "https://www.gnu.org/licenses/lgpl-3.0.html"
-        },
-        "model": "tools.softwarelicense",
-        "pk": 5
-    },
-    {
-        "fields": {
-            "family": "MIT",
-            "name": "MIT License",
-            "osi_approved": true,
-            "recommended": true,
-            "slug": "MIT",
-            "url": "https://opensource.org/licenses/mit-license.php"
-        },
-        "model": "tools.softwarelicense",
-        "pk": 6
-    },
-    {
-        "fields": {
-            "family": "ISC",
-            "name": "ISC License",
-            "osi_approved": true,
-            "recommended": false,
-            "slug": "ISC",
-            "url": "https://opensource.org/licenses/ISC"
-        },
-        "model": "tools.softwarelicense",
-        "pk": 7
-    },
-    {
-        "fields": {
-            "family": "BSD",
-            "name": "BSD 2-clause \"Simplified\" License",
-            "osi_approved": true,
-            "recommended": false,
-            "slug": "BSD-2-Clause",
-            "url": "https://opensource.org/licenses/BSD-2-Clause"
-        },
-        "model": "tools.softwarelicense",
-        "pk": 8
-    },
-    {
-        "fields": {
-            "family": "BSD",
-            "name": "BSD 3-clause \"Modified\" License",
-            "osi_approved": true,
-            "recommended": false,
-            "slug": "BSD-3-Clause",
-            "url": "https://opensource.org/licenses/BSD-3-Clause"
-        },
-        "model": "tools.softwarelicense",
-        "pk": 9
-    },
-    {
-        "fields": {
-            "family": "Apache",
-            "name": "Apache License 2.0",
-            "osi_approved": true,
-            "recommended": true,
-            "slug": "Apache-2.0",
-            "url": "https://www.apache.org/licenses/LICENSE-2.0"
-        },
-        "model": "tools.softwarelicense",
-        "pk": 10
-    },
-    {
-        "fields": {
-            "family": "MPL",
-            "name": "Mozilla Public License 2.0",
-            "osi_approved": true,
-            "recommended": false,
-            "slug": "MPL-2.0",
-            "url": "https://www.mozilla.org/MPL/2.0/"
-        },
-        "model": "tools.softwarelicense",
-        "pk": 11
-    },
-    {
-        "fields": {
-            "family": "CDDL",
-            "name": "Common Development and Distribution License",
-            "osi_approved": true,
-            "recommended": false,
-            "slug": "CDDL-1.0",
-            "url": "https://opensource.org/licenses/CDDL-1.0"
-        },
-        "model": "tools.softwarelicense",
-        "pk": 12
-    },
-    {
-        "fields": {
-            "family": "EPL",
-            "name": "Eclipse Public License 1.0",
-            "osi_approved": true,
-            "recommended": false,
-            "slug": "EPL-1.0",
-            "url": "https://opensource.org/licenses/EPL-1.0"
-        },
-        "model": "tools.softwarelicense",
-        "pk": 13
-    },
-    {
-        "fields": {
-            "family": "LiLiQ",
-            "name": "Licence Libre du Qu\u00e9bec \u2013 Permissive (LiLiQ-P) version 1.1",
-            "osi_approved": true,
-            "recommended": false,
-            "slug": "LiLiQ-P-1.1",
-            "url": "https://opensource.org/licenses/LiLiQ-P-1.1"
-        },
-        "model": "tools.softwarelicense",
-        "pk": 14
-    },
-    {
-        "fields": {
-            "family": "LiLiQ",
-            "name": "Licence Libre du Qu\u00e9bec \u2013 R\u00e9ciprocit\u00e9 (LiLiQ-R) version 1.1",
-            "osi_approved": true,
-            "recommended": false,
-            "slug": "LiLiQ-R-1.1",
-            "url": "https://opensource.org/licenses/LiLiQ-R-1.1"
-        },
-        "model": "tools.softwarelicense",
-        "pk": 15
-    },
-    {
-        "fields": {
-            "family": "LiLiQ",
-            "name": "Licence Libre du Qu\u00e9bec \u2013 R\u00e9ciprocit\u00e9 forte (LiLiQ-R+) version 1.1",
-            "osi_approved": true,
-            "recommended": false,
-            "slug": "LiLiQ-R+-1.1",
-            "url": "https://opensource.org/licenses/LiLiQ-Rplus-1.1"
-        },
-        "model": "tools.softwarelicense",
-        "pk": 16
-    },
-    {
-        "fields": {
-            "family": "ECL",
-            "name": "Educational Community License, Version 2.0",
-            "osi_approved": true,
-            "recommended": false,
-            "slug": "ECL-2.0",
-            "url": "https://opensource.org/licenses/ECL-2.0"
-        },
-        "model": "tools.softwarelicense",
-        "pk": 17
-    },
-    {
-        "fields": {
-            "family": "APL",
-            "name": "Adaptive Public License 1.0",
-            "osi_approved": true,
-            "recommended": false,
-            "slug": "APL-1.0",
-            "url": "https://opensource.org/licenses/APL-1.0"
-        },
-        "model": "tools.softwarelicense",
-        "pk": 18
-    },
-    {
-        "fields": {
-            "family": "Artistic",
-            "name": "Artistic License 2.0",
-            "osi_approved": true,
-            "recommended": false,
-            "slug": "Artistic-2.0",
-            "url": "https://opensource.org/licenses/Artistic-2.0"
-        },
-        "model": "tools.softwarelicense",
-        "pk": 19
-    },
-    {
-        "fields": {
-            "family": "FPL",
-            "name": "Free Public License 1.0.0",
-            "osi_approved": true,
-            "recommended": false,
-            "slug": "FPL-1.0.0",
-            "url": "https://opensource.org/licenses/FPL-1.0.0"
-        },
-        "model": "tools.softwarelicense",
-        "pk": 20
-    },
-    {
-        "fields": {
-            "family": "OSL",
-            "name": "The Open Software License 3.0",
-            "osi_approved": true,
-            "recommended": false,
-            "slug": "OSL-3.0",
-            "url": "https://opensource.org/licenses/OSL-3.0"
-        },
-        "model": "tools.softwarelicense",
-        "pk": 21
-    },
-    {
-        "fields": {
-            "family": "QPL",
-            "name": "The Q Public License Version",
-            "osi_approved": true,
-            "recommended": false,
-            "slug": "QPL-1.0",
-            "url": "https://opensource.org/licenses/QPL-1.0"
-        },
-        "model": "tools.softwarelicense",
-        "pk": 22
-    },
-    {
-        "fields": {
-            "family": "UPL",
-            "name": "The Universal Permissive License (UPL), Version 1.0",
-            "osi_approved": true,
-            "recommended": false,
-            "slug": "UPL-1.0",
-            "url": "https://opensource.org/licenses/UPL"
-        },
-        "model": "tools.softwarelicense",
-        "pk": 23
-    },
-    {
-        "fields": {
-            "family": "Zlib",
-            "name": "The zlib/libpng License",
-            "osi_approved": true,
-            "recommended": false,
-            "slug": "Zlib",
-            "url": "https://opensource.org/licenses/Zlib"
-        },
-        "model": "tools.softwarelicense",
-        "pk": 24
-    },
-    {
-        "fields": {
-            "family": "Fair",
-            "name": "Fair License",
-            "osi_approved": true,
-            "recommended": false,
-            "slug": "Fair",
-            "url": "https://opensource.org/licenses/Fair"
-        },
-        "model": "tools.softwarelicense",
-        "pk": 25
-    },
-    {
-        "fields": {
-            "family": "GPL",
-            "name": "GNU General Public License 3.0 or later",
-            "osi_approved": true,
-            "recommended": true,
-            "slug": "GPL-3.0-or-later",
-            "url": "https://www.gnu.org/licenses/gpl-3.0.html"
-        },
-        "model": "tools.softwarelicense",
-        "pk": 26
-    },
-    {
-        "fields": {
-            "family": "GPL",
-            "name": "GNU General Public License 2.0 or later",
-            "osi_approved": true,
-            "recommended": true,
-            "slug": "GPL-2.0-or-later",
-            "url": "https://www.gnu.org/licenses/gpl-2.0.html"
-        },
-        "model": "tools.softwarelicense",
-        "pk": 27
-    },
-    {
-        "fields": {
-            "family": "AGPL",
-            "name": "GNU Affero General Public License 3.0 or later",
-            "osi_approved": true,
-            "recommended": false,
-            "slug": "AGPL-3.0-or-later",
-            "url": "https://www.gnu.org/licenses/agpl-3.0.html"
-        },
-        "model": "tools.softwarelicense",
-        "pk": 28
-    },
-    {
-        "fields": {
-            "family": "LGPL",
-            "name": "GNU Lesser General Public License 2.1 or later",
-            "osi_approved": true,
-            "recommended": false,
-            "slug": "LGPL-2.1-or-later",
-            "url": "https://www.gnu.org/licenses/lgpl-2.1.html"
-        },
-        "model": "tools.softwarelicense",
-        "pk": 29
-    },
-    {
-        "fields": {
-            "family": "LGPL",
-            "name": "GNU Lesser General Public License 3.0 or later",
-            "osi_approved": true,
-            "recommended": false,
-            "slug": "LGPL-3.0-or-later",
-            "url": "https://www.gnu.org/licenses/lgpl-3.0.html"
-        },
-        "model": "tools.softwarelicense",
-        "pk": 30
-    },
-    {
-        "fields": {
-            "family": "Unlicense",
-            "name": "The Unlicense (public domain)",
-            "osi_approved": true,
-            "recommended": false,
-            "slug": "Unlicense",
-            "url": "https://unlicense.org/"
-        },
-        "model": "tools.softwarelicense",
-        "pk": 31
-    },
-    {
-        "fields": {
-            "family": "EUPL",
-            "name": "European Union Public Licence, version 1.2 only",
-            "osi_approved": true,
-            "recommended": false,
-            "slug": "EUPL-1.2-only",
-            "url": "https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12"
-        },
-        "model": "tools.softwarelicense",
-        "pk": 32
-    },
-    {
-        "fields": {
-            "family": "EUPL",
-            "name": "European Union Public Licence, version 1.2 or later",
-            "osi_approved": true,
-            "recommended": false,
-            "slug": "EUPL-1.2-or-later",
-            "url": "https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12"
-        },
-        "model": "tools.softwarelicense",
-        "pk": 33
-    },
-    {
-        "fields": {
-            "family": "EPL",
-            "name": "Eclipse Public License version 2.0",
-            "osi_approved": true,
-            "recommended": false,
-            "slug": "EPL-2.0",
-            "url": "https://opensource.org/license/epl-2-0"
-        },
-        "model": "tools.softwarelicense",
-        "pk": 34
-    }
+	{
+		"fields": {
+			"family": "GPL",
+			"name": "GNU General Public License 3.0 only",
+			"osi_approved": true,
+			"recommended": false,
+			"slug": "GPL-3.0-only",
+			"url": "https://www.gnu.org/licenses/gpl-3.0.html"
+		},
+		"model": "tools.softwarelicense",
+		"pk": 1
+	},
+	{
+		"fields": {
+			"family": "GPL",
+			"name": "GNU General Public License 2.0 only",
+			"osi_approved": true,
+			"recommended": false,
+			"slug": "GPL-2.0-only",
+			"url": "https://www.gnu.org/licenses/gpl-2.0.html"
+		},
+		"model": "tools.softwarelicense",
+		"pk": 2
+	},
+	{
+		"fields": {
+			"family": "AGPL",
+			"name": "GNU Affero General Public License 3.0 only",
+			"osi_approved": true,
+			"recommended": false,
+			"slug": "AGPL-3.0-only",
+			"url": "https://www.gnu.org/licenses/agpl-3.0.html"
+		},
+		"model": "tools.softwarelicense",
+		"pk": 3
+	},
+	{
+		"fields": {
+			"family": "LGPL",
+			"name": "GNU Lesser General Public License 2.1 only",
+			"osi_approved": true,
+			"recommended": false,
+			"slug": "LGPL-2.1-only",
+			"url": "https://www.gnu.org/licenses/lgpl-2.1.html"
+		},
+		"model": "tools.softwarelicense",
+		"pk": 4
+	},
+	{
+		"fields": {
+			"family": "LGPL",
+			"name": "GNU Lesser General Public License 3.0 only",
+			"osi_approved": true,
+			"recommended": false,
+			"slug": "LGPL-3.0-only",
+			"url": "https://www.gnu.org/licenses/lgpl-3.0.html"
+		},
+		"model": "tools.softwarelicense",
+		"pk": 5
+	},
+	{
+		"fields": {
+			"family": "MIT",
+			"name": "MIT License",
+			"osi_approved": true,
+			"recommended": true,
+			"slug": "MIT",
+			"url": "https://opensource.org/licenses/mit-license.php"
+		},
+		"model": "tools.softwarelicense",
+		"pk": 6
+	},
+	{
+		"fields": {
+			"family": "ISC",
+			"name": "ISC License",
+			"osi_approved": true,
+			"recommended": false,
+			"slug": "ISC",
+			"url": "https://opensource.org/licenses/ISC"
+		},
+		"model": "tools.softwarelicense",
+		"pk": 7
+	},
+	{
+		"fields": {
+			"family": "BSD",
+			"name": "BSD 2-clause \"Simplified\" License",
+			"osi_approved": true,
+			"recommended": false,
+			"slug": "BSD-2-Clause",
+			"url": "https://opensource.org/licenses/BSD-2-Clause"
+		},
+		"model": "tools.softwarelicense",
+		"pk": 8
+	},
+	{
+		"fields": {
+			"family": "BSD",
+			"name": "BSD 3-clause \"Modified\" License",
+			"osi_approved": true,
+			"recommended": false,
+			"slug": "BSD-3-Clause",
+			"url": "https://opensource.org/licenses/BSD-3-Clause"
+		},
+		"model": "tools.softwarelicense",
+		"pk": 9
+	},
+	{
+		"fields": {
+			"family": "Apache",
+			"name": "Apache License 2.0",
+			"osi_approved": true,
+			"recommended": true,
+			"slug": "Apache-2.0",
+			"url": "https://www.apache.org/licenses/LICENSE-2.0"
+		},
+		"model": "tools.softwarelicense",
+		"pk": 10
+	},
+	{
+		"fields": {
+			"family": "MPL",
+			"name": "Mozilla Public License 2.0",
+			"osi_approved": true,
+			"recommended": false,
+			"slug": "MPL-2.0",
+			"url": "https://www.mozilla.org/MPL/2.0/"
+		},
+		"model": "tools.softwarelicense",
+		"pk": 11
+	},
+	{
+		"fields": {
+			"family": "CDDL",
+			"name": "Common Development and Distribution License",
+			"osi_approved": true,
+			"recommended": false,
+			"slug": "CDDL-1.0",
+			"url": "https://opensource.org/licenses/CDDL-1.0"
+		},
+		"model": "tools.softwarelicense",
+		"pk": 12
+	},
+	{
+		"fields": {
+			"family": "EPL",
+			"name": "Eclipse Public License 1.0",
+			"osi_approved": true,
+			"recommended": false,
+			"slug": "EPL-1.0",
+			"url": "https://opensource.org/licenses/EPL-1.0"
+		},
+		"model": "tools.softwarelicense",
+		"pk": 13
+	},
+	{
+		"fields": {
+			"family": "LiLiQ",
+			"name": "Licence Libre du Qu\u00e9bec \u2013 Permissive (LiLiQ-P) version 1.1",
+			"osi_approved": true,
+			"recommended": false,
+			"slug": "LiLiQ-P-1.1",
+			"url": "https://opensource.org/licenses/LiLiQ-P-1.1"
+		},
+		"model": "tools.softwarelicense",
+		"pk": 14
+	},
+	{
+		"fields": {
+			"family": "LiLiQ",
+			"name": "Licence Libre du Qu\u00e9bec \u2013 R\u00e9ciprocit\u00e9 (LiLiQ-R) version 1.1",
+			"osi_approved": true,
+			"recommended": false,
+			"slug": "LiLiQ-R-1.1",
+			"url": "https://opensource.org/licenses/LiLiQ-R-1.1"
+		},
+		"model": "tools.softwarelicense",
+		"pk": 15
+	},
+	{
+		"fields": {
+			"family": "LiLiQ",
+			"name": "Licence Libre du Qu\u00e9bec \u2013 R\u00e9ciprocit\u00e9 forte (LiLiQ-R+) version 1.1",
+			"osi_approved": true,
+			"recommended": false,
+			"slug": "LiLiQ-R+-1.1",
+			"url": "https://opensource.org/licenses/LiLiQ-Rplus-1.1"
+		},
+		"model": "tools.softwarelicense",
+		"pk": 16
+	},
+	{
+		"fields": {
+			"family": "ECL",
+			"name": "Educational Community License, Version 2.0",
+			"osi_approved": true,
+			"recommended": false,
+			"slug": "ECL-2.0",
+			"url": "https://opensource.org/licenses/ECL-2.0"
+		},
+		"model": "tools.softwarelicense",
+		"pk": 17
+	},
+	{
+		"fields": {
+			"family": "APL",
+			"name": "Adaptive Public License 1.0",
+			"osi_approved": true,
+			"recommended": false,
+			"slug": "APL-1.0",
+			"url": "https://opensource.org/licenses/APL-1.0"
+		},
+		"model": "tools.softwarelicense",
+		"pk": 18
+	},
+	{
+		"fields": {
+			"family": "Artistic",
+			"name": "Artistic License 2.0",
+			"osi_approved": true,
+			"recommended": false,
+			"slug": "Artistic-2.0",
+			"url": "https://opensource.org/licenses/Artistic-2.0"
+		},
+		"model": "tools.softwarelicense",
+		"pk": 19
+	},
+	{
+		"fields": {
+			"family": "FPL",
+			"name": "Free Public License 1.0.0",
+			"osi_approved": true,
+			"recommended": false,
+			"slug": "FPL-1.0.0",
+			"url": "https://opensource.org/licenses/FPL-1.0.0"
+		},
+		"model": "tools.softwarelicense",
+		"pk": 20
+	},
+	{
+		"fields": {
+			"family": "OSL",
+			"name": "The Open Software License 3.0",
+			"osi_approved": true,
+			"recommended": false,
+			"slug": "OSL-3.0",
+			"url": "https://opensource.org/licenses/OSL-3.0"
+		},
+		"model": "tools.softwarelicense",
+		"pk": 21
+	},
+	{
+		"fields": {
+			"family": "QPL",
+			"name": "The Q Public License Version",
+			"osi_approved": true,
+			"recommended": false,
+			"slug": "QPL-1.0",
+			"url": "https://opensource.org/licenses/QPL-1.0"
+		},
+		"model": "tools.softwarelicense",
+		"pk": 22
+	},
+	{
+		"fields": {
+			"family": "UPL",
+			"name": "The Universal Permissive License (UPL), Version 1.0",
+			"osi_approved": true,
+			"recommended": false,
+			"slug": "UPL-1.0",
+			"url": "https://opensource.org/licenses/UPL"
+		},
+		"model": "tools.softwarelicense",
+		"pk": 23
+	},
+	{
+		"fields": {
+			"family": "Zlib",
+			"name": "The zlib/libpng License",
+			"osi_approved": true,
+			"recommended": false,
+			"slug": "Zlib",
+			"url": "https://opensource.org/licenses/Zlib"
+		},
+		"model": "tools.softwarelicense",
+		"pk": 24
+	},
+	{
+		"fields": {
+			"family": "Fair",
+			"name": "Fair License",
+			"osi_approved": true,
+			"recommended": false,
+			"slug": "Fair",
+			"url": "https://opensource.org/licenses/Fair"
+		},
+		"model": "tools.softwarelicense",
+		"pk": 25
+	},
+	{
+		"fields": {
+			"family": "GPL",
+			"name": "GNU General Public License 3.0 or later",
+			"osi_approved": true,
+			"recommended": true,
+			"slug": "GPL-3.0-or-later",
+			"url": "https://www.gnu.org/licenses/gpl-3.0.html"
+		},
+		"model": "tools.softwarelicense",
+		"pk": 26
+	},
+	{
+		"fields": {
+			"family": "GPL",
+			"name": "GNU General Public License 2.0 or later",
+			"osi_approved": true,
+			"recommended": true,
+			"slug": "GPL-2.0-or-later",
+			"url": "https://www.gnu.org/licenses/gpl-2.0.html"
+		},
+		"model": "tools.softwarelicense",
+		"pk": 27
+	},
+	{
+		"fields": {
+			"family": "AGPL",
+			"name": "GNU Affero General Public License 3.0 or later",
+			"osi_approved": true,
+			"recommended": false,
+			"slug": "AGPL-3.0-or-later",
+			"url": "https://www.gnu.org/licenses/agpl-3.0.html"
+		},
+		"model": "tools.softwarelicense",
+		"pk": 28
+	},
+	{
+		"fields": {
+			"family": "LGPL",
+			"name": "GNU Lesser General Public License 2.1 or later",
+			"osi_approved": true,
+			"recommended": false,
+			"slug": "LGPL-2.1-or-later",
+			"url": "https://www.gnu.org/licenses/lgpl-2.1.html"
+		},
+		"model": "tools.softwarelicense",
+		"pk": 29
+	},
+	{
+		"fields": {
+			"family": "LGPL",
+			"name": "GNU Lesser General Public License 3.0 or later",
+			"osi_approved": true,
+			"recommended": false,
+			"slug": "LGPL-3.0-or-later",
+			"url": "https://www.gnu.org/licenses/lgpl-3.0.html"
+		},
+		"model": "tools.softwarelicense",
+		"pk": 30
+	},
+	{
+		"fields": {
+			"family": "Unlicense",
+			"name": "The Unlicense (public domain)",
+			"osi_approved": true,
+			"recommended": false,
+			"slug": "Unlicense",
+			"url": "https://unlicense.org/"
+		},
+		"model": "tools.softwarelicense",
+		"pk": 31
+	},
+	{
+		"fields": {
+			"family": "EUPL",
+			"name": "European Union Public Licence, version 1.2 only",
+			"osi_approved": true,
+			"recommended": false,
+			"slug": "EUPL-1.2-only",
+			"url": "https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12"
+		},
+		"model": "tools.softwarelicense",
+		"pk": 32
+	},
+	{
+		"fields": {
+			"family": "EUPL",
+			"name": "European Union Public Licence, version 1.2 or later",
+			"osi_approved": true,
+			"recommended": false,
+			"slug": "EUPL-1.2-or-later",
+			"url": "https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12"
+		},
+		"model": "tools.softwarelicense",
+		"pk": 33
+	},
+	{
+		"fields": {
+			"family": "EPL",
+			"name": "Eclipse Public License version 2.0",
+			"osi_approved": true,
+			"recommended": false,
+			"slug": "EPL-2.0",
+			"url": "https://opensource.org/license/epl-2-0"
+		},
+		"model": "tools.softwarelicense",
+		"pk": 34
+	}
 ]
