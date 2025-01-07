@@ -253,6 +253,7 @@ STATIC_ROOT = env.str("STATIC_ROOT", default=os.path.join(BASE_DIR, "staticfiles
 STATICFILES_DIRS = (
     ("img", os.path.join(BASE_DIR, "static/img")),
     ("js/thirdparty", os.path.join(BASE_DIR, "static/js/thirdparty")),
+    os.path.join(BASE_DIR, "static/files"),
     os.path.join(BASE_DIR, "static/vite"),
 )
 STATICFILES_FINDERS = (
