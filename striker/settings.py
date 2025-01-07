@@ -235,7 +235,7 @@ CACHES = {
             default="django.core.cache.backends.memcached.MemcachedCache",
         ),
         "LOCATION": env.str("CACHE_LOCATION", default="127.0.0.1:11211"),
-        "KEY_PREFIX": "striker",
+        "KEY_PREFIX": env.str("CACHE_PREFIX", "striker"),
         "VERSION": 1,
     }
 }
