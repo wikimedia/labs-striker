@@ -100,7 +100,11 @@
             {% endfor %}
             {% for maintainer in tool.tool_members|dictsort:"cn" %}
               <tr>
-                <td>{{ maintainer.cn }}</td>
+                <td>
+                  <a href="{% url 'tools:tool' tool=maintaner.name %}" class="striker-link">
+                    {{ maintainer.cn }}
+                  </a>
+                </td>
               </tr>
             {% endfor %}
           </tbody>
