@@ -131,7 +131,7 @@
         <table class="cdx-table__table">
           <caption>{% trans "Git repositories" %}</caption>
           <tbody>
-            {% for repo in repositories %}
+            {% for repo in repos %}
               <tr>
                 <td>
                   <a class="striker-link" href="{% url 'tools:repo_view' tool=tool.name repo_id=repo.repo_id %}">{{ repo.name }}</a>
