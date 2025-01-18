@@ -101,7 +101,7 @@
             {% for maintainer in tool.tool_members|dictsort:"cn" %}
               <tr>
                 <td>
-                  <a href="{% url 'tools:tool' tool=maintaner.name %}" class="striker-link">
+                  <a href="{% url 'tools:tool' tool=maintainer %}" class="striker-link">
                     {{ maintainer.cn }}
                   </a>
                 </td>
