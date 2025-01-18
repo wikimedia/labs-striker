@@ -16,26 +16,26 @@
 {% endblock %}
 
 {% block content %}
-<div class="panel-group">
-  <div class="panel panel-default">
-    <div class="panel-heading">{% trans "Repository information" %}</div>
-    <div class="panel-body">
+<span class="cdx-card">
+  <span class="cdx-card__text striker-fullwidth">
+    <span class="cdx-card__text__title">{% trans "Repository information" %}</span>
+    <div>
       <dl class="dl-horizontal">
         <dt>{% trans "Name" %}</dt>
         <dd>{{ name }}</dd>
         <dt>{% trans "Clone" %}</dt>
-        <dd><form>
+        <dd>
             {% for u in urls %}
-            <div class="form-group">
-              <input value="{{ u }}" type="text" class="form-control input-sm" readonly>
+            <div class="form-cdx-text-input striker-mb-sm">
+              <input value="{{ u }}" type="text" class="cdx-text-input__input" readonly>
             </div>
             {% endfor %}
-        </form></dd>
+        </dd>
         <dt>{% trans "View" %}</dt>
-        <dd><a href="{{ web_url }}">{% trans "browse repository on GitLab" %}</a></dd>
+        <dd><a href="{{ web_url }}" class="striker-link">{% trans "browse repository on GitLab" %}</a></dd>
       </dl>
     </div>
-  </div>
-</div>
+  </span>
+</span>
 {% endblock %}
 {# vim:sw=2:ts=2:sts=2:et:ft=htmldjango: #}
