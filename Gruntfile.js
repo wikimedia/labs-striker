@@ -12,6 +12,9 @@ module.exports = function ( grunt ) {
 			all: '.'
 		},
 		stylelint: {
+			options: {
+				cache: true
+			},
 			all: [
 				'static/css/*.{css,less}',
 				'!static/css/thirdparty/**'
