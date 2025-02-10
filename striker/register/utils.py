@@ -46,7 +46,7 @@ def get_username_invalid_regex():
         # Any char that is not in $wgLegalTitleChars
         r"[^"
         r""" %!"$&'()*,\-./0-9:;=?@A-Z\^_`a-z~"""
-        "\x80-\xFF"
+        "\x80-\xff"
         r"+]"
         # URL percent encoding sequences
         r"|%[0-9A-Fa-f]{2}"

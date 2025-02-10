@@ -1,4 +1,4 @@
-"""Template tags relating to user Toolforge membership and admin status. """
+"""Template tags relating to user Toolforge membership and admin status."""
 
 # -*- coding: utf-8 -*-
 #
