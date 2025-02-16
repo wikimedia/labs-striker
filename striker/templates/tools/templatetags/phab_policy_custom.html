@@ -1,8 +1,0 @@
-{% load i18n %}
-{% load tools %}
-<ul class="list-unstyled">
-{% for rule in policy.rules %}
-<li>{% phab_rule rule phids %}</li>
-{% endfor %}
-<li>{% blocktrans with default=policy.default%}If no rules match, <strong>{{ default }}</strong> all other users.{% endblocktrans %}</li>
-</ul>
