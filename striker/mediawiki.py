@@ -31,7 +31,6 @@ class Client(object):
     """MediaWiki client"""
 
     _default_instance = None
-    _anon_instance = None
 
     @classmethod
     def default_client(cls):
@@ -46,14 +45,6 @@ class Client(object):
                 access_secret=settings.WIKITECH_ACCESS_SECRET,
             )
         return cls._default_instance
-
-    @classmethod
-    def anon_client(cls):
-        """Get a MediaWiki client that is not authenticated."""
-        if cls._anon_instance is None:
-            logger.debug("Creating anon instance")
-            cls._anon_instance = cls(settings.WIKITECH_URL)
-        return cls._anon_instance
 
     def __init__(
         self,
@@ -91,44 +82,6 @@ class Client(object):
             clients_useragent="Striker",
             force_login=force_login,
         )
-
-    def query_users_cancreate(self, *users):
-        """Check to see if the given usernames could be created or not.
-
-        Note: if this Client is authenticated to the target wiki, the result
-        that you get from this request may or may not be the same result that
-        an anonymous user would get.
-        """
-        result = self.site.api(
-            "query",
-            formatversion=2,
-            list="users",
-            usprop="cancreate",
-            ususers="|".join(users),
-        )
-
-        logger.debug(result)
-        # Example result:
-        # {'query': {'users': [{'missing': True, 'name': 'Puppet',
-        # 'cancreate': False, 'cancreateerror': [{'message':
-        # 'titleblacklist-forbidden-new-account', 'params': ['
-        # ^(User:)?puppet$ <newaccountonly>', 'Puppet'], 'type': 'error'}]}],
-        # 'userinfo': {'anon': True, 'messages': False, 'name':
-        # '137.164.12.107', 'id': 0}}, 'batchcomplete': True}
-        # TODO: error handling
-        return result["query"]["users"]
-
-    def get_message(self, message, *params, lang="en"):
-        result = self.site.api(
-            "query",
-            formatversion=2,
-            meta="allmessages",
-            ammessages=message,
-            amargs="|".join(params),
-            amlang=lang,
-        )
-        # TODO: error handling
-        return result["query"]["allmessages"][0]["content"]
 
     def query_blocks_ip(self, ip):
         result = self.site.api("query", formatversion=2, list="blocks", bkip=ip)

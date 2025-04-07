@@ -22,6 +22,8 @@ DJANGO_ALLOWED_HOSTS=*
 LOGGING_HANDLERS=console
 LOGGING_LEVEL=DEBUG
 
+BITU_URL=http://bitu.local.wmftest.net:8085
+
 DB_ENGINE=striker.db
 DB_NAME=striker
 DB_USER=striker

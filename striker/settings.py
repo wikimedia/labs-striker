@@ -240,6 +240,9 @@ CACHES = {
     }
 }
 
+# == Bitu settings ==
+BITU_URL = env.str("BITU_URL", default="https://idm.wikimedia.org")
+
 LANGUAGE_CODE = "en-us"
 TIME_ZONE = "UTC"
 USE_I18N = True

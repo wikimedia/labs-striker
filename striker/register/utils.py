@@ -22,10 +22,10 @@ import functools
 import logging
 import re
 
-from django.utils import translation
+import requests
 from django.utils.translation import gettext_lazy as _
 
-from striker import mediawiki
+from striker import mediawiki, settings
 from striker.labsauth.models import PosixAccount
 
 logger = logging.getLogger(__name__)
@@ -99,34 +99,52 @@ def check_username_create(name):
     - name : Canonicalized version of the given name
     - error : Error message if ok is False; None otherwise
     """
-    # Make sure to use the anon client here because on-wiki rights can affect
-    # the result of the cancreate check.
-    mwapi = mediawiki.Client.anon_client()
-    user = mwapi.query_users_cancreate(name)[0]
-    # Example response:
-    # [{'missing': True, 'name': 'Puppet',
-    # 'cancreate': False, 'cancreateerror': [{'message':
-    # 'titleblacklist-forbidden-new-account', 'params': ['
-    # ^(User:)?puppet$ <newaccountonly>', 'Puppet'], 'type': 'error'}]}]
+    payload = {"username": name}
+    headers = {
+        "User-Agent": "Striker ({url}) python-requests/{vers}".format(
+            url="https://wikitech.wikimedia.org/wiki/Striker",
+            vers=requests.__version__,
+        )
+    }
+
     ret = {
         "ok": False,
-        "name": user["name"],
+        "name": name,
         "error": None,
     }
-    if user.get("missing") and user.get("cancreate"):
-        ret["ok"] = True
-    elif "userid" in user:
-        ret["error"] = _("%(name)s is already in use.") % ret
-    elif "cancreateerror" in user:
-        try:
-            ret["error"] = mwapi.get_message(
-                user["cancreateerror"][0]["message"],
-                *user["cancreateerror"][0]["params"],
-                lang=translation.get_language().split("-")[0]
+
+    try:
+        response = requests.post(
+            f"{settings.BITU_URL}/signup/api/username/", json=payload, headers=headers
+        )
+        # Example response:
+        # [{
+        #     "username": "good_username",
+        #     "uid": "goodusername",
+        #     "sanitized": "Good_username"
+        # }], or
+        # [{
+        #     "username": [
+        #         "Invalid username, may already in use.",
+        #         "Invalid username, may already in use."
+        #     ]
+        # }]
+        if response.status_code == 201:
+            data = response.json()
+            ret["ok"] = True
+            ret["name"] = data.get("sanitized", data.get("username", name))
+        elif response.status_code == 400:
+            ret["error"] = _("%(name)s is already in use.") % ret
+        else:
+            logger.error(
+                "Unexpected response from validator: status_code=%s, body=%s",
+                response.status_code,
+                response.text,
             )
-        except Exception:
-            logger.exception("Failed to get expanded message for %s", user)
-            ret["error"] = user["cancreateerror"][0]["message"]
+            ret["error"] = f"Unexpected response from validator: {response.status_code}"
+    except Exception:
+        logger.exception("Failed to validate username")
+        ret["error"] = "Validation service is unavailable."
     return ret
 
 

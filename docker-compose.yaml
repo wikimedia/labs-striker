@@ -88,6 +88,7 @@ services:
       - OPENSTACK_PROJECT
       - OPENSTACK_USER_ROLE
       - OPENSTACK_ADMIN_ROLE
+      - BITU_URL
       - SITE_ENVIRONMENT_BANNER
       - FEATURE_ACCOUNT_CREATE
     volumes:
