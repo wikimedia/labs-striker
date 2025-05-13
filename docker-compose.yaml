@@ -180,6 +180,7 @@ services:
           - keystone.local.wmftest.net
     depends_on:
       - mariadb
+      - openldap
 
   sulwiki:
     build:
