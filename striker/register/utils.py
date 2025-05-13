@@ -23,7 +23,7 @@ import logging
 import re
 
 from django.utils import translation
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from striker import mediawiki
 from striker.labsauth.models import PosixAccount

@@ -32,7 +32,7 @@ from django.contrib.auth.models import (
 )
 from django.db import models
 from django.utils.crypto import salted_hmac
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django_auth_ldap.backend import LDAPBackend
 from ldapdb.models import fields as ldap_fields
 

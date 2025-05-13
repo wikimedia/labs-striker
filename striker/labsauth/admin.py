@@ -20,7 +20,7 @@
 
 import django.contrib.admin
 import django.contrib.auth.admin
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 import striker.admin
 import striker.labsauth.forms

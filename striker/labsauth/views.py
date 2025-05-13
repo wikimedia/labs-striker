@@ -25,7 +25,7 @@ from django import shortcuts, urls
 from django.conf import settings
 from django.contrib import messages
 from django.db.utils import DatabaseError, IntegrityError
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.views.decorators.cache import never_cache
 from django.views.decorators.debug import sensitive_post_parameters
 from ratelimitbackend import views as ratelimit_views
