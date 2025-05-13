@@ -1,4 +1,4 @@
-ARG KEYSTONE_IMAGE_TAG=2023.1-debian-bullseye
+ARG KEYSTONE_IMAGE_TAG=2025.1-debian-bookworm
 FROM quay.io/openstack.kolla/keystone:${KEYSTONE_IMAGE_TAG}
 
 RUN set -eux; \
