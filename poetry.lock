@@ -309,20 +309,20 @@ dev = ["attribution (==1.8.0)", "black (==24.8.0)", "build (>=1)", "flit (==3.9.
 
 [[package]]
 name = "django"
-version = "3.2.25"
-description = "A high-level Python Web framework that encourages rapid development and clean, pragmatic design."
+version = "4.2.21"
+description = "A high-level Python web framework that encourages rapid development and clean, pragmatic design."
 optional = false
-python-versions = ">=3.6"
+python-versions = ">=3.8"
 groups = ["main"]
 files = [
-    {file = "Django-3.2.25-py3-none-any.whl", hash = "sha256:a52ea7fcf280b16f7b739cec38fa6d3f8953a5456986944c3ca97e79882b4e38"},
-    {file = "Django-3.2.25.tar.gz", hash = "sha256:7ca38a78654aee72378594d63e51636c04b8e28574f5505dff630895b5472777"},
+    {file = "django-4.2.21-py3-none-any.whl", hash = "sha256:1d658c7bf5d31c7d0cac1cab58bc1f822df89255080fec81909256c30e6180b3"},
+    {file = "django-4.2.21.tar.gz", hash = "sha256:b54ac28d6aa964fc7c2f7335138a54d78980232011e0cd2231d04eed393dcb0d"},
 ]
 
 [package.dependencies]
-asgiref = ">=3.3.2,<4"
-pytz = "*"
-sqlparse = ">=0.2.2"
+asgiref = ">=3.6.0,<4"
+sqlparse = ">=0.3.1"
+tzdata = {version = "*", markers = "sys_platform == \"win32\""}
 
 [package.extras]
 argon2 = ["argon2-cffi (>=19.1.0)"]
@@ -330,18 +330,18 @@ bcrypt = ["bcrypt"]
 
 [[package]]
 name = "django-auth-ldap"
-version = "4.8.0"
+version = "5.2.0"
 description = "Django LDAP authentication backend"
 optional = false
-python-versions = ">=3.8"
+python-versions = ">=3.9"
 groups = ["main"]
 files = [
-    {file = "django-auth-ldap-4.8.0.tar.gz", hash = "sha256:604250938ddc9fda619f247c7a59b0b2f06e53a7d3f46a156f28aa30dd71a738"},
-    {file = "django_auth_ldap-4.8.0-py3-none-any.whl", hash = "sha256:4b4b944f3c28bce362f33fb6e8db68429ed8fd8f12f0c0c4b1a4344a7ef225ce"},
+    {file = "django_auth_ldap-5.2.0-py3-none-any.whl", hash = "sha256:7dc6eb576ba36051850b580e4bdf4464e04bbe7367c3827a3121b4d7c51fb175"},
+    {file = "django_auth_ldap-5.2.0.tar.gz", hash = "sha256:08ba6efc0340d9874725a962311b14991e29a33593eb150a8fb640709dbfa80f"},
 ]
 
 [package.dependencies]
-Django = ">=3.2"
+Django = ">=4.2"
 python-ldap = ">=3.1"
 
 [[package]]
@@ -366,54 +366,57 @@ tags = ["django-taggit"]
 
 [[package]]
 name = "django-bootstrap3"
-version = "23.6"
+version = "25.1"
 description = "Bootstrap 3 for Django"
 optional = false
-python-versions = ">=3.8"
+python-versions = ">=3.9"
 groups = ["main"]
 files = [
-    {file = "django-bootstrap3-23.6.tar.gz", hash = "sha256:f8563b2641bcad3a8626beda979ff697c8375002cbf906fbd49f4be97b0f8a54"},
-    {file = "django_bootstrap3-23.6-py3-none-any.whl", hash = "sha256:ba1334104c390ca9dc5b985a8d8ec45fab2c6401e4abb8d3a47d3b225614c3d9"},
+    {file = "django_bootstrap3-25.1-py3-none-any.whl", hash = "sha256:6a5d7f4159488a48b172512237eb7de46bf54d193f379d6a014650d0d5cea066"},
+    {file = "django_bootstrap3-25.1.tar.gz", hash = "sha256:56374e185915e20733df98cb9fae0291c9e0fae3d06e1421dd85b6a7546ce6f2"},
 ]
 
 [package.dependencies]
-Django = ">=3.2"
+django = ">=4.2"
 
 [[package]]
 name = "django-csp"
-version = "3.8"
+version = "4.0"
 description = "Django Content Security Policy support."
 optional = false
 python-versions = "*"
 groups = ["main"]
 files = [
-    {file = "django_csp-3.8-py3-none-any.whl", hash = "sha256:19b2978b03fcd73517d7d67acbc04fbbcaec0facc3e83baa502965892d1e0719"},
-    {file = "django_csp-3.8.tar.gz", hash = "sha256:ef0f1a9f7d8da68ae6e169c02e9ac661c0ecf04db70e0d1d85640512a68471c0"},
+    {file = "django_csp-4.0-py3-none-any.whl", hash = "sha256:d5a0a05463a6b75a4f1fc1828c58c89af8db9364d09fc6e12f122b4d7f3d00dc"},
+    {file = "django_csp-4.0.tar.gz", hash = "sha256:b27010bb702eb20a3dad329178df2b61a2b82d338b70fbdc13c3a3bd28712833"},
 ]
 
 [package.dependencies]
-Django = ">=3.2"
+django = ">=4.2"
+packaging = "*"
 
 [package.extras]
+dev = ["django-stubs[compatible-mypy]", "jinja2 (>=2.9.6)", "mypy", "pre-commit", "pytest", "pytest-cov", "pytest-django", "pytest-ruff", "sphinx", "sphinx-rtd-theme", "tox", "tox-gh-actions", "types-setuptools"]
 jinja2 = ["jinja2 (>=2.9.6)"]
 tests = ["jinja2 (>=2.9.6)", "pytest", "pytest-cov", "pytest-django", "pytest-ruff"]
+typing = ["django-stubs[compatible-mypy]", "jinja2 (>=2.9.6)", "mypy", "pytest", "pytest-django", "types-setuptools"]
 
 [[package]]
 name = "django-environ"
-version = "0.11.2"
+version = "0.12.0"
 description = "A package that allows you to utilize 12factor inspired environment variables to configure your Django application."
 optional = false
-python-versions = ">=3.6,<4"
+python-versions = "<4,>=3.9"
 groups = ["main"]
 files = [
-    {file = "django-environ-0.11.2.tar.gz", hash = "sha256:f32a87aa0899894c27d4e1776fa6b477e8164ed7f6b3e410a62a6d72caaf64be"},
-    {file = "django_environ-0.11.2-py2.py3-none-any.whl", hash = "sha256:0ff95ab4344bfeff693836aa978e6840abef2e2f1145adff7735892711590c05"},
+    {file = "django_environ-0.12.0-py2.py3-none-any.whl", hash = "sha256:92fb346a158abda07ffe6eb23135ce92843af06ecf8753f43adf9d2366dcc0ca"},
+    {file = "django_environ-0.12.0.tar.gz", hash = "sha256:227dc891453dd5bde769c3449cf4a74b6f2ee8f7ab2361c93a07068f4179041a"},
 ]
 
 [package.extras]
-develop = ["coverage[toml] (>=5.0a4)", "furo (>=2021.8.17b43,<2021.9.dev0)", "pytest (>=4.6.11)", "sphinx (>=3.5.0)", "sphinx-notfound-page"]
-docs = ["furo (>=2021.8.17b43,<2021.9.dev0)", "sphinx (>=3.5.0)", "sphinx-notfound-page"]
-testing = ["coverage[toml] (>=5.0a4)", "pytest (>=4.6.11)"]
+develop = ["coverage[toml] (>=5.0a4)", "furo (>=2024.8.6)", "pytest (>=4.6.11)", "setuptools (>=71.0.0)", "sphinx (>=5.0)", "sphinx-notfound-page"]
+docs = ["furo (>=2024.8.6)", "sphinx (>=5.0)", "sphinx-notfound-page"]
+testing = ["coverage[toml] (>=5.0a4)", "pytest (>=4.6.11)", "setuptools (>=71.0.0)"]
 
 [[package]]
 name = "django-formtools"
@@ -432,14 +435,14 @@ Django = ">=3.2"
 
 [[package]]
 name = "django-ipware"
-version = "6.0.5"
+version = "7.0.1"
 description = "A Django application to retrieve user's IP address"
 optional = false
 python-versions = ">=3.8"
 groups = ["main"]
 files = [
-    {file = "django-ipware-6.0.5.tar.gz", hash = "sha256:b39e27403287d6beb0513e694024017dba58d129fd410a1014ac8a1584e73fce"},
-    {file = "django_ipware-6.0.5-py2.py3-none-any.whl", hash = "sha256:a4b73de9a58af9aaa08710da689fb87e39ec470f8df6dc7ee9f8e2d3e0cdef6a"},
+    {file = "django-ipware-7.0.1.tar.gz", hash = "sha256:d9ec43d2bf7cdf216fed8d494a084deb5761a54860a53b2e74346a4f384cff47"},
+    {file = "django_ipware-7.0.1-py2.py3-none-any.whl", hash = "sha256:db16bbee920f661ae7f678e4270460c85850f03c6761a4eaeb489bdc91f64709"},
 ]
 
 [package.dependencies]
@@ -450,13 +453,13 @@ name = "django-ldapdb"
 version = "1.5.2.dev0"
 description = "A LDAP database backend for Django"
 optional = false
-python-versions = ">=3.6"
+python-versions = ">=3.8"
 groups = ["main"]
 files = []
 develop = false
 
 [package.dependencies]
-Django = ">=2.2"
+Django = ">=4.2"
 python-ldap = ">=3.0"
 
 [package.extras]
@@ -465,8 +468,8 @@ dev = ["check-manifest", "factory_boy", "flake8", "isort (>=5.0.0)", "tox", "vol
 [package.source]
 type = "git"
 url = "https://github.com/django-ldapdb/django-ldapdb.git"
-reference = "d3a0b20eb53fd3e13c454499ca1771df7f8858b3"
-resolved_reference = "d3a0b20eb53fd3e13c454499ca1771df7f8858b3"
+reference = "eb9503c85cd230f45765ec8fcd9fc21dbc81ce4c"
+resolved_reference = "eb9503c85cd230f45765ec8fcd9fc21dbc81ce4c"
 
 [[package]]
 name = "django-log-request-id"
@@ -546,34 +549,34 @@ Django = "*"
 [package.source]
 type = "git"
 url = "https://github.com/supertassu/django-ratelimit-backend.git"
-reference = "a408e214e17152a7801a0a82cb85ec97e99829f5"
-resolved_reference = "a408e214e17152a7801a0a82cb85ec97e99829f5"
+reference = "61bcc2f7fac85df7d8ba96b5cfda416c98141949"
+resolved_reference = "61bcc2f7fac85df7d8ba96b5cfda416c98141949"
 
 [[package]]
 name = "django-reversion"
-version = "5.0.12"
+version = "5.1.0"
 description = "An extension to the Django web framework that provides version control for model instances."
 optional = false
-python-versions = ">=3.7"
+python-versions = ">=3.8"
 groups = ["main"]
 files = [
-    {file = "django-reversion-5.0.12.tar.gz", hash = "sha256:c047cc99a9f1ba4aae6db89c3ac243478d6de98ec8a60c7073fcc875d89c5cdb"},
-    {file = "django_reversion-5.0.12-py3-none-any.whl", hash = "sha256:5884e9f77f55c341b3f0a8d3b0af000f060530653776997267c8b1e5349d8fee"},
+    {file = "django_reversion-5.1.0-py3-none-any.whl", hash = "sha256:084d4f117d9e2b4e8dfdfaad83ebb34410a03eed6071c96089e6811fdea82ad3"},
+    {file = "django_reversion-5.1.0.tar.gz", hash = "sha256:3309821e5b6fceedcce6b6975f1a9c7fab6ae7c7d0e1276a90e345946fa0dcb8"},
 ]
 
 [package.dependencies]
-django = ">=3.2"
+django = ">=4.2"
 
 [[package]]
 name = "django-reversion-compare"
-version = "0.17.0"
+version = "0.18.1"
 description = "Add compare view to django-reversion for comparing two versions of a reversion model."
 optional = false
-python-versions = ">=3.9"
+python-versions = ">=3.11"
 groups = ["main"]
 files = [
-    {file = "django-reversion-compare-0.17.0.tar.gz", hash = "sha256:bfb036f32943965d01132809f94b853531cf6c9e3607b8894149c82fe68eddaa"},
-    {file = "django_reversion_compare-0.17.0-py3-none-any.whl", hash = "sha256:02d13ed7994d24d505671d84a005c6f99d13ed92531fa457c63245b518f835ff"},
+    {file = "django_reversion_compare-0.18.1-py3-none-any.whl", hash = "sha256:41ec69e703e5191a6722cad885e0360dbb27c1e33160fe5ecfb8c386dcf69c6f"},
+    {file = "django_reversion_compare-0.18.1.tar.gz", hash = "sha256:f9a1f35be1347c88152368650dfcce23196be938e02a4af128c55de5b06d1496"},
 ]
 
 [package.dependencies]
@@ -583,10 +586,10 @@ django-reversion = "*"
 rich = "*"
 
 [package.extras]
-dev = ["EditorConfig", "autopep8", "beautifulsoup4", "bx-django-utils", "codespell", "colorlog", "coverage", "darker[color,flynt,isort]", "django-countries", "django-debug-toolbar", "django-override-storage", "flake8", "flake8-bugbear", "freezegun", "gunicorn", "manage-django-project (>=0.6.4)", "model-bakery", "mypy", "pip-tools", "pyflakes", "pyupgrade", "requests-mock", "safety", "tblib", "tomli", "tox", "twine", "typing-extensions (>=3.10)"]
-django32 = ["django (>=3.2,<3.3)"]
+dev = ["EditorConfig", "autopep8", "backports.tarfile", "beautifulsoup4", "bx-django-utils", "codespell", "colorlog", "coverage", "darker[color,flynt,isort]", "django-countries", "django-debug-toolbar", "django-override-storage", "flake8", "flake8-bugbear", "freezegun", "gunicorn", "manage-django-project (>=0.6.4)", "model-bakery", "mypy", "pip-audit", "pip-tools", "pre-commit", "pyflakes", "pyupgrade", "requests-mock", "tblib", "tox", "twine", "typeguard"]
 django42 = ["django (>=4.2,<4.3)"]
 django50 = ["django (>=5.0,<5.1)"]
+django51 = ["django (>=5.1,<5.2)"]
 
 [[package]]
 name = "ecdsa"
@@ -1663,4 +1666,4 @@ files = [
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.11"
-content-hash = "4909d6f47e5ed3af9621a35217da1b3ea184c261093cb861e2ecdd498c09f33b"
+content-hash = "1d9321fa73c39eb0b92b4525ae01b75ed0dcafa88cf059e2bfdcc8062a0c342e"
