@@ -1137,6 +1137,18 @@ files = [
 python-ldap = ">=3.0.0b1"
 
 [[package]]
+name = "pymemcache"
+version = "4.0.0"
+description = "A comprehensive, fast, pure Python memcached client"
+optional = false
+python-versions = ">=3.7"
+groups = ["main"]
+files = [
+    {file = "pymemcache-4.0.0-py2.py3-none-any.whl", hash = "sha256:f507bc20e0dc8d562f8df9d872107a278df049fa496805c1431b926f3ddd0eab"},
+    {file = "pymemcache-4.0.0.tar.gz", hash = "sha256:27bf9bd1bbc1e20f83633208620d56de50f14185055e49504f4f5e94e94aff94"},
+]
+
+[[package]]
 name = "pyparsing"
 version = "3.2.3"
 description = "pyparsing module - Classes and methods to define and execute parsing grammars"
@@ -1255,21 +1267,6 @@ groups = ["main"]
 files = [
     {file = "python-logstash-0.4.8.tar.gz", hash = "sha256:d04e1ce11ecc107e4a4f3b807fc57d96811e964a554081b3bbb44732f74ef5f9"},
 ]
-
-[[package]]
-name = "python-memcached"
-version = "1.59"
-description = "Pure python memcached client"
-optional = false
-python-versions = "*"
-groups = ["main"]
-files = [
-    {file = "python-memcached-1.59.tar.gz", hash = "sha256:a2e28637be13ee0bf1a8b6843e7490f9456fd3f2a4cb60471733c7b5d5557e4f"},
-    {file = "python_memcached-1.59-py2.py3-none-any.whl", hash = "sha256:4dac64916871bd3550263323fc2ce18e1e439080a2d5670c594cf3118d99b594"},
-]
-
-[package.dependencies]
-six = ">=1.4.0"
 
 [[package]]
 name = "pytz"
@@ -1423,14 +1420,14 @@ jupyter = ["ipywidgets (>=7.5.1,<9)"]
 
 [[package]]
 name = "setuptools"
-version = "80.4.0"
+version = "80.7.1"
 description = "Easily download, build, install, upgrade, and uninstall Python packages"
 optional = false
 python-versions = ">=3.9"
 groups = ["main"]
 files = [
-    {file = "setuptools-80.4.0-py3-none-any.whl", hash = "sha256:6cdc8cb9a7d590b237dbe4493614a9b75d0559b888047c1f67d49ba50fc3edb2"},
-    {file = "setuptools-80.4.0.tar.gz", hash = "sha256:5a78f61820bc088c8e4add52932ae6b8cf423da2aff268c23f813cfbb13b4006"},
+    {file = "setuptools-80.7.1-py3-none-any.whl", hash = "sha256:ca5cc1069b85dc23070a6628e6bcecb3292acac802399c7f8edc0100619f9009"},
+    {file = "setuptools-80.7.1.tar.gz", hash = "sha256:f6ffc5f0142b1bd8d0ca94ee91b30c0ca862ffd50826da1ea85258a06fd94552"},
 ]
 
 [package.extras]
@@ -1666,4 +1663,4 @@ files = [
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.11"
-content-hash = "2a584b8c0fb26012baa86358926e4f2fa296e792ef279c338987f63b7925c6cd"
+content-hash = "4909d6f47e5ed3af9621a35217da1b3ea184c261093cb861e2ecdd498c09f33b"

@@ -19,3 +19,5 @@
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
 
 from striker.settings import *  # noqa
+
+CACHES["default"]["BACKEND"] = "django.core.cache.backends.locmem.LocMemCache"

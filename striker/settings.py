@@ -232,7 +232,7 @@ CACHES = {
     "default": {
         "BACKEND": env.str(
             "CACHE_BACKEND",
-            default="django.core.cache.backends.memcached.MemcachedCache",
+            default="django.core.cache.backends.memcached.PyMemcacheCache",
         ),
         "LOCATION": env.str("CACHE_LOCATION", default="127.0.0.1:11211"),
         "KEY_PREFIX": env.str("CACHE_PREFIX", "striker"),
