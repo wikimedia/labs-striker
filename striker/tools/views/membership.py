@@ -28,7 +28,7 @@ from django.core import paginator
 from django.db.utils import DatabaseError
 from django.http import HttpResponseRedirect, QueryDict
 from django.utils import timezone
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from notifications.signals import notify
 
 from striker import mediawiki, openstack

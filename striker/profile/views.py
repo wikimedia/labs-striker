@@ -27,7 +27,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db.utils import DatabaseError
 from django.utils.translation import gettext_lazy as _
-from django.utils.translation import ungettext
+from django.utils.translation import ngettext
 from django.views.decorators.debug import sensitive_post_parameters
 
 from striker import decorators, phabricator
@@ -102,7 +102,7 @@ def ssh_keys(req):
     if invalids:
         messages.error(
             req,
-            ungettext(
+            ngettext(
                 "Invalid ssh key detected.",
                 "{count} invalid ssh keys detected.",
                 invalids,

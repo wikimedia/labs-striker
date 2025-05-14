@@ -33,7 +33,7 @@ from django.db import transaction
 from django.db.utils import DatabaseError
 from django.http import HttpResponse
 from django.utils.text import slugify
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from striker.tools.forms import ToolInfoForm, ToolInfoPublicForm
 from striker.tools.models import Author, Tool, ToolInfo, ToolInfoTag
