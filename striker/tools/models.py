@@ -222,7 +222,9 @@ class ToolUser(ldapdb.models.Model):
 
 
 class SudoRole(ldapdb.models.Model):
-    base_dn = "ou=sudoers,cn=tools,{}".format(settings.PROJECTS_BASE_DN)
+    base_dn = "ou=sudoers,cn={},{}".format(
+        settings.OPENSTACK_PROJECT, settings.PROJECTS_BASE_DN
+    )
     object_classes = ["sudoRole"]
 
     cn = fields.CharField(db_column="cn", primary_key=True)
