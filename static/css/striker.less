@@ -133,19 +133,15 @@
 @import './layout.less';
 
 /* Hacks for Bootstrap interoperability */
-.cdx-accordion {
-	.cdx-accordion__header {
-		font-size: 1em; // was: rem
-		font-weight: @font-weight-bold;
-	}
-
-	.cdx-accordion__content {
-		font-size: 1em; // was: rem
-	}
+html {
+	// stylelint-disable-next-line declaration-property-unit-disallowed-list
+	font-size: 14px;
 }
 
-.cdx-card__text__supporting-text {
-	font-size: 0.875em; // was: rem
+.cdx-accordion {
+	.cdx-accordion__header {
+		font-weight: @font-weight-bold;
+	}
 }
 
 .cdx-card .cdx-message {
@@ -156,12 +152,8 @@
 	}
 }
 
-.cdx-info-chip__text {
-	font-size: 0.875em; // was: rem
-}
-
 .cdx-table__header__caption {
-	font-size: 1.125em; // was: rem
+	font-size: @font-size-large;
 }
 /* End of hacks. */
 
