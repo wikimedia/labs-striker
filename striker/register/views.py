@@ -242,7 +242,6 @@ class AccountWizard(NamedUrlSessionWizardView):
             sulid=oauth["id"],
             sulname=oauth["username"],
             sulemail=oauth["email"],
-            realname=oauth["realname"],
             oauthtoken=oauth["token"],
             oauthsecret=oauth["secret"],
         )

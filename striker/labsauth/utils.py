@@ -32,14 +32,13 @@ logger = logging.getLogger(__name__)
 def oauth_from_session(session):
     """Get OAuth data from a user's session.
 
-    :return: dict of id, username, email, realname, token, and secret
+    :return: dict of id, username, email, token, and secret
     """
     token = session.get(constants.ACCESS_TOKEN_KEY, (None, None))
     return {
         "id": session.get(constants.OAUTH_ID_KEY, None),
         "username": session.get(constants.OAUTH_USERNAME_KEY, None),
         "email": session.get(constants.OAUTH_EMAIL_KEY, None),
-        "realname": session.get(constants.OAUTH_REALNAME_KEY, None),
         "token": token[0],
         "secret": token[1],
     }

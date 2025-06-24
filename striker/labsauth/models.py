@@ -78,7 +78,6 @@ class LabsUser(AbstractBaseUser, PermissionsMixin):
         _("SUL username"), max_length=255, unique=True, blank=True, null=True
     )
     sulemail = models.EmailField(_("SUL email address"), blank=True, null=True)
-    realname = models.CharField(_("real name"), max_length=255, blank=True, null=True)
     oauthtoken = models.CharField(
         _("OAuth token"), max_length=127, blank=True, null=True
     )
@@ -148,7 +147,7 @@ class LabsUser(AbstractBaseUser, PermissionsMixin):
         return False
 
     def get_full_name(self):
-        return self.realname or self.phabrealname or self.sulname or self.ldapname
+        return self.phabrealname or self.sulname or self.ldapname
 
     def get_short_name(self):
         return self.sulname or self.ldapname

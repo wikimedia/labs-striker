@@ -34,7 +34,7 @@ class LabsUserAdmin(django.contrib.auth.admin.UserAdmin):
     fieldsets = (
         (None, {"fields": ("ldapname",)}),
         (_("LDAP info"), {"fields": ("ldapemail", "shellname")}),
-        (_("SUL info"), {"fields": ("sulid", "sulname", "sulemail", "realname")}),
+        (_("SUL info"), {"fields": ("sulid", "sulname", "sulemail")}),
         (
             _("Phabricator info"),
             {"fields": ("phabname", "phid", "phabrealname", "phaburl", "phabimage")},
