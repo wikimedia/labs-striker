@@ -384,8 +384,8 @@ LABSAUTH_DEFAULT_GID = env.int("DEFAULT_GID", default=500)
 LABSAUTH_DEFAULT_SHELL = env.str("DEFAULT_SHELL", default="/bin/bash")
 LABSAUTH_MIN_GID = env.int("MIN_GID", default=50000)
 LABSAUTH_MAX_GID = env.int("MAX_GID", default=59999)
-LABSAUTH_MIN_UID = env.int("MIN_UID", default=500)
-LABSAUTH_MAX_UID = env.int("MAX_UID", default=49999)
+LABSAUTH_MIN_UID = env.int("MIN_UID", default=100000)
+LABSAUTH_MAX_UID = env.int("MAX_UID", default=499999)
 
 LDAP_TOOL_URL = env.str("LDAP_TOOL_URL", default="https://ldap.toolforge.org")
 
