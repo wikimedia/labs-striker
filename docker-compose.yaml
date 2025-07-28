@@ -112,7 +112,7 @@ services:
 
   mariadb:
     image: "docker.io/mariadb:10.4"
-    platform: "linux/amd64"
+    platform: linux/amd64
     restart: always
     command: "--character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --local-infile=0 --max-allowed-packet=32M --innodb-buffer-pool-size=256MB --sql-mode=STRICT_ALL_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION"
     environment:
@@ -120,13 +120,12 @@ services:
       - MARIADB_INITDB_SKIP_TZINFO
     healthcheck:
       test:
-        [
-          "CMD",
-          "healthcheck.sh",
-          "--su-mysql",
-          "--connect",
-          "--innodb_initialized"
-        ]
+        - CMD
+        - healthcheck.sh
+        - --su-mysql
+        - --connect
+        - --innodb_initialized
+
       timeout: 5s
       retries: 20
     volumes:
@@ -228,8 +227,8 @@ services:
   ldapwiki:
     build:
       context: contrib/docker/mediawiki
-    image: "striker/mediawiki"
-    #command:
+    image: striker/mediawiki
+    # command:
     #  - cd /var/www/html/; php maintenance/run.php
     #  - apache2-foreground
     restart: always
@@ -329,7 +328,7 @@ services:
 
   redis:
     image: redis:bullseye
-    platform: "linux/amd64"
+    platform: linux/amd64
     networks:
       default:
         aliases:
@@ -362,7 +361,7 @@ services:
       MEDIAWIKI_SUL_URL: http://sulwiki.local.wmftest.net:8082/w/index.php
       MEDIAWIKI_SUL_KEY: ${BITU_SULWIKI_CONSUMER_TOKEN}
       MEDIAWIKI_SUL_SECRET: ${BITU_SULWIKI_CONSUMER_SECRET}
-      MEDIAWIKI_SUL_CALLBACK: 'http://bitu.local.wmftest.net:8085/complete/mediawiki'
+      MEDIAWIKI_SUL_CALLBACK: "http://bitu.local.wmftest.net:8085/complete/mediawiki"
 
     depends_on:
       openldap:
