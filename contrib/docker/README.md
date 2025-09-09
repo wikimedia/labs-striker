@@ -280,6 +280,14 @@ administrator.
 * Access level: Administrator
 * "Save changes"
 
+Setup Bitu
+----------
+URL: http://idm.local.wmftest.net:8085/
+
+* Edit your .env configuration file:
+  * BITU_SULWIKI_CONSUMER_TOKEN: <32 char consumer token>
+  * BITU_SULWIKI_CONSUMER_SECRET: <40 char consumer secret>
+
 Setup Striker
 -------------
 URL: http://striker.local.wmftest.net:8080/
@@ -298,35 +306,3 @@ URL: http://striker.local.wmftest.net:8080/
   * WIKITECH_ACCESS_SECRET = <40 char access secret>
 * Load the new settings: `make restart tail`
 
-
-Setup Bitu
-----------
-These are created in the step "Create OAuth consumer for Bitu"
-* Edit your .env configuration file:
-  * BITU_SULWIKI_CONSUMER_TOKEN: ${SULWIKI_CONSUMER_TOKEN}
-  * BITU_SULWIKI_CONSUMER_SECRET: ${SULWIKI_CONSUMER_SECRET}
-
-The MediaWiki OAuth consumer configuration is only required if you need to be able to use the account
-linking feature in Bitu. If not this can be left out.
-
-Create an API user, by going to: http://bitu.local.wmftest.net:8085/admin/accounts/user/
-Sign in as "Admin" using password: "admin". The new user can be created with any username
-you like, but the suggestion is to just use "Striker". Assign the new user the following
-permission "signup | user validation | Can add user user validation". This will
-allow the user to access the token validation API http://bitu.local.wmftest.net:8085/signup/api/username/.
-
-Next create an API token for the new user, by going to the token option in the admin
-interface, http://bitu.local.wmftest.net:8085/admin/accounts/token/ and click "ADD TOKEN".
-
-You can test your newly created API token using requests or curl, see example:
-
-```
->>> headers = {'Authorization': 'Token RhydGaigfishJedwuvGuWearr', 'Content-Type': 'application/json'}
->>> url = 'http://bitu.local.wmftest.net:8085/mediawiki/signup/username/'
->>> payload = {'username': 'maxmustermann'}
->>> r = requests.post(headers=headers, json=payload, url=url)
->>> r.status_code
-201
->>> r.json()
-{'username': 'maxmustermann', 'uid': 'maxmustermann', 'sanitized': 'Maxmustermann'}
-```
