@@ -122,7 +122,7 @@ def oauth_callback(req):
                 req,
                 _(
                     'Wikimedia account "{sul}" is already attached '
-                    "to another LDAP account."
+                    "to another Developer account."
                 ).format(sul=sul_user["username"]),
             )
         except DatabaseError:

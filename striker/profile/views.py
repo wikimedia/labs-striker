@@ -25,7 +25,7 @@ from django import shortcuts, urls
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.db.utils import DatabaseError
+from django.db.utils import DatabaseError, IntegrityError
 from django.utils.translation import gettext_lazy as _
 from django.utils.translation import ngettext
 from django.views.decorators.debug import sensitive_post_parameters
@@ -63,6 +63,15 @@ def phab_attach(req):
         try:
             req.user.save()
             messages.info(req, _("Attached Phabricator account."))
+        except IntegrityError:
+            logger.exception("user.save failed")
+            messages.error(
+                req,
+                _(
+                    'Phabricator account "{phab}" is already attached '
+                    "to another Developer account."
+                ).format(phab=r["userName"]),
+            )
         except DatabaseError:
             logger.exception("user.save failed")
             messages.error(
