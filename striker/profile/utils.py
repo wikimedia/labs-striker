@@ -30,9 +30,7 @@ logger = logging.getLogger(__name__)
 class SSHPublicKey(sshpubkeys.SSHKey):
     @property
     def type_name(self):
-        if self.key_type == b"ssh-dss":
-            return "DSA"
-        elif self.key_type == b"ssh-rsa":
+        if self.key_type == b"ssh-rsa":
             return "RSA"
         elif self.key_type.startswith(b"ecdsa-sha"):
             return "ECDSA"

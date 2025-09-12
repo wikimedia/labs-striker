@@ -52,9 +52,8 @@ class SshKeyForm(forms.Form):
         widget=forms.Textarea(
             attrs={
                 "placeholder": _(
-                    "Begins with 'ssh-rsa', 'ssh-dss', 'ssh-ed25519', "
-                    "'ecdsa-sha2-nistp256', 'ecdsa-sha2-nistp384', or "
-                    "'ecdsa-sha2-nistp521'"
+                    "Begins with 'ssh-rsa', 'ssh-ed25519', 'ecdsa-sha2-nistp256', "
+                    "'ecdsa-sha2-nistp384', or 'ecdsa-sha2-nistp521'"
                 ),
             }
         ),
