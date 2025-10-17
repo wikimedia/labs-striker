@@ -267,7 +267,7 @@ class Client(object):
                     {"type": "repository", "value": repo_phid},
                     {"type": "uri", "value": upstream_uri},
                     {"type": "io", "value": "observe"},
-                    {"type": "display", "value": "never"},
+                    {"type": "display", "value": "always"},  # T407624
                 ],
             },
         )
