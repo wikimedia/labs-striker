@@ -298,7 +298,7 @@ class Client(object):
         return False
 
     def _repository_hide_http_url(self, repo):
-        """Hide http URI if we also have an https URI."""
+        """Hide http URI and set IO to none if we also have an https URI."""
         https = self._repository_get_uri_with_scheme(repo, "https://id")
         http = self._repository_get_uri_with_scheme(repo, "http://id")
         if https is not None and http is not None:
@@ -308,6 +308,7 @@ class Client(object):
                     {
                         "transactions": [
                             {"type": "display", "value": "never"},
+                            {"type": "io", "value": "none"},  # T407705
                         ],
                         "objectIdentifier": http["phid"],
                     },
