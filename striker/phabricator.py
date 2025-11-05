@@ -226,7 +226,7 @@ class Client(object):
         )
         obj = r["object"]
         repo = self.get_repository_by_phid(obj["phid"])
-        self._repository_hide_http_url(repo)
+        self._repository_hide_internal_urls(repo)
         return repo
 
     def repository_admin_only(self, repo_phid):
@@ -297,27 +297,41 @@ class Client(object):
                 return True
         return False
 
-    def _repository_hide_http_url(self, repo):
-        """Hide http URI and set IO to none if we also have an https URI."""
-        https = self._repository_get_uri_with_scheme(repo, "https://id")
-        http = self._repository_get_uri_with_scheme(repo, "http://id")
-        if https is not None and http is not None:
+    def _repository_hide_internal_urls(self, repo):
+        """Set IO and visibility to none for all internal Phabricator URIs."""
+        for scheme in [
+            "https://id",
+            "http://id",
+            "ssh://id",
+            "https://shortname",
+            "http://shortname",
+            "ssh://shortname",
+        ]:
+            uri_id = self._repository_get_uri_with_scheme(repo, scheme)
+            if uri_id is None:
+                logger.warning(
+                    "Could not find URI with scheme %s for repository %s",
+                    scheme,
+                    repo["phid"],
+                )
+                continue
             try:
                 self.post(
                     "diffusion.uri.edit",
                     {
                         "transactions": [
                             {"type": "display", "value": "never"},
-                            {"type": "io", "value": "none"},  # T407705
+                            {"type": "io", "value": "none"},
                         ],
-                        "objectIdentifier": http["phid"],
+                        "objectIdentifier": uri_id["phid"],
                     },
                 )
-                return True
             except APIError:
-                logger.exception("Failed to hide http uri for repo %s", repo["phid"])
+                logger.exception(
+                    "Failed to hide uri for repo %s (%s)", repo["phid"], uri_id
+                )
                 return False
-        return False
+        return True
 
     def _repository_get_uri_with_scheme(self, repo, scheme):
         for uri in repo["attachments"]["uris"]["uris"]:
