@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Expand jinja2 templates."""
+
 import argparse
 import os
 import sys
