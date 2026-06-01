@@ -145,7 +145,6 @@ http://ldapwiki.local.wmftest.net:8083/wiki/Special:CreateAccount
 * Username: StrikerBot
 * Password: strikerbot-docker
 * Email address: strikerbot@local.wmftest.net
-* Instance shell account name: strikerbot
 
 ### Create StrikerBot owner-only consumer
 http://ldapwiki.local.wmftest.net:8083/wiki/Special:OAuthConsumerRegistration/propose/oauth1a

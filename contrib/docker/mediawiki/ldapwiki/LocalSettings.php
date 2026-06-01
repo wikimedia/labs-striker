@@ -253,11 +253,6 @@ $wgDebugLogGroups['ldap'] = "php://stderr";
 // domain users (as domain user's passwords are not stored)
 $wgPasswordPolicy['default']['MinimalPasswordLength'] = 1;
 
-wfLoadExtension( 'OpenStackManager' );
-$wgOpenStackManagerLDAPDomain = "ldap";
-$wgOpenStackManagerLDAPUser = "cn=writer,dc=wmftest,dc=net";
-$wgOpenStackManagerLDAPUserPassword = "docker_writer";
-
 $wgDebugLogFile = "php://stderr";
 
 error_reporting( -1 );

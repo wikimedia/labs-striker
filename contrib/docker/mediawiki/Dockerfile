@@ -1,4 +1,4 @@
-FROM docker.io/mediawiki:1.41
+FROM docker.io/mediawiki:1.43
 
 # XXX: it would be cool if the upstram image provided a helper script for this
 RUN set -eux; \
@@ -21,11 +21,11 @@ RUN set -eux; \
     && mv composer.phar /usr/local/bin/composer \
     && rm /usr/local/bin/install-composer
 
-ENV MW_BRANCH=REL1_41 \
+ENV MW_BRANCH=REL1_43 \
     GIT_ROOT=https://gerrit.wikimedia.org/r/mediawiki \
     MW_INSTALL_DIR=/var/www/html \
     MW_EXT_DIR=/var/www/html/extensions \
-    MW_EXTS="OAuth LdapAuthentication OpenStackManager"
+    MW_EXTS="OAuth LdapAuthentication"
 
 RUN set -eux; \
     for EXT in $MW_EXTS; do \
