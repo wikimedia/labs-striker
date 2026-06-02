@@ -39,6 +39,7 @@ django-csp = "^4.0"
 django-environ = "^0.12.0"
 django-formtools = ">=2.3,<3"
 django-ipware = "^7.0"
+packaging = ">=26,<27"
 # v2.0, https://github.com/django-ldapdb/django-ldapdb/issues/215
 django-ldapdb = {git = "https://github.com/django-ldapdb/django-ldapdb.git", rev = "eb9503c85cd230f45765ec8fcd9fc21dbc81ce4c"}
 django-log-request-id = ">=2.0.0,<3"
