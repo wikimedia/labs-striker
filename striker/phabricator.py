@@ -414,9 +414,6 @@ class Client(object):
             "project.search",
             {
                 "constraints": {"query": "title:{}".format(json.dumps(name))},
-                "attachments": {
-                    "uris": True,
-                },
                 "order": "name",
             },
         )
@@ -433,9 +430,6 @@ class Client(object):
             {
                 "constraints": {
                     "phids": [phid],
-                },
-                "attachments": {
-                    "uris": True,
                 },
             },
         )
