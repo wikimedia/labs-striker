@@ -41,14 +41,17 @@ class SSHPublicKey(sshpubkeys.SSHKey):
 
 
 def parse_ssh_key(pubkey):
+    if pubkey.startswith("---- BEGIN SSH2 PUBLIC KEY ----"):
+        logger.info("Rejected PEM formatted key")
+        return None
     key = SSHPublicKey(pubkey, strict_mode=True, skip_option_parsing=True)
     try:
         key.parse()
-    except sshpubkeys.InvalidKeyException as err:
-        logger.exception('Failed to parse "%s"', err)
+    except sshpubkeys.InvalidKeyException:
+        logger.info('Failed to parse provided public key "%s"', pubkey, exc_info=True)
         key = None
-    except NotImplementedError as err:
-        logger.exception('Failed to parse "%s"', err)
+    except NotImplementedError:
+        logger.info('Failed to parse provided public key "%s"', pubkey, exc_info=True)
         key = None
     return key
 
