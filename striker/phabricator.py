@@ -248,18 +248,6 @@ class Client(object):
 
     def repository_mirror(self, repo_phid, upstream_uri):
         """Make a repo a mirror of an upstream."""
-        repo = self.get_repository_by_phid(repo_phid)
-        for uri in repo["attachments"]["uris"]["uris"]:
-            if uri["fields"]["io"]["default"] == "readwrite":
-                self.post(
-                    "diffusion.uri.edit",
-                    {
-                        "objectIdentifier": uri["phid"],
-                        "transactions": [
-                            {"type": "io", "value": "read"},
-                        ],
-                    },
-                )
         self.post(
             "diffusion.uri.edit",
             {
