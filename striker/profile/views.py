@@ -40,6 +40,7 @@ logger = logging.getLogger(__name__)
 def accounts(req):
     ctx = {
         "phab_url": settings.PHABRICATOR_URL,
+        "bitu_url": settings.BITU_URL,
     }
     return shortcuts.render(req, "profile/settings/accounts.html", ctx)
 
