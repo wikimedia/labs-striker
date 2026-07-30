@@ -120,7 +120,7 @@ services:
       - --loglevel
       - debug
     ports:
-      - "1389:389"
+      - "1389:1389"
     volumes:
       - type: volume
         source: openldap_ldap
@@ -226,7 +226,7 @@ services:
           'main' => {
             'label' => 'LDAP',
             'host' =>  'openldap.local.wmftest.net',
-            'port' => 389,
+            'port' => 1389,
             'uid' => 'uid',
             'encryption' => 'plain',
             'bind_dn' => 'cn=proxyagent,dc=wmftest,dc=net',
@@ -243,7 +243,8 @@ services:
           }
         }
 
-        gitlab_rails['initial_root_password'] = 'docker-gitlab'
+        # Password must not contain "gitlab"...
+        gitlab_rails['initial_root_password'] = 'docker-git-lab'
 
         logging['svlogd_num'] = 1
         logging['logrotate_rotate'] = 1

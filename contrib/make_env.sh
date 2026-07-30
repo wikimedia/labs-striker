@@ -31,7 +31,7 @@ DB_PASSWORD=striker
 DB_HOST=mariadb.local.wmftest.net
 DB_PORT=3306
 
-LDAP_SERVER_URI=ldap://openldap.local.wmftest.net:389
+LDAP_SERVER_URI=ldap://openldap.local.wmftest.net:1389
 LDAP_BIND_USER=cn=writer,dc=wmftest,dc=net
 LDAP_BIND_PASSWORD=docker_writer
 LDAP_USER_SEARCH_BASE=ou=People,dc=wmftest,dc=net

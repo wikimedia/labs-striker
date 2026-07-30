@@ -16,7 +16,7 @@ services:
     command: >
       /srv/dockerize/bin/dockerize
       -wait tcp://mariadb:3306
-      -wait tcp://openldap:389
+      -wait tcp://openldap:1389
       -wait tcp://keystone:5000
       -timeout 300s
       poetry run python3 ./manage.py runserver --nostatic 0.0.0.0:8080
@@ -146,11 +146,14 @@ services:
       context: contrib/docker/openldap
     image: striker/openldap
     restart: always
+    # privileged is needed to work around issues with volume access.
+    # See https://github.com/osixia/container-openldap/issues/184
+    privileged: true
     command:
       - --loglevel
       - debug
     ports:
-      - "1389:389"
+      - "1389:1389"
     volumes:
       - type: volume
         source: openldap_ldap
@@ -268,7 +271,7 @@ services:
           'main' => {
             'label' => 'LDAP',
             'host' =>  'openldap.local.wmftest.net',
-            'port' => 389,
+            'port' => 1389,
             'uid' => 'uid',
             'encryption' => 'plain',
             'bind_dn' => 'cn=proxyagent,dc=wmftest,dc=net',
@@ -285,7 +288,8 @@ services:
           }
         }
 
-        gitlab_rails['initial_root_password'] = 'docker-gitlab'
+        # Password must not contain "gitlab"...
+        gitlab_rails['initial_root_password'] = 'docker-git-lab'
 
         logging['svlogd_num'] = 1
         logging['logrotate_rotate'] = 1

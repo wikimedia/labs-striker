@@ -15,6 +15,28 @@ installation and configuration of the various software components needed to
 develop and test Striker, but there are some additional configuration steps
 that must be performed manually.
 
+Using Podman
+-----------------------
+Using [Podman](https://podman.io) as a drop-in replacement for Docker is mostly
+supported, however there are a few catches to be aware of.
+
+* It is necessary to run `docker-compose` directly, which means you will need
+  to set `$DOCKER_HOST` according to the output of `podman machine start`.
+* `docker-compose run --build` and similar will tag its images as
+  `docker.io/striker/<service>`, while `podman build --tag striker/<service>`
+  will tag images as `localhost/striker/<service>`. This will then cause issues
+  when running the compose file, as the older `localhost`-prefixed images will
+  take precedence over the new `docker.io`-prefixed images.
+* On macOS under Podman, it may be necessary to add the following to
+  `~/.config/containers/containers.conf`, especially if you witness a
+  segfault from esbuild when attempting to run `make build`:
+  ```toml
+  [machine]
+  rosetta = true
+  ```
+  You will need to run `podman machine stop && podman machine start` after
+  making this change.
+
 First boot
 ----------
 The initial startup of the docker-compose environment will be slow, and very
@@ -79,8 +101,11 @@ http://sulwiki.local.wmftest.net:8082/wiki/Special:OAuthConsumerRegistration/pro
   behalf."
 * Check the "By submitting this application, ..." checkbox
 
-Save the consumer token and secret token values for use later when we are
-setting up Striker.
+Update your `.env` file with the consumer token and secret token:
+```sh
+OAUTH_CONSUMER_KEY = <32 char consumer token>
+OAUTH_CONSUMER_SECRET = <40 char secret token>
+```
 
 ### Create OAuth consumer for Bitu
 http://sulwiki.local.wmftest.net:8082/wiki/Special:OAuthConsumerRegistration/propose/oauth1a
@@ -88,12 +113,19 @@ http://sulwiki.local.wmftest.net:8082/wiki/Special:OAuthConsumerRegistration/pro
 * Application name: Bitu
 * Application description: Bitu Integration
 * OAuth callback URL: http://bitu.local.wmftest.net:8085/complete/mediawiki
-* Request authorization for specific permissions
-  - Pick "Access two-factor authentication (OATH) information for self and others"
+* Types of grants being requested: "User identity verification only with access
+  to real name and email address, no ability to read pages or act on a user's
+  behalf."
 * Check the "By submitting this application, ..." checkbox
 
 Save the consumer token and secret token values for use later when we are
 setting up Bitu.
+
+Update your `.env` file with the consumer token and secret token:
+```sh
+BITU_SULWIKI_CONSUMER_TOKEN = <32 char consumer token>
+BITU_SULWIKI_CONSUMER_SECRET = <40 char secret token>
+```
 
 ### Approve OAuth consumers
 Approve all three consumers at http://sulwiki.local.wmftest.net:8082/wiki/Special:OAuthManageConsumers/proposed
@@ -136,8 +168,13 @@ http://ldapwiki.local.wmftest.net:8083/wiki/Special:OAuthConsumerRegistration/pr
   * Access private information
 * Check the "By submitting this application, ..." checkbox
 
-Save the consumer token, consumer secret, access token, and access secret
-values for use later when we are setting up Striker.
+Update your `.env` file with all four tokens:
+```sh
+WIKITECH_CONSUMER_TOKEN = <32 char consumer token>
+WIKITECH_CONSUMER_SECRET = <40 char consumer secret>
+WIKITECH_ACCESS_TOKEN = <32 char access token>
+WIKITECH_ACCESS_SECRET = <40 char access secret>
+```
 
 ### Grant StrikerBot the bot right
 
@@ -162,6 +199,7 @@ http://phabricator.local.wmftest.net:8081/auth/config/edit/?provider=Phabricator
 
 * Check the "Trust Email Addresses" checkbox
 * LDAP Hostname: openldap.local.wmftest.net
+* LDAP Port: 1389
 * Base Distinguished Name: ou=People,dc=wmftest,dc=net
 * Search Attributes: cn
 * Check the "Always Search" checkbox
@@ -198,7 +236,10 @@ http://phabricator.local.wmftest.net:8081/people/new/bot/
 ### Generate a Conduit API token for StrikerBot
 http://phabricator.local.wmftest.net:8081/settings/user/StrikerBot/page/apitokens/
 
-Copy the API token for use later in configuring the Striker app
+Update your `.env` file with the API token:
+```sh
+PHABRICATOR_TOKEN = api-<28 chars>
+```
 
 ### Create a "Repository-Admins" project
 http://phabricator.local.wmftest.net:8081/project/edit/form/default/
@@ -223,6 +264,11 @@ http://phabricator.local.wmftest.net:8081/project/profile/1/
 * Click "View All" in the "Recent Activity" pane
 * Copy the PHID-PROJ- value from the URL.
 
+Update your `.env` file:
+```sh
+PHABRICATOR_REPO_ADMIN_GROUP = PHID-PROJ-<20 chars>
+```
+
 ### Create a "Tools" project
 http://phabricator.local.wmftest.net:8081/project/edit/form/default/
 
@@ -238,12 +284,13 @@ http://phabricator.local.wmftest.net:8081/project/profile/2/
 * Click "View All" in the "Recent Activity" pane
 * Copy the PHID-PROJ- value from the URL.
 
+Update your `.env` file:
+```sh
+PHABRICATOR_PARENT_PROJECT = PHID-PROJ-<20 chars>
+```
+
 Setup GitLab
 ------------
-* URL: http://gitlab.local.wmftest.net:8084/
-* USERNAME: root
-* PASSWORD: docker-gitlab
-
 ### Create a StrikerBot bot account
 http://gitlab.local.wmftest.net:8084/users/sign_in
 
@@ -256,8 +303,10 @@ http://gitlab.local.wmftest.net:8084/-/profile/personal_access_tokens
 * Token name: Striker API integration
 * Scopes: api
 
-Save the personal access token value for use later when we are setting up
-Striker.
+Update your `.env` file with the personal access token:
+```sh
+GITLAB_ACCESS_TOKEN = glpat-<20 char personal access token>
+```
 
 ### Create public group "toolforge-repos"
 http://gitlab.local.wmftest.net:8084/groups/new#create-group-pane
@@ -265,44 +314,30 @@ http://gitlab.local.wmftest.net:8084/groups/new#create-group-pane
 * Group name: toolforge-repos
 * Visiblity level: Public
 
-Save the Group ID for use later when we are setting up Striker.
+Update your `.env` file with the Group ID:
+```sh
+GITLAB_REPO_NAMESPACE_ID = <integer>
+```
 
 ### Make StrikerBot bot account an administrator
-http://gitlab.local.wmftest.net:8084/admin/users/strikerbot/edit
-
 Only administrators are allowed to create local accounts for other LDAP users.
 The default "root" administrator account can be used to make StrikerBot an
 administrator.
 
 * Log out
-* Login as root / docker-gitlab
+* Log in using the "Standard" authentication provider
+  * URL: http://gitlab.local.wmftest.net:8084/
+  * USERNAME: root
+  * PASSWORD: docker-git-lab
 * Visit http://gitlab.local.wmftest.net:8084/admin/users/strikerbot/edit
 * Access level: Administrator
 * "Save changes"
 
-Setup Bitu
-----------
-URL: http://idm.local.wmftest.net:8085/
-
-* Edit your .env configuration file:
-  * BITU_SULWIKI_CONSUMER_TOKEN: <32 char consumer token>
-  * BITU_SULWIKI_CONSUMER_SECRET: <40 char consumer secret>
-
 Setup Striker
 -------------
 URL: http://striker.local.wmftest.net:8080/
+USERNAME: admin
+PASSWORD: admin
 
-* Edit your .env configuration file:
-  * GITLAB_ACCESS_TOKEN = <20 char personal access token>
-  * GITLAB_REPO_NAMESPACE_ID = <integer>
-  * OAUTH_CONSUMER_KEY = <32 char consumer token>
-  * OAUTH_CONSUMER_SECRET = <40 char secret token>
-  * PHABRICATOR_TOKEN = api-<28 chars>
-  * PHABRICATOR_REPO_ADMIN_GROUP = PHID-PROJ-<20 chars>
-  * PHABRICATOR_PARENT_PROJECT = PHID-PROJ-<20 chars>
-  * WIKITECH_CONSUMER_TOKEN = <32 char consumer token>
-  * WIKITECH_CONSUMER_SECRET = <40 char consumer secret>
-  * WIKITECH_ACCESS_TOKEN = <32 char access token>
-  * WIKITECH_ACCESS_SECRET = <40 char access secret>
+* Save the `.env` file
 * Load the new settings: `make restart tail`
-

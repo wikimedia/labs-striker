@@ -215,6 +215,7 @@ $wgAuthManagerAutoConfig['primaryauth'] += [
 
 $wgLDAPDomainNames = [ 'ldap' ];
 $wgLDAPServerNames = [ 'ldap' => 'openldap.local.wmftest.net' ];
+$wgLDAPPort = [ 'ldap' => 1389 ];
 $wgLDAPEncryptionType = [ 'ldap' => 'clear' ];
 
 $wgLDAPProxyAgent =  [ 'ldap' => 'cn=proxyagent,dc=wmftest,dc=net' ];

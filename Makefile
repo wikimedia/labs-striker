@@ -20,9 +20,15 @@ this := $(word $(words $(MAKEFILE_LIST)),$(MAKEFILE_LIST))
 PROJECT_DIR := $(dir $(this))
 PIPELINE_DIR := $(PROJECT_DIR)/.pipeline
 DOCKERIZE := /srv/dockerize/bin/dockerize
-# Prefer Compose v2, but allow override on hosts that only have v1
-COMPOSE ?= docker compose
 NPM ?= fresh-node -- npm
+
+# Use "docker compose" if we can find it, falling back to
+# "docker-compose" if docker isn't found.
+ifneq ($(shell command -v docker),)
+COMPOSE ?= docker compose
+else
+COMPOSE ?= docker-compose
+endif
 
 help:
 	@echo "Make targets:"

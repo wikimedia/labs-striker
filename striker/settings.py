@@ -205,7 +205,7 @@ DATABASES = {
     },
     "ldap": {
         "ENGINE": "ldapdb.backends.ldap",
-        "NAME": env.str("LDAP_SERVER_URI", default="ldap://127.0.0.1:389"),
+        "NAME": env.str("LDAP_SERVER_URI", default="ldap://127.0.0.1:1389"),
         "USER": env.str("LDAP_BIND_USER", default=""),
         "PASSWORD": env.str("LDAP_BIND_PASSWORD", default=""),
     },
@@ -332,7 +332,7 @@ BOOTSTRAP3 = {
 
 # == Authentication settings ==
 # LDAP Authentication
-AUTH_LDAP_SERVER_URI = env.str("LDAP_SERVER_URI", default="ldap://127.0.0.1:389")
+AUTH_LDAP_SERVER_URI = env.str("LDAP_SERVER_URI", default="ldap://127.0.0.1:1389")
 AUTH_LDAP_START_TLS = env.bool("LDAP_TLS", default=False)
 AUTH_LDAP_USER_SEARCH = django_auth_ldap.config.LDAPSearch(
     env.str("LDAP_USER_SEARCH_BASE", default="ou=people,dc=wikimedia,dc=org"),
@@ -460,7 +460,11 @@ GITLAB_REPO_NAMESPACE_NAME = env.str(
     "GITLAB_REPO_NAMESPACE_NAME",
     default="toolforge-repos",
 )
-GITLAB_REPO_NAMESPACE_ID = env.int("GITLAB_REPO_NAMESPACE_ID", default=688)
+
+# GITLAB_REPO_NAMESPACE_NAME will be an empty string when first
+# setting up, so default=None is needed to ensure that doesn't become
+# a ValueError.
+GITLAB_REPO_NAMESPACE_ID = env.int("GITLAB_REPO_NAMESPACE_ID", default=None) or 688
 GITLAB_PROVIDER = env.str("GITLAB_PROVIDER", default="openid_connect")
 GITLAB_EXTERN_FORMAT = env.str("GITLAB_EXTERN_FORMAT", default="{0.cn}")
 
