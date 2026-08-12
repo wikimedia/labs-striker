@@ -18,6 +18,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Striker.  If not, see <http://www.gnu.org/licenses/>.
 
+import logging
 import random
 import string
 
@@ -35,6 +36,8 @@ from django.utils.crypto import salted_hmac
 from django.utils.translation import gettext_lazy as _
 from django_auth_ldap.backend import LDAPBackend
 from ldapdb.models import fields as ldap_fields
+
+logger = logging.getLogger(__name__)
 
 
 class LabsUserManager(BaseUserManager):
@@ -172,7 +175,17 @@ class LabsUser(AbstractBaseUser, PermissionsMixin):
 
     @property
     def ldapuser(self):
-        return LdapUser.objects.get(dn=self.ldap_dn)
+        try:
+            return LdapUser.objects.get(dn=self.ldap_dn)
+        except LdapUser.DoesNotExist:
+            # T434684: our local view of the user is out of sync with the
+            # backing Developer account.
+            logger.critical(
+                "Failed to find associated 'dn: %s' LdapUser for %r",
+                self.ldap_dn,
+                self,
+            )
+            raise
 
 
 class PosixGroup(ldapdb.models.Model):
