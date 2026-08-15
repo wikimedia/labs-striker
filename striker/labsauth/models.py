@@ -232,6 +232,14 @@ class LdapUser(ldapdb.models.Model):
         # "wikimediaPerson",
     ]
 
+    def __init__(self, *args, **kwargs):
+        # Ensure each instance of this class has a separate object_classes list
+        # object so that it can be adjusted for individual instances. (This is so
+        # we can add wikimediaPerson to it where necessary without requiring that
+        # searches only find objects with that object class.)
+        self.object_classes = [*self.object_classes]
+        super().__init__(*args, **kwargs)
+
     # posixAccount
     uid = ldap_fields.CharField(db_column="uid", primary_key=True)
     cn = ldap_fields.CharField(db_column="cn", unique=True)
