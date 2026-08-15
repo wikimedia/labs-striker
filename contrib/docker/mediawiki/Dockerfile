@@ -38,8 +38,6 @@ RUN set -eux; \
 
 RUN set -eux; \
     mv $MW_INSTALL_DIR/composer.local.json-sample $MW_INSTALL_DIR/composer.local.json \
-    # Temporary workaround until we update our mediawiki version:
-    && sh -c "COMPOSER_ALLOW_SUPERUSER=1 composer config -g policy.advisories.block false" \
     && sh -c "cd $MW_INSTALL_DIR && COMPOSER_ALLOW_SUPERUSER=1 composer update --no-dev" \
     && ls -lh $MW_INSTALL_DIR/vendor
 

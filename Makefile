@@ -56,12 +56,17 @@ tail:  ## Tail logs from the docker-compose stack
 	$(COMPOSE) logs --tail=1000 -f
 .PHONY: tail
 
-migrate:  ## Run `manage.py migrate`
+migrate:  ## Run `manage.py migrate` and mediawiki migrations
 	$(COMPOSE) exec striker $(DOCKERIZE) \
 		-wait tcp://mariadb:3306 \
 		-wait tcp://keystone:5000 \
 		-timeout 90s \
 		poetry run python3 manage.py migrate
+
+	for wiki in ldapwiki sulwiki; do \
+		$(COMPOSE) exec $$wiki php maintenance/run.php update --quick; \
+	done
+
 .PHONY: migrate
 
 init_licenses:
