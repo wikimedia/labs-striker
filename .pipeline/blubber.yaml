@@ -13,7 +13,7 @@ runs:
 
 variants:
   base-node:
-    base: docker-registry.wikimedia.org/nodejs20-slim:latest
+    base: docker-registry.wikimedia.org/nodejs26-slim:latest
     node: { requirements: [package.json, package-lock.json] }
   vite:
     includes: [base-node]
